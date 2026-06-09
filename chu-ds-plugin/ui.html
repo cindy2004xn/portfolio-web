@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Inter, sans-serif; padding: 24px; background: #f5f1eb; color: #1a1a1a; }
+  h2 { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+  .sub { font-size: 12px; color: #6b6560; margin-bottom: 24px; line-height: 1.6; }
+
+  .section { margin-bottom: 20px; }
+  .section-title { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6560; margin-bottom: 10px; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 11px; padding: 4px 10px; border-radius: 999px;
+    border: 0.5px solid #1a1a1a; color: #1a1a1a; background: transparent;
+  }
+  .chip.green { background: #2c6e4f; color: #d4ede2; border-color: #2c6e4f; }
+
+  .divider { height: 0.5px; background: #ddd7cc; margin: 20px 0; }
+
+  button#run {
+    width: 100%; padding: 12px;
+    background: #1a1a1a; color: #f5f1eb;
+    border: none; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; letter-spacing: 0.02em;
+  }
+  button#run:hover { background: #2c6e4f; }
+  button#run:disabled { background: #b2afa9; cursor: not-allowed; }
+
+  #status { font-size: 12px; color: #2c6e4f; text-align: center; margin-top: 12px; min-height: 18px; }
+</style>
+</head>
+<body>
+
+<h2>Chu Chien-Hui — Design System</h2>
+<p class="sub">一鍵建立 Variables、Text Styles、Color Styles</p>
+
+<div class="section">
+  <div class="section-title">色彩 Variables</div>
+  <div class="chip-row">
+    <span class="chip green">color/brand/primary</span>
+    <span class="chip">color/bg/base</span>
+    <span class="chip">color/text/main</span>
+    <span class="chip">color/border/default</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">字型 Text Styles</div>
+  <div class="chip-row">
+    <span class="chip">Display · 48px</span>
+    <span class="chip">H1 · 36px</span>
+    <span class="chip">H2 · 24px</span>
+    <span class="chip">H3 · 18px</span>
+    <span class="chip">Body · 15px</span>
+    <span class="chip">Label · 12px</span>
+    <span class="chip">Caption · 11px</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">間距 & 圓角 Variables</div>
+  <div class="chip-row">
+    <span class="chip">spacing/xs · 4px</span>
+    <span class="chip">spacing/sm · 8px</span>
+    <span class="chip">spacing/md · 16px</span>
+    <span class="chip">spacing/lg · 24px</span>
+    <span class="chip">spacing/xl · 40px</span>
+    <span class="chip">radius/md · 8px</span>
+    <span class="chip">radius/pill · 999px</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<button id="run">建立 Design System</button>
+<div id="status"></div>
+
+<script>
+  const btn = document.getElementById('run');
+  const status = document.getElementById('status');
+
+  btn.addEventListener('click', () => {
+    btn.disabled = true;
+    btn.textContent = '建立中…';
+    status.textContent = '';
+    parent.postMessage({ pluginMessage: { type: 'build' } }, '*');
+  });
+
+  window.onmessage = (e) => {
+    const msg = e.data.pluginMessage;
+    if (msg?.type === 'done') {
+      btn.textContent = '完成 ✓';
+      status.textContent = '所有 Styles 和 Variables 已建立！';
+    }
+  };
+</script>
+</body>
+</html>

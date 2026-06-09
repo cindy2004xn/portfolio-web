@@ -1,0 +1,45 @@
+:root {
+  /* Brand */
+  --color-brand-primary:    #2c6e4f;
+  --color-brand-primary-bg: #d4ede2;
+
+  /* Background */
+  --color-bg-base:    #f5f1eb;
+  --color-bg-surface: #eae4d8;
+  --color-bg-card:    #ffffff;
+  --color-bg-dark:    #1a1a1a;
+
+  /* Text */
+  --color-text-main:      #1a1a1a;
+  --color-text-secondary: #6b6560;
+  --color-text-disabled:  #b2afa9;
+
+  /* Border */
+  --color-border-default: #ddd7cc;
+  --color-border-strong:  #1a1a1a;
+
+  /* Spacing */
+  --spacing-xs:  4px;
+  --spacing-sm:  8px;
+  --spacing-md:  16px;
+  --spacing-lg:  24px;
+  --spacing-xl:  40px;
+  --spacing-2xl: 64px;
+
+  /* Radius */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-pill: 999px;
+
+  /* Typography sizes */
+  --text-display:    48px;
+  --text-h1:         36px;
+  --text-h2:         24px;
+  --text-h3:         18px;
+  --text-body:       15px;
+  --text-body-sm:    13px;
+  --text-label:      12px;
+  --text-label-caps: 11px;
+  --text-caption:    11px;
+}

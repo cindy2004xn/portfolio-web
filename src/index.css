@@ -1,0 +1,30 @@
+@import './styles/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--color-bg-base);
+    color: var(--color-text-main);
+  }
+}
+
+@layer utilities {
+  /* Typography scale */
+  .text-display  { font-size: 48px; line-height: 52px; letter-spacing: -0.02em; font-weight: 400; }
+  .text-h1       { font-size: 36px; line-height: 40px; letter-spacing: -0.01em; font-weight: 400; }
+  .text-h2       { font-size: 24px; line-height: 30px; letter-spacing: -0.01em; font-weight: 400; }
+  .text-h3       { font-size: 18px; line-height: 24px; font-weight: 500; }
+  .text-body     { font-size: 15px; line-height: 27px; font-weight: 400; }
+  .text-body-sm  { font-size: 13px; line-height: 22px; font-weight: 400; }
+  .text-label    { font-size: 12px; line-height: 16px; letter-spacing: 0.08em; font-weight: 500; }
+  .text-label-caps { font-size: 11px; line-height: 16px; letter-spacing: 0.14em; font-weight: 400; text-transform: uppercase; }
+  .text-caption  { font-size: 11px; line-height: 16px; letter-spacing: 0.04em; font-weight: 400; }
+}
