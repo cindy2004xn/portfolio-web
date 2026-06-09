@@ -50,7 +50,6 @@ app.get('/api/works', async (req, res) => {
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_ID,
-      filter: { property: 'published', checkbox: { equals: true } },
       sorts: [{ timestamp: 'created_time', direction: 'descending' }],
     });
     res.json({ works: response.results.map(formatPage) });
