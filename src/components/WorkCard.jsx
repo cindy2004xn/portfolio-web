@@ -16,7 +16,7 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
 
   return (
     <div
-      onClick={() => openInNewTab ? window.open(`/work/${work.id}`, '_blank', 'noopener') : navigate(`/work/${work.id}`)}
+      onClick={() => openInNewTab ? window.open(`${import.meta.env.BASE_URL}work/${work.id}`, '_blank', 'noopener') : navigate(`/work/${work.id}`)}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{ cursor: 'pointer' }}
