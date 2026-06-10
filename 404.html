@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Portfolio</title>
-  <script>
-    // SPA redirect: convert path to query string for GitHub Pages
-    var l = window.location;
-    l.replace(
-      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      l.pathname.split('/').slice(0, 2).join('/') +
-      '/?p=' + l.pathname.slice(1).split('/').slice(1).join('/').replace(/&/g, '~and~') +
-      (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-      l.hash
-    );
-  </script>
-</head>
-<body></body>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>朱千慧作品集</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400&family=Noto+Serif+TC:wght@500&display=swap" rel="stylesheet" />
+    <script>
+      // SPA redirect restore for GitHub Pages
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var p = params.get('p');
+        if (p) {
+          var q = params.get('q');
+          var base = window.location.pathname;
+          var url = base + p + (q ? '?' + q.replace(/~and~/g, '&') : '') + window.location.hash;
+          window.history.replaceState(null, null, url);
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/portfolio-web/assets/index-DeicebUS.js"></script>
+    <link rel="stylesheet" crossorigin href="/portfolio-web/assets/index-CbHUkHOC.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
