@@ -9,159 +9,121 @@
     font-family: 'Noto Sans TC', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-
   body {
-    background-color: var(--color-bg-base);
-    color: var(--color-text-main);
+    background-color: var(--ju-base);
+    color: var(--ju-text);
   }
 }
 
+/* ── Font family helpers ── */
+.ju-sans  { font-family: 'Noto Sans TC', system-ui, sans-serif; }
+.ju-serif { font-family: 'Noto Serif TC', serif; }
+.ju-mono  { font-family: 'IBM Plex Mono', monospace; }
+
 @layer utilities {
-  /* ── Hero / detail page titles (responsive) ── */
-  .p-hero-title {
-    font-family: 'Noto Serif TC', serif;
-    font-size: clamp(28px, 5vw, 44px);
-    line-height: 1.4;
-    font-weight: 500;
-  }
-  .p-detail-title {
-    font-family: 'Noto Serif TC', serif;
-    font-size: clamp(28px, 5vw, 40px);
-    line-height: 1.4;
-    font-weight: 500;
-  }
+  /* ── Responsive page titles ── */
+  .p-hero-title   { font-size: clamp(28px, 5vw, 44px); line-height: 1.4; }
+  .p-detail-title { font-size: clamp(28px, 5vw, 40px); line-height: 1.4; }
 
-  /* ── Card title ── */
-  .text-card-title {
-    font-family: 'Noto Serif TC', serif;
-    font-size: 20px;
-    line-height: 1.45;
-    font-weight: 500;
-  }
-
-  /* ── Body ── */
-  .text-body    { font-size: 16px; line-height: 1.95; font-weight: 400; }
-  .text-body-sm { font-size: 14px; line-height: 1.7;  font-weight: 400; }
-
-  /* ── Mono utilities (IBM Plex Mono) ── */
+  /* ── Mono utilities ── */
   .text-mono-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    font-weight: 400;
+    font-size: 11px; letter-spacing: 0.08em; font-weight: 400;
   }
   .text-caption {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
-    letter-spacing: 0.14em;
-    font-weight: 400;
+    font-size: 10.5px; letter-spacing: 0.14em; font-weight: 400;
   }
-
-  /* ── Kept for backwards compat ── */
-  .text-h2    { font-size: 24px; line-height: 1.35; font-weight: 500; }
-  .text-h3    { font-size: 18px; line-height: 1.45; font-weight: 500; }
-  .text-label { font-size: 12px; line-height: 1.5;  font-weight: 500; }
-  .text-label-caps {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    line-height: 1.5;
-    letter-spacing: 0.08em;
-    font-weight: 400;
-    text-transform: uppercase;
-  }
+  .text-label { font-size: 12px; line-height: 1.5; font-weight: 500; }
+  .text-body    { font-size: 16px; line-height: 1.95; font-weight: 400; }
+  .text-body-sm { font-size: 14px; line-height: 1.7;  font-weight: 400; }
 }
 
-/* ── Work card hover (0.5px border can't use Tailwind hover) ── */
-.work-card {
-  border: 0.5px solid var(--color-border-default);
-  transition: border-color 150ms ease;
+/* ── Tag chip hover ── */
+.p-chip:hover { border-color: var(--ju-green) !important; color: var(--ju-green) !important; }
+
+/* ── BackToTop ── */
+.p-backtop {
+  position: fixed; right: 24px; bottom: 24px; z-index: 35;
+  width: 44px; height: 44px; border-radius: 999px;
+  background: var(--ju-base); border: 0.5px solid var(--ju-text);
+  color: var(--ju-text); font-size: 15px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
-.work-card:hover {
-  border-color: var(--color-brand-primary);
+.p-backtop:hover { color: var(--ju-green); border-color: var(--ju-green); }
+
+/* ── Mobile: sticky bottom dock + bottom sheet ── */
+.p-dock {
+  display: none;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  padding: 10px 16px calc(14px + env(safe-area-inset-bottom));
+  background: var(--ju-base);
+  border-top: 0.5px solid var(--ju-border);
 }
-.work-card:hover .work-card-title {
-  color: var(--color-brand-primary);
+.p-sheet-backdrop {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(26, 26, 26, 0.32);
+  display: flex; align-items: flex-end;
 }
-.work-card:hover .work-card-arrow {
-  opacity: 1;
+.p-sheet {
+  width: 100%; max-height: 78vh; overflow-y: auto;
+  background: var(--ju-base);
+  border-top: 0.5px solid var(--ju-border);
+  border-radius: 16px 16px 0 0;
+  padding: 20px 20px calc(28px + env(safe-area-inset-bottom));
+  animation: p-sheet-up 0.24s ease;
 }
-.work-card-title {
-  color: var(--color-text-main);
-  transition: color 150ms ease;
-}
-.work-card-arrow {
-  opacity: 0;
-  transition: opacity 150ms ease;
+@keyframes p-sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
-/* ── Tag rotation keyframes ── */
-@keyframes tag-scroll-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* ── Search sticky (desktop only) ── */
+.p-search-sticky {
+  position: sticky; top: 56px; z-index: 25;
+  background: var(--ju-base);
+  padding: 20px 0 14px;
+  transition: border-color 0.15s ease;
 }
-@keyframes tag-scroll-out {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(-10px); }
+
+@media (max-width: 719px) {
+  .p-search-inline { display: none !important; }
+  .p-dock { display: block; }
+  .p-backtop { bottom: 86px; right: 16px; }
 }
 
 /* ── Article / Notion content ── */
-.article-content {
-  color: var(--color-text-main);
-}
-.article-content > *:first-child {
-  margin-top: 0 !important;
-}
+.article-content > *:first-child { margin-top: 0 !important; }
 .article-content p {
-  font-size: 16px;
-  line-height: 1.95;
-  text-wrap: pretty;
-  margin-bottom: 1em;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 16px; line-height: var(--p-lh, 1.95);
+  margin: 24px 0 0; color: var(--ju-text); text-wrap: pretty;
 }
 .article-content h2 {
   font-family: 'Noto Serif TC', serif;
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 1.4;
-  margin-top: 56px;
-  margin-bottom: 16px;
-  color: var(--color-text-main);
+  font-size: 24px; line-height: 1.5; font-weight: 500;
+  margin: 56px 0 0; color: var(--ju-text);
 }
+.article-content h2 + p { margin-top: 14px; }
 .article-content blockquote {
-  font-size: 18px;
-  line-height: 1.7;
-  color: var(--color-text-secondary);
-  text-align: center;
-  border: none;
-  padding: 24px 0;
-  margin: 8px 0;
-  border-top: 0.5px solid var(--color-border-default);
-  border-bottom: 0.5px solid var(--color-border-default);
+  margin: 48px 0; padding: 24px 16px;
+  border-top: 0.5px solid var(--ju-border);
+  border-bottom: 0.5px solid var(--ju-border);
+  border-left: none; border-right: none;
+  font-size: 18px; line-height: 1.9;
+  color: var(--ju-text2); text-align: center; font-weight: 400;
   background: none;
 }
-.article-content blockquote p {
-  margin: 0;
-  font-size: inherit;
-}
-.article-content .img-wrapper {
-  margin: 32px 0;
-}
+.article-content blockquote p { margin: 0; font-size: inherit; line-height: inherit; }
+.article-content .img-wrapper { margin: 40px 0; }
 .article-content .img-wrapper img {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  display: block;
-  border-radius: 4px;
+  width: 100%; aspect-ratio: 16 / 10; object-fit: cover;
+  display: block; border-radius: 4px;
 }
 .article-content .img-caption {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  color: var(--color-text-secondary);
-  text-align: center;
-  margin-top: 8px;
+  font-size: 10px; letter-spacing: 0.14em;
+  color: var(--ju-text3); text-align: center; margin-top: 10px;
 }
-.article-content a {
-  color: var(--color-brand-primary);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
+.article-content a { color: var(--ju-green); text-decoration: underline; text-underline-offset: 2px; }

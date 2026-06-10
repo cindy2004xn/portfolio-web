@@ -1,99 +1,91 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import SearchBar from '../components/SearchBar.jsx';
+import SearchPanel, { BottomDock } from '../components/SearchBar.jsx';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
 
 const INITIAL_COUNT = 6;
 const LOAD_MORE_COUNT = 4;
 
+function distributeMasonry(works, cols) {
+  const heights = Array(cols).fill(0);
+  const buckets = Array.from({ length: cols }, () => []);
+  works.forEach(w => {
+    const [rw, rh] = (w.ratio || '4 / 3').split('/').map(s => parseFloat(s.trim()));
+    const h = rh / rw + 0.42;
+    const k = heights.indexOf(Math.min(...heights));
+    buckets[k].push(w);
+    heights[k] += h;
+  });
+  return buckets;
+}
+
+function CountDivider({ children }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ flex: 1, height: 0.5, background: 'var(--ju-border)' }} />
+      <span className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.12em', color: 'var(--ju-text2)', textAlign: 'center' }}>{children}</span>
+      <div style={{ flex: 1, height: 0.5, background: 'var(--ju-border)' }} />
+    </div>
+  );
+}
+
 function SkeletonCard() {
   return (
-    <div
-      className="rounded-lg overflow-hidden animate-pulse"
-      style={{ backgroundColor: 'var(--color-bg-card)', border: '0.5px solid var(--color-border-default)' }}
-    >
-      <div className="aspect-[4/3]" style={{ backgroundColor: 'var(--color-bg-surface)' }} />
-      <div style={{ padding: 'clamp(16px, 3vw, 24px)', display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <div className="h-5 rounded w-4/5" style={{ backgroundColor: 'var(--color-bg-surface)' }} />
-        <div className="h-3 rounded w-1/2" style={{ backgroundColor: 'var(--color-bg-surface)' }} />
+    <div style={{ cursor: 'default' }}>
+      <div className="animate-pulse" style={{ aspectRatio: '4/3', backgroundColor: 'var(--ju-surface)', border: '0.5px solid var(--ju-border)' }} />
+      <div style={{ paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="animate-pulse" style={{ height: 20, width: '80%', borderRadius: 4, backgroundColor: 'var(--ju-surface)' }} />
+        <div className="animate-pulse" style={{ height: 12, width: '50%', borderRadius: 4, backgroundColor: 'var(--ju-surface)' }} />
       </div>
     </div>
   );
 }
 
+/* Tag rotates with overflow:hidden mask — exit slides up, enter slides up from below */
 function RotatingTag({ tags, selectedTags }) {
   const [currentTag, setCurrentTag] = useState(tags[0] ?? '');
-  const [animStyle, setAnimStyle] = useState({
-    opacity: 1,
-    transform: 'translateY(0)',
-    transition: 'none',
-  });
+  const [phase, setPhase] = useState('in'); // 'in' | 'out' | 'enter'
 
-  // Lock to first selected tag when filtering is active
   useEffect(() => {
-    if (selectedTags.length > 0) {
-      setAnimStyle({ opacity: 1, transform: 'translateY(0)', transition: 'opacity 200ms ease' });
-    }
-  }, [selectedTags]);
-
-  // Sync currentTag to first available tag when tags list loads
-  useEffect(() => {
-    if (tags.length > 0 && !tags.includes(currentTag)) {
-      setCurrentTag(tags[0]);
-    }
+    if (tags.length > 0 && !tags.includes(currentTag)) setCurrentTag(tags[0]);
   }, [tags]);
 
   useEffect(() => {
     if (selectedTags.length > 0 || tags.length < 2) return;
-
-    const interval = setInterval(() => {
-      // Phase 1: exit upward
-      setAnimStyle({
-        opacity: 0,
-        transform: 'translateY(-10px)',
-        transition: 'opacity 300ms cubic-bezier(.33,0,.2,1), transform 300ms cubic-bezier(.33,0,.2,1)',
-      });
-
+    const t = setInterval(() => {
+      setPhase('out');
       setTimeout(() => {
-        // Phase 2: swap tag, jump to bottom (no transition)
         setCurrentTag(prev => {
           const i = tags.indexOf(prev);
           return tags[(i + 1) % tags.length];
         });
-        setAnimStyle({ opacity: 0, transform: 'translateY(10px)', transition: 'none' });
-
-        // Phase 3: enter upward from below
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setAnimStyle({
-              opacity: 1,
-              transform: 'translateY(0)',
-              transition: 'opacity 300ms cubic-bezier(.33,0,.2,1), transform 300ms cubic-bezier(.33,0,.2,1)',
-            });
-          });
-        });
+        setPhase('enter');
+        requestAnimationFrame(() => requestAnimationFrame(() => setPhase('in')));
       }, 300);
-    }, 2500);
-
-    return () => clearInterval(interval);
+    }, 2600);
+    return () => clearInterval(t);
   }, [tags, selectedTags]);
 
   const displayTag = selectedTags.length > 0 ? selectedTags[0] : currentTag;
+  const y = (selectedTags.length > 0 || phase === 'in') ? '0%'
+    : phase === 'out' ? '-112%' : '112%';
 
   return (
-    <span
-      style={{
-        display: 'inline-block',
-        padding: '4px 14px',
-        borderRadius: '999px',
-        backgroundColor: 'var(--color-brand-primary-bg)',
-        color: 'var(--color-brand-primary)',
-        fontFamily: 'inherit',
-        ...animStyle,
-      }}
-    >
-      {displayTag}
+    <span style={{ display: 'inline-flex', overflow: 'hidden', verticalAlign: 'bottom' }}>
+      <span
+        className="ju-serif"
+        style={{
+          display: 'inline-block',
+          color: 'var(--ju-green)',
+          borderBottom: '0.5px solid var(--ju-green)',
+          padding: '0 6px',
+          transform: `translateY(${y})`,
+          transition: phase === 'enter' ? 'none' : 'transform .3s cubic-bezier(.33, 0, .2, 1)',
+        }}
+      >
+        {displayTag}
+      </span>
     </span>
   );
 }
@@ -109,94 +101,66 @@ export default function HomePage() {
   const [isSearchFixed, setIsSearchFixed] = useState(false);
   const [displayCount, setDisplayCount] = useState(INITIAL_COUNT);
 
-  const heroRef = useRef(null);
-  const searchBarRef = useRef(null);
+  const searchRef = useRef(null);
   const sentinelRef = useRef(null);
-
   const API_BASE = import.meta.env.VITE_API_URL ?? '/api';
 
   useEffect(() => {
     fetch(`${API_BASE}/works`)
-      .then(res => {
-        if (!res.ok) throw new Error('API error');
-        return res.json();
-      })
-      .then(data => {
-        setWorks((data.works ?? []).filter(Boolean));
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
+      .then(res => { if (!res.ok) throw new Error('API error'); return res.json(); })
+      .then(data => { setWorks((data.works ?? []).filter(Boolean)); setLoading(false); })
+      .catch(err => { setError(err.message); setLoading(false); });
   }, []);
 
-  // Fix search bar after hero scrolls past header
-  useEffect(() => {
-    function handleScroll() {
-      if (!heroRef.current) return;
-      setIsSearchFixed(heroRef.current.getBoundingClientRect().bottom < 56);
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Infinite scroll sentinel
-  const loadMore = useCallback(() => {
-    setDisplayCount(n => n + LOAD_MORE_COUNT);
-  }, []);
-
-  useEffect(() => {
-    if (!sentinelRef.current) return;
-    const observer = new IntersectionObserver(
-      entries => { if (entries[0].isIntersecting) loadMore(); },
-      { rootMargin: '320px' }
-    );
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [loadMore, loading]);
-
-  // Reset displayCount when tags change
-  useEffect(() => {
-    setDisplayCount(INITIAL_COUNT);
-  }, [selectedTags]);
-
-  // Clear ?tag= param from URL after it's been consumed
   useEffect(() => {
     if (initialTag) setSearchParams({}, { replace: true });
   }, []);
 
-  const allTags = useMemo(() => {
-    const tagSet = new Set();
-    works.forEach(w => w.tags?.forEach(t => tagSet.add(t)));
-    return [...tagSet];
+  useEffect(() => {
+    function f() {
+      if (searchRef.current) setIsSearchFixed(searchRef.current.getBoundingClientRect().top <= 56);
+    }
+    window.addEventListener('scroll', f, { passive: true });
+    return () => window.removeEventListener('scroll', f);
+  }, []);
+
+  const loadMore = useCallback(() => setDisplayCount(n => n + LOAD_MORE_COUNT), []);
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const io = new IntersectionObserver(entries => { if (entries[0].isIntersecting) loadMore(); }, { rootMargin: '320px' });
+    io.observe(sentinelRef.current);
+    return () => io.disconnect();
+  }, [loadMore, loading]);
+
+  useEffect(() => { setDisplayCount(INITIAL_COUNT); }, [selectedTags]);
+
+  /* Tag counts sorted by frequency */
+  const allTagCounts = useMemo(() => {
+    const m = new Map();
+    works.forEach(w => w.tags?.forEach(t => m.set(t, (m.get(t) || 0) + 1)));
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
   }, [works]);
 
   const filteredWorks = useMemo(() => {
     if (selectedTags.length === 0) return works;
     return works
-      .map(w => ({ ...w, _matchCount: w.tags.filter(t => selectedTags.includes(t)).length }))
-      .filter(w => w._matchCount > 0)
-      .sort((a, b) => b._matchCount - a._matchCount);
+      .map(w => ({ ...w, _m: w.tags.filter(t => selectedTags.includes(t)).length }))
+      .filter(w => w._m > 0)
+      .sort((a, b) => b._m - a._m);
   }, [works, selectedTags]);
 
-  // When tags are selected show all matches; when browsing all, paginate
   const visibleWorks = selectedTags.length > 0
     ? filteredWorks
     : filteredWorks.slice(0, displayCount);
 
   const allLoaded = selectedTags.length > 0 || displayCount >= filteredWorks.length;
-
-  const searchBarHeight = isSearchFixed && searchBarRef.current
-    ? searchBarRef.current.offsetHeight
-    : 0;
+  const cols = 2;
+  const buckets = distributeMasonry(visibleWorks, cols);
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-14">
-        <p className="text-body" style={{ color: 'var(--color-text-secondary)' }}>
-          資料載入失敗，請重新整理頁面
-        </p>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 56 }}>
+        <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)' }}>資料載入失敗，請重新整理頁面</p>
       </div>
     );
   }
@@ -206,84 +170,92 @@ export default function HomePage() {
     : `全部作品 · ${works.length} 件`;
 
   return (
-    <div className="min-h-screen pt-14">
-      {/* Hero */}
-      <section ref={heroRef} className="max-w-[940px] mx-auto px-4 pt-16 pb-10">
-        <p className="text-body mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+    <div style={{ minHeight: '100vh', paddingTop: 56 }}>
+      {/* Hero — centered */}
+      <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(48px, 8vw, 88px) 24px 0', textAlign: 'center' }}>
+        <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', margin: 0, letterSpacing: '0.02em' }}>
           Hi, I&apos;m Chain Huei Ju
         </p>
-        <div className="p-hero-title" style={{ color: 'var(--color-text-main)' }}>
-          尋找{' '}
-          <RotatingTag tags={allTags} selectedTags={selectedTags} />
-          {' '}的作品
+        <h1 className="ju-serif p-hero-title" style={{ margin: '18px 0 0', fontWeight: 500 }}>
+          尋找 <RotatingTag tags={allTagCounts.map(([t]) => t)} selectedTags={selectedTags} /> 的作品
+        </h1>
+      </section>
+
+      {/* Search bar — desktop sticky */}
+      <section
+        ref={searchRef}
+        className="p-search-inline p-search-sticky"
+        style={{ borderBottom: isSearchFixed ? '0.5px solid var(--ju-border)' : '0.5px solid transparent' }}
+      >
+        <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 24px' }}>
+          <SearchPanel
+            applied={selectedTags}
+            allTagCounts={allTagCounts}
+            onApply={setSelectedTags}
+          />
         </div>
       </section>
 
-      {/* Search bar */}
-      <div ref={searchBarRef}>
-        {isSearchFixed && <div style={{ height: searchBarHeight }} />}
-        <SearchBar
-          allTags={allTags}
-          selectedTags={selectedTags}
-          onSearch={setSelectedTags}
-          isFixed={isSearchFixed}
-        />
-      </div>
+      {/* Mobile bottom dock */}
+      <BottomDock applied={selectedTags} allTagCounts={allTagCounts} onApply={setSelectedTags} resultCount={filteredWorks.length} />
 
-      {/* Result count — always visible after load */}
+      {/* Result count */}
       {!loading && (
-        <div className="max-w-[940px] mx-auto px-4 flex items-center gap-4 py-4">
-          <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border-default)' }} />
-          <span className="text-caption" style={{ color: 'var(--color-text-secondary)' }}>
-            {resultLabel}
-          </span>
-          <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border-default)' }} />
-        </div>
+        <section style={{ maxWidth: 880, margin: '0 auto', padding: '28px 24px 0' }}>
+          <CountDivider>{resultLabel}</CountDivider>
+        </section>
       )}
 
-      {/* Work grid */}
-      <main className="max-w-[940px] mx-auto px-4 pb-16 mt-6">
+      {/* Work grid — masonry */}
+      <main style={{ maxWidth: 880, margin: '0 auto', padding: '40px 24px 64px' }}>
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'clamp(24px, 4vw, 40px)', alignItems: 'start' }}>
+            {[...Array(cols)].map((_, k) => (
+              <div key={k} style={{ display: 'grid', gap: 'clamp(40px, 6vw, 56px)' }}>
+                <SkeletonCard /><SkeletonCard /><SkeletonCard />
+              </div>
+            ))}
           </div>
         ) : filteredWorks.length === 0 ? (
-          <div className="text-center py-24">
-            <p className="text-body mb-4" style={{ color: 'var(--color-text-secondary)' }}>
-              目前沒有符合的作品，試試其他標籤？
+          <div style={{ textAlign: 'center', padding: '64px 0' }}>
+            <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', margin: 0 }}>
+              目前沒有符合的作品，試試其他關鍵字？
             </p>
             <button
               onClick={() => setSelectedTags([])}
-              className="h-12 px-6 text-label transition-opacity hover:opacity-80"
-              style={{
-                backgroundColor: 'var(--color-brand-primary)',
-                color: 'var(--color-brand-primary-bg)',
-                borderRadius: 'var(--radius-md)',
-              }}
+              className="ju-mono"
+              style={{ marginTop: 20, height: 40, padding: '0 20px', background: 'transparent', border: '0.5px solid var(--ju-green)', borderRadius: 8, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.14em', cursor: 'pointer' }}
             >
               清除篩選
             </button>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {visibleWorks.map(work => (
-                <WorkCard key={work.id} work={work} />
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 'clamp(24px, 4vw, 40px)', alignItems: 'start' }}>
+              {buckets.map((bucket, k) => (
+                <div key={k} style={{ display: 'grid', gap: 'clamp(40px, 6vw, 56px)', alignContent: 'start' }}>
+                  {bucket.map(w => (
+                    <WorkCard key={w.id} work={w} index={works.findIndex(x => x.id === w.id)} />
+                  ))}
+                </div>
               ))}
             </div>
 
-            {/* Infinite scroll sentinel */}
-            {!allLoaded && <div ref={sentinelRef} className="h-px" />}
+            {!allLoaded && <div ref={sentinelRef} style={{ textAlign: 'center', padding: '48px 0 0' }}>
+              <span className="ju-mono" style={{ fontSize: 10, letterSpacing: '0.24em', color: 'var(--ju-text3)' }}>載入更多…</span>
+            </div>}
 
-            {/* Footer — all loaded */}
-            {allLoaded && (
-              <div className="flex items-center gap-4 mt-12 mb-4">
-                <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border-default)' }} />
-                <span className="text-caption" style={{ color: 'var(--color-text-disabled)' }}>
-                  已是全部 {filteredWorks.length} 件作品
-                </span>
-                <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border-default)' }} />
-              </div>
+            {allLoaded && filteredWorks.length > 0 && (
+              <footer style={{ padding: '72px 0 96px', textAlign: 'center' }}>
+                <CountDivider>已是全部 {filteredWorks.length} 件作品</CountDivider>
+                <button
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  className="ju-mono"
+                  style={{ marginTop: 28, height: 42, padding: '0 22px', background: 'transparent', border: '0.5px solid var(--ju-green)', borderRadius: 999, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.18em', cursor: 'pointer' }}
+                >
+                  回到最頂端 ↑
+                </button>
+              </footer>
             )}
           </>
         )}

@@ -1,209 +1,180 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function SearchBar({ allTags, selectedTags, onSearch, isFixed }) {
-  const [draft, setDraft] = useState(selectedTags);
-  const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+function TagChip({ label, count = null, selected = false, small = false, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="ju-mono p-chip"
+      style={{
+        height: small ? 28 : 32,
+        padding: small ? '0 11px' : '0 14px',
+        borderRadius: 999, fontSize: small ? 10.5 : 11, letterSpacing: '0.08em',
+        cursor: 'pointer', background: 'transparent', whiteSpace: 'nowrap',
+        border: selected ? '0.5px solid var(--ju-green)' : '0.5px solid var(--ju-border)',
+        color: selected ? 'var(--ju-green)' : 'var(--ju-text2)',
+        transition: 'color .15s ease, border-color .15s ease', flexShrink: 0,
+      }}
+    >
+      {label}
+      {count !== null && <span style={{ marginLeft: 6, opacity: 0.55, fontSize: '0.9em' }}>{count}</span>}
+      {selected && <span style={{ marginLeft: 6 }}>×</span>}
+    </button>
+  );
+}
+
+/* Core search panel — used by both desktop inline and mobile sheet */
+export function SearchPanel({ applied, allTagCounts, onApply, popover = true, onDone }) {
+  const [draft, setDraft] = useState(applied);
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(!popover);
   const containerRef = useRef(null);
   const inputRef = useRef(null);
 
-  useEffect(() => { setDraft(selectedTags); }, [selectedTags]);
+  useEffect(() => { setDraft(applied); }, [applied]);
 
   useEffect(() => {
-    function handleClick(e) {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setIsOpen(false);
-      }
+    if (!popover) return;
+    function handle(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) setOpen(false);
     }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
+    document.addEventListener('mousedown', handle);
+    return () => document.removeEventListener('mousedown', handle);
+  }, [popover]);
 
-  const filteredTags = allTags.filter(tag =>
-    inputValue === '' || tag.toLowerCase().includes(inputValue.toLowerCase())
-  );
+  const q = query.trim();
+  const shown = q ? allTagCounts.filter(([t]) => t.includes(q)) : allTagCounts;
+  const dirty = draft.length !== applied.length || draft.some(t => !applied.includes(t));
+  const allTags = allTagCounts.map(([t]) => t);
 
-  function toggleTag(tag) {
-    setDraft(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+  function toggleDraft(t) {
+    setDraft(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]);
   }
-
-  function clearAll() {
-    setDraft([]);
-    onSearch([]);
-    setInputValue('');
-    setIsOpen(false);
+  function doSearch() {
+    onApply(draft); setQuery(''); setOpen(!popover); onDone?.();
   }
-
-  function handleSearch() {
-    onSearch(draft);
-    setInputValue('');
-    setIsOpen(false);
-  }
-
-  function handleKeyDown(e) {
-    if (e.key === 'Backspace' && inputValue === '' && draft.length > 0) {
-      setDraft(prev => prev.slice(0, -1));
-    }
+  function onKeyDown(e) {
     if (e.key === 'Enter') {
-      if (inputValue && filteredTags.length > 0) {
-        const first = filteredTags.find(t => !draft.includes(t));
-        if (first) { setDraft(prev => [...prev, first]); }
-        setInputValue('');
-      } else if (!inputValue) {
-        handleSearch();
-      }
+      const candidates = shown.filter(([t]) => !draft.includes(t));
+      if (q && candidates.length > 0) { toggleDraft(candidates[0][0]); setQuery(''); }
+      else doSearch();
     }
-    if (e.key === 'Escape') {
-      setIsOpen(false);
-      inputRef.current?.blur();
-    }
+    if (e.key === 'Backspace' && query === '' && draft.length > 0) toggleDraft(draft[draft.length - 1]);
+    if (e.key === 'Escape') setOpen(!popover);
   }
 
-  const hasDiff = JSON.stringify(draft.slice().sort()) !== JSON.stringify(selectedTags.slice().sort());
-
-  const wrapperClass = isFixed ? 'fixed left-0 right-0 z-40' : '';
-  const wrapperStyle = isFixed
-    ? { top: '56px', backgroundColor: 'var(--color-bg-base)', borderBottom: '0.5px solid var(--color-border-default)' }
-    : {};
-
-  return (
-    <div className={wrapperClass} style={wrapperStyle}>
-      <div className="max-w-[940px] mx-auto px-4 py-4" ref={containerRef}>
-
-        {/* Input row */}
-        <div
-          className="flex items-center flex-wrap gap-2 min-h-[52px] px-4 py-2 cursor-text"
-          style={{
-            border: isOpen
-              ? '0.5px solid var(--color-brand-primary)'
-              : '0.5px solid var(--color-border-strong)',
-            backgroundColor: 'var(--color-bg-card)',
-            borderRadius: 'var(--radius-md)',
-            transition: 'border-color 150ms ease',
-          }}
-          onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}
-        >
-          {draft.map(tag => (
-            <span
-              key={tag}
-              className="inline-flex items-center gap-1.5 h-[30px] px-3 text-mono-label"
-              style={{
-                border: '0.5px solid var(--color-border-strong)',
-                borderRadius: '999px',
-                color: 'var(--color-text-main)',
-                backgroundColor: 'transparent',
-              }}
-            >
-              {tag}
-              <button
-                onClick={e => { e.stopPropagation(); toggleTag(tag); }}
-                className="leading-none hover:opacity-60 transition-opacity"
-                aria-label={`移除 ${tag}`}
-              >
-                ×
-              </button>
-            </span>
-          ))}
-
-          <input
-            ref={inputRef}
-            value={inputValue}
-            onChange={e => { setInputValue(e.target.value); setIsOpen(true); }}
-            onFocus={() => setIsOpen(true)}
-            onKeyDown={handleKeyDown}
-            placeholder={draft.length === 0 ? '選擇或輸入關鍵字' : ''}
-            className="flex-1 min-w-[80px] bg-transparent outline-none text-body"
-            style={{
-              color: 'var(--color-text-main)',
-              fontFamily: 'inherit',
-            }}
-          />
-
-          <button
-            onClick={e => { e.stopPropagation(); setIsOpen(v => !v); }}
-            className="ml-auto text-text-secondary select-none transition-transform duration-150"
-            style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            tabIndex={-1}
-          >
-            ▾
-          </button>
-        </div>
-
-        {/* Dropdown */}
-        {isOpen && (
-          <div
-            className="mt-1 p-4"
-            style={{
-              backgroundColor: 'var(--color-bg-card)',
-              border: '0.5px solid var(--color-border-default)',
-              borderRadius: 'var(--radius-md)',
-            }}
-          >
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => { setDraft([...allTags]); }}
-                className="inline-flex items-center h-[30px] px-3 text-mono-label transition-colors"
-                style={{ border: '0.5px solid var(--color-border-strong)', borderRadius: '999px', color: 'var(--color-text-main)' }}
-              >
-                全選
-              </button>
-              {filteredTags.map(tag => {
-                const active = draft.includes(tag);
-                return (
-                  <button
-                    key={tag}
-                    onClick={() => toggleTag(tag)}
-                    className="inline-flex items-center h-[30px] px-3 text-mono-label transition-colors"
-                    style={
-                      active
-                        ? { backgroundColor: 'var(--color-brand-primary)', color: 'var(--color-brand-primary-bg)', borderRadius: '999px', border: 'none' }
-                        : { border: '0.5px solid var(--color-border-default)', borderRadius: '999px', color: 'var(--color-text-main)' }
-                    }
-                  >
-                    {tag}
-                  </button>
-                );
-              })}
-              {filteredTags.length === 0 && (
-                <span className="text-caption" style={{ color: 'var(--color-text-disabled)' }}>
-                  無符合標籤
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Search button — prominent when draft differs from current selection */}
-        <button
-          onClick={handleSearch}
-          className="mt-3 w-full h-[52px] text-label transition-opacity hover:opacity-90"
-          style={{
-            backgroundColor: hasDiff
-              ? 'var(--color-brand-primary)'
-              : 'var(--color-bg-surface)',
-            color: hasDiff
-              ? 'var(--color-brand-primary-bg)'
-              : 'var(--color-text-secondary)',
-            borderRadius: 'var(--radius-md)',
-            border: hasDiff ? 'none' : '0.5px solid var(--color-border-default)',
-            transition: 'background-color 200ms ease, color 200ms ease',
-          }}
-        >
-          {draft.length === 0 ? '探索全部' : '開始搜尋'}
+  const tagList = (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        <button onClick={() => setDraft([...allTags])} className="ju-mono p-chip"
+          style={{ height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5, letterSpacing: '0.08em', cursor: 'pointer', background: 'transparent', border: '0.5px solid var(--ju-text)', color: 'var(--ju-text)' }}>
+          全選
         </button>
-
-        {(draft.length > 0 || selectedTags.length > 0) && (
-          <button
-            onClick={clearAll}
-            className="mt-2 w-full text-center text-caption transition-colors"
-            style={{ color: 'var(--color-text-disabled)' }}
-            onMouseEnter={e => e.currentTarget.style.color = 'var(--color-text-secondary)'}
-            onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text-disabled)'}
-          >
-            清除全部
-          </button>
+        <button onClick={() => setDraft([])} className="ju-mono p-chip"
+          style={{ height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5, letterSpacing: '0.08em', cursor: 'pointer', background: 'transparent', border: '0.5px solid var(--ju-border)', color: 'var(--ju-text2)' }}>
+          清除
+        </button>
+        <span className="ju-mono" style={{ marginLeft: 'auto', fontSize: 9.5, letterSpacing: '0.14em', color: 'var(--ju-text3)' }}>
+          已選 {draft.length} / {allTags.length}
+        </span>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {shown.map(([t, c]) => (
+          <TagChip key={t} label={t} count={c} small selected={draft.includes(t)} onClick={() => toggleDraft(t)} />
+        ))}
+        {shown.length === 0 && (
+          <span className="ju-mono" style={{ fontSize: 10.5, letterSpacing: '0.1em', color: 'var(--ju-text3)', padding: '4px 0' }}>
+            沒有符合「{q}」的標籤
+          </span>
         )}
       </div>
     </div>
   );
+
+  return (
+    <div ref={containerRef} style={{ position: 'relative' }}>
+      {/* Input row with inline search button */}
+      <div
+        onClick={() => { setOpen(true); inputRef.current?.focus(); }}
+        style={{
+          display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8,
+          minHeight: 52, padding: '8px 8px 8px 14px', cursor: 'text',
+          background: 'var(--ju-card)',
+          border: `0.5px solid ${open && popover ? 'var(--ju-text)' : 'var(--ju-border)'}`,
+          borderRadius: 8, transition: 'border-color .15s ease',
+        }}
+      >
+        <span className="ju-mono" style={{ fontSize: 12, color: 'var(--ju-text3)', flexShrink: 0 }}>⌕</span>
+        {draft.map(t => (
+          <TagChip key={t} label={t} selected small onClick={e => { e.stopPropagation(); toggleDraft(t); }} />
+        ))}
+        <input
+          ref={inputRef}
+          value={query}
+          onChange={e => { setQuery(e.target.value); setOpen(true); }}
+          onKeyDown={onKeyDown}
+          placeholder={draft.length === 0 ? '輸入或下拉選擇關鍵字' : ''}
+          className="ju-sans"
+          style={{ flex: 1, minWidth: 110, border: 'none', outline: 'none', background: 'transparent', fontSize: 14, color: 'var(--ju-text)', padding: '6px 0' }}
+        />
+        <button
+          onClick={e => { e.stopPropagation(); doSearch(); }}
+          className="ju-mono"
+          style={{
+            height: 38, padding: '0 18px', borderRadius: 6, fontSize: 11.5, letterSpacing: '0.16em',
+            cursor: 'pointer', flexShrink: 0, alignSelf: 'center',
+            background: dirty ? 'var(--ju-green)' : 'transparent',
+            border: '0.5px solid var(--ju-green)',
+            color: dirty ? 'var(--ju-green-bg)' : 'var(--ju-green)',
+            transition: 'background .15s ease, color .15s ease',
+          }}
+        >
+          搜尋
+        </button>
+      </div>
+
+      {popover ? (
+        open && (
+          <div style={{ position: 'absolute', left: 0, right: 0, top: 'calc(100% + 8px)', zIndex: 30, padding: 16, background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 8 }}>
+            {tagList}
+          </div>
+        )
+      ) : (
+        <div style={{ marginTop: 16 }}>{tagList}</div>
+      )}
+    </div>
+  );
 }
+
+/* Mobile: sticky bottom bar + bottom sheet */
+export function BottomDock({ applied, allTagCounts, onApply, resultCount }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <div className="p-dock">
+        <button
+          onClick={() => setOpen(true)}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, height: 50, padding: '0 16px', background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 8, cursor: 'pointer', textAlign: 'left' }}
+        >
+          <span className="ju-mono" style={{ fontSize: 12, color: 'var(--ju-green)' }}>⌕</span>
+          <span className="ju-sans" style={{ flex: 1, fontSize: 13, color: applied.length ? 'var(--ju-text)' : 'var(--ju-text3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {applied.length ? applied.join('・') : '輸入或下拉選擇關鍵字'}
+          </span>
+          <span className="ju-mono" style={{ fontSize: 10, letterSpacing: '0.1em', color: 'var(--ju-text3)', flexShrink: 0 }}>{resultCount} 件</span>
+        </button>
+      </div>
+      {open && (
+        <div className="p-sheet-backdrop" onClick={() => setOpen(false)}>
+          <div className="p-sheet" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <span className="ju-mono" style={{ fontSize: 10, letterSpacing: '0.24em', color: 'var(--ju-text3)' }}>搜尋作品</span>
+              <button onClick={() => setOpen(false)} className="ju-mono" style={{ background: 'transparent', border: 'none', fontSize: 13, color: 'var(--ju-text2)', cursor: 'pointer', padding: 4 }}>✕</button>
+            </div>
+            <SearchPanel applied={applied} allTagCounts={allTagCounts} onApply={onApply} popover={false} onDone={() => setOpen(false)} />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default SearchPanel;

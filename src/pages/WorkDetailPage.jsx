@@ -1,36 +1,65 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import MarkdownRenderer from '../components/MarkdownRenderer.jsx';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
 
-function Skeleton() {
+function distributeMasonry(works, cols) {
+  const heights = Array(cols).fill(0);
+  const buckets = Array.from({ length: cols }, () => []);
+  works.forEach(w => {
+    const [rw, rh] = (w.ratio || '4 / 3').split('/').map(s => parseFloat(s.trim()));
+    const h = rh / rw + 0.42;
+    const k = heights.indexOf(Math.min(...heights));
+    buckets[k].push(w);
+    heights[k] += h;
+  });
+  return buckets;
+}
+
+function CountDivider({ children }) {
   return (
-    <div className="pt-14 min-h-screen">
-      <div className="max-w-[680px] mx-auto px-4 py-12 animate-pulse space-y-4">
-        <div className="h-3 rounded w-36" style={{ backgroundColor: 'var(--color-bg-surface)' }} />
-        <div className="h-9 rounded w-3/4" style={{ backgroundColor: 'var(--color-bg-surface)' }} />
-        <div className="flex gap-1.5">
-          <div className="h-[26px] rounded-pill w-16" style={{ backgroundColor: 'var(--color-bg-surface)' }} />
-          <div className="h-[26px] rounded-pill w-20" style={{ backgroundColor: 'var(--color-bg-surface)' }} />
-        </div>
-        <div className="aspect-[4/3] rounded-lg" style={{ backgroundColor: 'var(--color-bg-surface)' }} />
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className={`h-4 rounded ${i % 3 === 2 ? 'w-2/3' : 'w-full'}`} style={{ backgroundColor: 'var(--color-bg-surface)' }} />
-        ))}
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ flex: 1, height: 0.5, background: 'var(--ju-border)' }} />
+      <span className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.12em', color: 'var(--ju-text2)', textAlign: 'center' }}>{children}</span>
+      <div style={{ flex: 1, height: 0.5, background: 'var(--ju-border)' }} />
     </div>
   );
 }
 
-function getRecommended(current, allWorks) {
-  const others = allWorks.filter(w => w && w.id !== current.id);
-  const scored = others.map(w => ({
-    ...w,
-    score: w.tags.filter(t => current.tags.includes(t)).length,
-  }));
-  scored.sort((a, b) => b.score - a.score || new Date(b.date ?? b.createdTime) - new Date(a.date ?? a.createdTime));
-  return scored.slice(0, 4);
+function TagChip({ label, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="ju-mono p-chip"
+      style={{
+        height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5,
+        letterSpacing: '0.08em', cursor: 'pointer', background: 'transparent',
+        border: '0.5px solid var(--ju-border)', color: 'var(--ju-text2)',
+        transition: 'color .15s ease, border-color .15s ease',
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+function Skeleton() {
+  return (
+    <div style={{ paddingTop: 56, minHeight: '100vh' }}>
+      <div className="animate-pulse" style={{ maxWidth: 728, margin: '0 auto', padding: 'clamp(40px, 6vw, 64px) 24px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ height: 12, width: 120, borderRadius: 4, backgroundColor: 'var(--ju-surface)' }} />
+        <div style={{ height: 36, width: '75%', borderRadius: 4, backgroundColor: 'var(--ju-surface)' }} />
+        <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ height: 28, width: 64, borderRadius: 999, backgroundColor: 'var(--ju-surface)' }} />
+          <div style={{ height: 28, width: 80, borderRadius: 999, backgroundColor: 'var(--ju-surface)' }} />
+        </div>
+        {[...Array(6)].map((_, i) => (
+          <div key={i} style={{ height: 16, width: i % 3 === 2 ? '66%' : '100%', borderRadius: 4, backgroundColor: 'var(--ju-surface)' }} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function WorkDetailPage() {
@@ -53,24 +82,26 @@ export default function WorkDetailPage() {
         setAllWorks((worksData.works ?? []).filter(Boolean));
         setLoading(false);
       })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
+      .catch(err => { setError(err.message); setLoading(false); });
   }, [id]);
+
+  const recommended = useMemo(() => {
+    if (!work) return [];
+    return allWorks
+      .filter(w => w && w.id !== work.id)
+      .map(w => ({ ...w, _s: w.tags.filter(t => work.tags.includes(t)).length }))
+      .sort((a, b) => b._s - a._s || (b.year ?? '').localeCompare(a.year ?? ''))
+      .slice(0, 4);
+  }, [work, allWorks]);
 
   if (loading) return <Skeleton />;
 
-  if (error) {
+  if (error || !work) {
     return (
-      <div className="min-h-screen pt-14 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-body mb-4" style={{ color: 'var(--color-text-secondary)' }}>作品載入失敗</p>
-          <Link
-            to="/"
-            className="inline-block h-12 px-6 text-label leading-[48px] transition-opacity hover:opacity-80"
-            style={{ backgroundColor: 'var(--color-brand-primary)', color: 'var(--color-brand-primary-bg)', borderRadius: 'var(--radius-md)' }}
-          >
+      <div style={{ minHeight: '100vh', paddingTop: 56, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', marginBottom: 16 }}>作品載入失敗</p>
+          <Link to="/" className="ju-mono" style={{ display: 'inline-block', height: 40, lineHeight: '40px', padding: '0 20px', background: 'var(--ju-green)', color: 'var(--ju-green-bg)', borderRadius: 8, fontSize: 11, letterSpacing: '0.14em', textDecoration: 'none' }}>
             返回首頁
           </Link>
         </div>
@@ -79,93 +110,60 @@ export default function WorkDetailPage() {
   }
 
   const page = work.display?.page ?? {};
-  const recommended = getRecommended(work, allWorks);
   const formattedDate = work.date ?? (work.createdTime ? new Date(work.createdTime).toISOString().slice(0, 10) : '');
-  const breadcrumbTag = work.tags?.[0] ?? '作品';
+  const recBuckets = distributeMasonry(recommended, 2);
 
   return (
-    <div className="min-h-screen pt-14">
-      <div className="max-w-[680px] mx-auto px-4 py-12">
+    <div style={{ minHeight: '100vh', paddingTop: 56 }}>
+      <div style={{ maxWidth: 728, margin: '0 auto', padding: 'clamp(40px, 6vw, 64px) 24px 0' }}>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 mb-10 text-caption" style={{ color: 'var(--color-text-disabled)' }}>
-          <Link to="/" className="hover:underline" style={{ color: 'var(--color-text-disabled)' }}>
-            首頁
-          </Link>
-          <span>→</span>
-          <span>{breadcrumbTag}</span>
-        </div>
+        <p className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.12em', color: 'var(--ju-text3)', margin: 0 }}>
+          <Link to="/" style={{ color: 'var(--ju-green)', textDecoration: 'none' }}>首頁</Link>
+          <span>　—　{work.tags?.[0] ?? '作品'}</span>
+        </p>
 
         {/* Title */}
-        <h1 className="p-detail-title mb-5" style={{ color: 'var(--color-text-main)' }}>
+        <h1 className="ju-serif p-detail-title" style={{ margin: '28px 0 0', fontWeight: 500 }}>
           {work.title}
         </h1>
 
         {/* Meta row */}
-        <div className="flex flex-wrap items-center gap-2 mb-10">
-          {page.tags !== false && work.tags?.map(tag => (
-            <button
-              key={tag}
-              onClick={() => navigate(`/?tag=${encodeURIComponent(tag)}`)}
-              className="inline-flex items-center h-[26px] px-3 text-mono-label transition-colors"
-              style={{
-                border: '0.5px solid var(--color-brand-primary)',
-                borderRadius: '999px',
-                color: 'var(--color-brand-primary)',
-                backgroundColor: 'transparent',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = 'var(--color-brand-primary)';
-                e.currentTarget.style.color = 'var(--color-brand-primary-bg)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'var(--color-brand-primary)';
-              }}
-            >
-              {tag}
-            </button>
-          ))}
+        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '10px 12px', margin: '20px 0 0' }}>
           {page.client !== false && work.client && (
-            <span className="text-caption" style={{ color: 'var(--color-text-secondary)' }}>
-              {work.client}
-            </span>
+            <>
+              <span className="ju-sans" style={{ fontSize: 13, color: 'var(--ju-text2)' }}>{work.client}</span>
+              <span style={{ color: 'var(--ju-border)' }}>|</span>
+            </>
           )}
+          {page.tags !== false && work.tags?.map(t => (
+            <TagChip key={t} label={t} onClick={() => navigate(`/?tag=${encodeURIComponent(t)}`)} />
+          ))}
           {page.date !== false && formattedDate && (
-            <span className="text-caption" style={{ color: 'var(--color-text-disabled)' }}>
-              {formattedDate}
-            </span>
+            <span className="ju-mono" style={{ fontSize: 10.5, letterSpacing: '0.1em', color: 'var(--ju-text3)' }}>{formattedDate}</span>
           )}
         </div>
 
-        {/* Notion content */}
-        <div
-          style={{
-            backgroundColor: 'var(--color-bg-card)',
-            border: '0.5px solid var(--color-border-default)',
-            borderRadius: 'var(--radius-lg)',
-            padding: 'clamp(24px, 5vw, 56px)',
-            minHeight: '420px',
-          }}
-        >
+        {/* Article content */}
+        <div style={{ marginTop: 40, background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 12, padding: 'clamp(24px, 5vw, 56px)' }}>
           {work.content
-            ? <MarkdownRenderer content={work.content} />
-            : <p className="text-body" style={{ color: 'var(--color-text-disabled)' }}>尚無內容</p>
+            ? <MarkdownRenderer content={work.content} lineHeight={1.95} />
+            : <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text3)', margin: 0 }}>尚無內容</p>
           }
         </div>
       </div>
 
-      {/* Recommended works */}
+      {/* Recommended — masonry */}
       {recommended.length > 0 && (
-        <section className="max-w-[940px] mx-auto px-4 pb-24">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border-default)' }} />
-            <h2 className="text-caption" style={{ color: 'var(--color-text-secondary)' }}>推薦其他作品</h2>
-            <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border-default)' }} />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {recommended.map(w => (
-              <WorkCard key={w.id} work={w} />
+        <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(56px, 8vw, 96px) 24px 120px' }}>
+          <CountDivider>推薦其他作品</CountDivider>
+          <div style={{ marginTop: 40, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'clamp(32px, 5vw, 40px)', alignItems: 'start' }}>
+            {recBuckets.map((bucket, k) => (
+              <div key={k} style={{ display: 'grid', gap: 'clamp(40px, 6vw, 56px)', alignContent: 'start' }}>
+                {bucket.map(w => (
+                  <WorkCard key={w.id} work={w} index={allWorks.findIndex(x => x.id === w.id)} />
+                ))}
+              </div>
             ))}
           </div>
         </section>

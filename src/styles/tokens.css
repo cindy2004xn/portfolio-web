@@ -3,6 +3,18 @@
   --color-brand-primary:    #2c6e4f;
   --color-brand-primary-bg: #d4ede2;
 
+  /* Prototype design token aliases */
+  --ju-green:    #2c6e4f;
+  --ju-green-bg: #d4ede2;
+  --ju-base:     #f5f1eb;
+  --ju-surface:  #eae4d8;
+  --ju-card:     #ffffff;
+  --ju-dark:     #1a1a1a;
+  --ju-text:     #1a1a1a;
+  --ju-text2:    #6b6560;
+  --ju-text3:    #b2afa9;
+  --ju-border:   #ddd7cc;
+
   /* Background */
   --color-bg-base:    #f5f1eb;
   --color-bg-surface: #eae4d8;
