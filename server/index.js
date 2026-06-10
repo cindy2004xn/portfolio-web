@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
 import { Client } from '@notionhq/client';
-import { blocksToMarkdown } from './notionParser.js';
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -27,12 +26,50 @@ function richTextStr(richTextArr) {
   return richTextArr?.map(t => t.plain_text || '').join('') || '';
 }
 
+// Block types whose children need to be recursively fetched
+const NEEDS_CHILDREN = new Set([
+  'toggle', 'quote', 'callout',
+  'bulleted_list_item', 'numbered_list_item',
+  'column_list', 'column',
+  'table',
+  'synced_block',
+]);
+
+async function fetchBlocksRecursively(blockId, depth = 0) {
+  if (depth > 4) return [];
+  const blocks = [];
+  let cursor;
+  do {
+    const res = await notion.blocks.children.list({
+      block_id: blockId,
+      start_cursor: cursor,
+      page_size: 100,
+    });
+    for (const block of res.results) {
+      if (block.has_children && NEEDS_CHILDREN.has(block.type)) {
+        block.children = await fetchBlocksRecursively(block.id, depth + 1);
+      }
+      blocks.push(block);
+    }
+    cursor = res.next_cursor;
+  } while (cursor);
+  return blocks;
+}
+
+// Strip Notion metadata, keep only content fields
+function stripMeta(block) {
+  const { id, type, has_children } = block;
+  const out = { id, type, has_children: has_children ?? false };
+  if (block[type]) out[type] = block[type];
+  if (block.children) out.children = block.children.map(stripMeta);
+  return out;
+}
+
 const FALLBACK_RATIOS = ['4 / 3', '3 / 4', '4 / 3', '1 / 1', '4 / 5', '16 / 10'];
 
 function formatPage(page, index = 0) {
   const props = page.properties;
   const createdDate = new Date(page.created_time);
-
   return {
     id: page.id,
     title: props['作品名稱']?.title?.map(t => t.plain_text).join('') || '',
@@ -80,12 +117,12 @@ app.get('/api/works', async (req, res) => {
 app.get('/api/works/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const [page, blocksRes] = await Promise.all([
+    const [page, rawBlocks] = await Promise.all([
       notion.pages.retrieve({ page_id: id }),
-      notion.blocks.children.list({ block_id: id }),
+      fetchBlocksRecursively(id),
     ]);
     const work = formatPage(page);
-    work.content = blocksToMarkdown(blocksRes.results);
+    work.blocks = rawBlocks.map(stripMeta);
     res.json(work);
   } catch (err) {
     console.error(`GET /api/works/${req.params.id} error:`, err.message);

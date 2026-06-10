@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import MarkdownRenderer from '../components/MarkdownRenderer.jsx';
+import NotionBlockRenderer from '../components/NotionBlockRenderer.jsx';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
 
@@ -146,8 +146,8 @@ export default function WorkDetailPage() {
 
         {/* Article content */}
         <div style={{ marginTop: 40, background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 12, padding: 'clamp(24px, 5vw, 56px)' }}>
-          {work.content
-            ? <MarkdownRenderer content={work.content} lineHeight={1.95} />
+          {work.blocks?.length > 0
+            ? <NotionBlockRenderer blocks={work.blocks} />
             : <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text3)', margin: 0 }}>尚無內容</p>
           }
         </div>
