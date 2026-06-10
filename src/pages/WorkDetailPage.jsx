@@ -24,7 +24,7 @@ function Skeleton() {
 }
 
 function getRecommended(current, allWorks) {
-  const others = allWorks.filter(w => w.id !== current.id);
+  const others = allWorks.filter(w => w && w.id !== current.id);
   const scored = others.map(w => ({
     ...w,
     score: w.tags.filter(t => current.tags.includes(t)).length,
@@ -50,7 +50,7 @@ export default function WorkDetailPage() {
     ])
       .then(([workData, worksData]) => {
         setWork(workData);
-        setAllWorks(worksData.works ?? []);
+        setAllWorks((worksData.works ?? []).filter(Boolean));
         setLoading(false);
       })
       .catch(err => {

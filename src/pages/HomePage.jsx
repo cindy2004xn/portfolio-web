@@ -122,7 +122,7 @@ export default function HomePage() {
         return res.json();
       })
       .then(data => {
-        setWorks(data.works);
+        setWorks((data.works ?? []).filter(Boolean));
         setLoading(false);
       })
       .catch(err => {

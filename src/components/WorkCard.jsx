@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function WorkCard({ work }) {
   const navigate = useNavigate();
+  if (!work) return null;
   const card = work.display?.card ?? {};
 
   const ratio = work.ratio ?? '4 / 3';
