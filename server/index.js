@@ -27,7 +27,9 @@ function richTextStr(richTextArr) {
   return richTextArr?.map(t => t.plain_text || '').join('') || '';
 }
 
-function formatPage(page) {
+const FALLBACK_RATIOS = ['4 / 3', '3 / 4', '4 / 3', '1 / 1', '4 / 5', '16 / 10'];
+
+function formatPage(page, index = 0) {
   const props = page.properties;
   const createdDate = new Date(page.created_time);
 
@@ -44,7 +46,7 @@ function formatPage(page) {
       || createdDate.getFullYear().toString(),
     date: props['日期']?.date?.start
       || createdDate.toISOString().slice(0, 10),
-    ratio: props['比例']?.select?.name || '4 / 3',
+    ratio: props['比例']?.select?.name || FALLBACK_RATIOS[index % FALLBACK_RATIOS.length],
     coverImage: parseCoverImage(props['圖片']?.rich_text),
     createdTime: page.created_time,
     display: {

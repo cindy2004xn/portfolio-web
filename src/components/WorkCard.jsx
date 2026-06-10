@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function WorkCard({ work, index = 0 }) {
+export default function WorkCard({ work, index = 0, openInNewTab = false }) {
   const navigate = useNavigate();
   const [hov, setHov] = useState(false);
   if (!work) return null;
@@ -16,7 +16,7 @@ export default function WorkCard({ work, index = 0 }) {
 
   return (
     <div
-      onClick={() => navigate(`/work/${work.id}`)}
+      onClick={() => openInNewTab ? window.open(`/work/${work.id}`, '_blank', 'noopener') : navigate(`/work/${work.id}`)}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{ cursor: 'pointer' }}

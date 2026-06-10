@@ -115,7 +115,7 @@ export default function WorkDetailPage() {
 
   return (
     <div style={{ minHeight: '100vh', paddingTop: 56 }}>
-      <div style={{ maxWidth: 728, margin: '0 auto', padding: 'clamp(40px, 6vw, 64px) 24px 0' }}>
+      <div style={{ maxWidth: 'clamp(600px, 74vw, 960px)', margin: '0 auto', padding: 'clamp(40px, 6vw, 64px) 24px 0' }}>
 
         {/* Breadcrumb */}
         <p className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.12em', color: 'var(--ju-text3)', margin: 0 }}>
@@ -161,7 +161,7 @@ export default function WorkDetailPage() {
             {recBuckets.map((bucket, k) => (
               <div key={k} style={{ display: 'grid', gap: 'clamp(40px, 6vw, 56px)', alignContent: 'start' }}>
                 {bucket.map(w => (
-                  <WorkCard key={w.id} work={w} index={allWorks.findIndex(x => x.id === w.id)} />
+                  <WorkCard key={w.id} work={w} index={allWorks.findIndex(x => x.id === w.id)} openInNewTab />
                 ))}
               </div>
             ))}
