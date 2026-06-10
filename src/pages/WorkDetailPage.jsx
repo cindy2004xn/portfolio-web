@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import NotionBlockRenderer from '../components/NotionBlockRenderer.jsx';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
@@ -27,20 +27,19 @@ function CountDivider({ children }) {
   );
 }
 
-function TagChip({ label, onClick }) {
+function TagChip({ label }) {
   return (
-    <button
-      onClick={onClick}
-      className="ju-mono p-chip"
+    <span
+      className="ju-mono"
       style={{
-        height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5,
-        letterSpacing: '0.08em', cursor: 'pointer', background: 'transparent',
+        display: 'inline-block', height: 28, lineHeight: '28px',
+        padding: '0 11px', borderRadius: 999, fontSize: 10.5,
+        letterSpacing: '0.08em', background: 'transparent',
         border: '0.5px solid var(--ju-border)', color: 'var(--ju-text2)',
-        transition: 'color .15s ease, border-color .15s ease',
       }}
     >
       {label}
-    </button>
+    </span>
   );
 }
 
@@ -64,7 +63,6 @@ function Skeleton() {
 
 export default function WorkDetailPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [work, setWork] = useState(null);
   const [allWorks, setAllWorks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -137,7 +135,7 @@ export default function WorkDetailPage() {
             </>
           )}
           {page.tags !== false && work.tags?.map(t => (
-            <TagChip key={t} label={t} onClick={() => navigate(`/?tag=${encodeURIComponent(t)}`)} />
+            <TagChip key={t} label={t} />
           ))}
           {page.date !== false && formattedDate && (
             <span className="ju-mono" style={{ fontSize: 10.5, letterSpacing: '0.1em', color: 'var(--ju-text3)' }}>{formattedDate}</span>
@@ -161,7 +159,7 @@ export default function WorkDetailPage() {
             {recBuckets.map((bucket, k) => (
               <div key={k} style={{ display: 'grid', gap: 'clamp(40px, 6vw, 56px)', alignContent: 'start' }}>
                 {bucket.map(w => (
-                  <WorkCard key={w.id} work={w} index={allWorks.findIndex(x => x.id === w.id)} openInNewTab />
+                  <WorkCard key={w.id} work={w} index={allWorks.findIndex(x => x.id === w.id)} />
                 ))}
               </div>
             ))}

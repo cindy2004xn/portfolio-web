@@ -235,7 +235,7 @@ export default function HomePage() {
               {buckets.map((bucket, k) => (
                 <div key={k} style={{ display: 'grid', gap: 'clamp(40px, 6vw, 56px)', alignContent: 'start' }}>
                   {bucket.map(w => (
-                    <WorkCard key={w.id} work={w} index={works.findIndex(x => x.id === w.id)} />
+                    <WorkCard key={w.id} work={w} index={works.findIndex(x => x.id === w.id)} openInNewTab />
                   ))}
                 </div>
               ))}
