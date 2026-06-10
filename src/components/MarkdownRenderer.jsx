@@ -21,7 +21,7 @@ function extractYouTubeId(url) {
 
 export default function MarkdownRenderer({ content }) {
   return (
-    <div className="prose prose-gray max-w-none">
+    <div className="article-content">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkUnwrapImages]}
         components={{
@@ -30,19 +30,25 @@ export default function MarkdownRenderer({ content }) {
               const videoId = extractYouTubeId(src);
               if (videoId) {
                 return (
-                  <div className="aspect-video w-full my-6 not-prose">
-                    <iframe
-                      src={`https://www.youtube.com/embed/${videoId}`}
-                      className="w-full h-full rounded-lg"
-                      allowFullScreen
-                      title={alt || 'YouTube video'}
-                    />
+                  <div className="img-wrapper">
+                    <div style={{ aspectRatio: '16/9', width: '100%' }}>
+                      <iframe
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        style={{ width: '100%', height: '100%', borderRadius: 4 }}
+                        allowFullScreen
+                        title={alt || 'YouTube video'}
+                      />
+                    </div>
+                    {alt && <p className="img-caption">{alt}</p>}
                   </div>
                 );
               }
             }
             return (
-              <img src={src} alt={alt || ''} className="w-full rounded-lg my-4" />
+              <span className="img-wrapper" style={{ display: 'block' }}>
+                <img src={src} alt={alt || ''} />
+                {alt && <span className="img-caption" style={{ display: 'block' }}>{alt}</span>}
+              </span>
             );
           },
           a({ href, children, ...props }) {
@@ -54,7 +60,20 @@ export default function MarkdownRenderer({ content }) {
           },
           pre({ children, ...props }) {
             return (
-              <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto my-4" {...props}>
+              <pre
+                style={{
+                  backgroundColor: '#1a1a1a',
+                  color: '#f5f1eb',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '20px',
+                  overflowX: 'auto',
+                  margin: '24px 0',
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: 13,
+                  lineHeight: 1.7,
+                }}
+                {...props}
+              >
                 {children}
               </pre>
             );
@@ -64,7 +83,16 @@ export default function MarkdownRenderer({ content }) {
               return <code className={className} {...props}>{children}</code>;
             }
             return (
-              <code className="bg-gray-100 text-gray-800 rounded px-1.5 py-0.5 text-sm font-mono" {...props}>
+              <code
+                style={{
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: 13,
+                  backgroundColor: 'var(--color-bg-surface)',
+                  borderRadius: 3,
+                  padding: '2px 6px',
+                }}
+                {...props}
+              >
                 {children}
               </code>
             );

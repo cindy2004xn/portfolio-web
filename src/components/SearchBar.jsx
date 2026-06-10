@@ -3,14 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 export default function SearchBar({ allTags, selectedTags, onSearch, isFixed }) {
   const [draft, setDraft] = useState(selectedTags);
   const [isOpen, setIsOpen] = useState(false);
+  const [inputValue, setInputValue] = useState('');
   const containerRef = useRef(null);
+  const inputRef = useRef(null);
 
-  // Sync draft when selectedTags changes externally (e.g., clear from hero)
-  useEffect(() => {
-    setDraft(selectedTags);
-  }, [selectedTags]);
+  useEffect(() => { setDraft(selectedTags); }, [selectedTags]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e) {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -21,31 +19,49 @@ export default function SearchBar({ allTags, selectedTags, onSearch, isFixed }) 
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  function toggleTag(tag) {
-    setDraft(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
-    );
-  }
+  const filteredTags = allTags.filter(tag =>
+    inputValue === '' || tag.toLowerCase().includes(inputValue.toLowerCase())
+  );
 
-  function selectAll() {
-    setDraft([...allTags]);
+  function toggleTag(tag) {
+    setDraft(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
   }
 
   function clearAll() {
     setDraft([]);
     onSearch([]);
+    setInputValue('');
     setIsOpen(false);
   }
 
   function handleSearch() {
     onSearch(draft);
+    setInputValue('');
     setIsOpen(false);
   }
 
-  const wrapperClass = isFixed
-    ? 'fixed left-0 right-0 z-40'
-    : '';
+  function handleKeyDown(e) {
+    if (e.key === 'Backspace' && inputValue === '' && draft.length > 0) {
+      setDraft(prev => prev.slice(0, -1));
+    }
+    if (e.key === 'Enter') {
+      if (inputValue && filteredTags.length > 0) {
+        const first = filteredTags.find(t => !draft.includes(t));
+        if (first) { setDraft(prev => [...prev, first]); }
+        setInputValue('');
+      } else if (!inputValue) {
+        handleSearch();
+      }
+    }
+    if (e.key === 'Escape') {
+      setIsOpen(false);
+      inputRef.current?.blur();
+    }
+  }
 
+  const hasDiff = JSON.stringify(draft.slice().sort()) !== JSON.stringify(selectedTags.slice().sort());
+
+  const wrapperClass = isFixed ? 'fixed left-0 right-0 z-40' : '';
   const wrapperStyle = isFixed
     ? { top: '56px', backgroundColor: 'var(--color-bg-base)', borderBottom: '0.5px solid var(--color-border-default)' }
     : {};
@@ -53,28 +69,29 @@ export default function SearchBar({ allTags, selectedTags, onSearch, isFixed }) 
   return (
     <div className={wrapperClass} style={wrapperStyle}>
       <div className="max-w-[940px] mx-auto px-4 py-4" ref={containerRef}>
-        {/* Input field */}
+
+        {/* Input row */}
         <div
-          onClick={() => setIsOpen(v => !v)}
-          className="flex items-center flex-wrap gap-2 min-h-[55px] px-4 py-2 cursor-pointer rounded-md"
+          className="flex items-center flex-wrap gap-2 min-h-[52px] px-4 py-2 cursor-text"
           style={{
-            border: '0.5px solid var(--color-border-strong)',
+            border: isOpen
+              ? '0.5px solid var(--color-brand-primary)'
+              : '0.5px solid var(--color-border-strong)',
             backgroundColor: 'var(--color-bg-card)',
             borderRadius: 'var(--radius-md)',
+            transition: 'border-color 150ms ease',
           }}
+          onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}
         >
-          {draft.length === 0 && (
-            <span className="text-body" style={{ color: 'var(--color-text-secondary)' }}>
-              選擇關鍵字
-            </span>
-          )}
           {draft.map(tag => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1.5 h-[34px] px-3 rounded-pill text-label-caps"
+              className="inline-flex items-center gap-1.5 h-[30px] px-3 text-mono-label"
               style={{
                 border: '0.5px solid var(--color-border-strong)',
+                borderRadius: '999px',
                 color: 'var(--color-text-main)',
+                backgroundColor: 'transparent',
               }}
             >
               {tag}
@@ -87,13 +104,35 @@ export default function SearchBar({ allTags, selectedTags, onSearch, isFixed }) 
               </button>
             </span>
           ))}
-          <span className="ml-auto text-text-secondary select-none">▾</span>
+
+          <input
+            ref={inputRef}
+            value={inputValue}
+            onChange={e => { setInputValue(e.target.value); setIsOpen(true); }}
+            onFocus={() => setIsOpen(true)}
+            onKeyDown={handleKeyDown}
+            placeholder={draft.length === 0 ? '選擇或輸入關鍵字' : ''}
+            className="flex-1 min-w-[80px] bg-transparent outline-none text-body"
+            style={{
+              color: 'var(--color-text-main)',
+              fontFamily: 'inherit',
+            }}
+          />
+
+          <button
+            onClick={e => { e.stopPropagation(); setIsOpen(v => !v); }}
+            className="ml-auto text-text-secondary select-none transition-transform duration-150"
+            style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            tabIndex={-1}
+          >
+            ▾
+          </button>
         </div>
 
         {/* Dropdown */}
         {isOpen && (
           <div
-            className="mt-1 p-4 rounded-md"
+            className="mt-1 p-4"
             style={{
               backgroundColor: 'var(--color-bg-card)',
               border: '0.5px solid var(--color-border-default)',
@@ -102,54 +141,64 @@ export default function SearchBar({ allTags, selectedTags, onSearch, isFixed }) 
           >
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={selectAll}
-                className="inline-flex items-center h-[30px] px-3 rounded-pill text-label-caps transition-colors"
-                style={{
-                  border: '0.5px solid var(--color-border-strong)',
-                  color: 'var(--color-text-main)',
-                }}
+                onClick={() => { setDraft([...allTags]); }}
+                className="inline-flex items-center h-[30px] px-3 text-mono-label transition-colors"
+                style={{ border: '0.5px solid var(--color-border-strong)', borderRadius: '999px', color: 'var(--color-text-main)' }}
               >
                 全選
               </button>
-              {allTags.map(tag => {
+              {filteredTags.map(tag => {
                 const active = draft.includes(tag);
                 return (
                   <button
                     key={tag}
                     onClick={() => toggleTag(tag)}
-                    className="inline-flex items-center h-[30px] px-3 rounded-pill text-label-caps transition-colors"
+                    className="inline-flex items-center h-[30px] px-3 text-mono-label transition-colors"
                     style={
                       active
-                        ? { backgroundColor: 'var(--color-brand-primary)', color: 'var(--color-brand-primary-bg)', border: 'none' }
-                        : { border: '0.5px solid var(--color-border-default)', color: 'var(--color-text-main)' }
+                        ? { backgroundColor: 'var(--color-brand-primary)', color: 'var(--color-brand-primary-bg)', borderRadius: '999px', border: 'none' }
+                        : { border: '0.5px solid var(--color-border-default)', borderRadius: '999px', color: 'var(--color-text-main)' }
                     }
                   >
                     {tag}
                   </button>
                 );
               })}
+              {filteredTags.length === 0 && (
+                <span className="text-caption" style={{ color: 'var(--color-text-disabled)' }}>
+                  無符合標籤
+                </span>
+              )}
             </div>
           </div>
         )}
 
-        {/* Search button */}
+        {/* Search button — prominent when draft differs from current selection */}
         <button
           onClick={handleSearch}
-          className="mt-3 w-full h-[54px] rounded-md text-label transition-opacity hover:opacity-90"
+          className="mt-3 w-full h-[52px] text-label transition-opacity hover:opacity-90"
           style={{
-            backgroundColor: 'var(--color-brand-primary)',
-            color: 'var(--color-brand-primary-bg)',
+            backgroundColor: hasDiff
+              ? 'var(--color-brand-primary)'
+              : 'var(--color-bg-surface)',
+            color: hasDiff
+              ? 'var(--color-brand-primary-bg)'
+              : 'var(--color-text-secondary)',
             borderRadius: 'var(--radius-md)',
+            border: hasDiff ? 'none' : '0.5px solid var(--color-border-default)',
+            transition: 'background-color 200ms ease, color 200ms ease',
           }}
         >
-          開始探索
+          {draft.length === 0 ? '探索全部' : '開始搜尋'}
         </button>
 
-        {/* Clear all link */}
         {(draft.length > 0 || selectedTags.length > 0) && (
           <button
             onClick={clearAll}
-            className="mt-2 w-full text-center text-caption text-text-disabled hover:text-text-secondary transition-colors"
+            className="mt-2 w-full text-center text-caption transition-colors"
+            style={{ color: 'var(--color-text-disabled)' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--color-text-secondary)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text-disabled)'}
           >
             清除全部
           </button>
