@@ -72,12 +72,14 @@ function formatPage(page, index = 0) {
     id: page.id,
     title: props['作品名稱']?.title?.map(t => t.plain_text).join('') || '',
     tags: props['tag']?.multi_select?.map(t => t.name) || [],
-    client: props['委託方']?.select?.name
+    // 「作品類型」rich_text 實際存的是委託方/客戶（如「華碩」）；舊欄名 委託方 留作 fallback
+    client: richTextStr(props['作品類型']?.rich_text)
+      || props['委託方']?.select?.name
       || richTextStr(props['委託方']?.rich_text)
-      || props['作品類型']?.select?.name
       || '',
-    year: props['年份']?.select?.name
-      || props['年份']?.rich_text?.map(t => t.plain_text).join('')
+    year: richTextStr(props['作品年份']?.rich_text)
+      || props['年份']?.select?.name
+      || richTextStr(props['年份']?.rich_text)
       || createdDate.getFullYear().toString(),
     date: props['日期']?.date?.start
       || createdDate.toISOString().slice(0, 10),
@@ -87,13 +89,13 @@ function formatPage(page, index = 0) {
     display: {
       card: {
         tags:   props['卡片顯示Tag']?.checkbox ?? true,
-        client: props['卡片顯示委託方']?.checkbox ?? true,
-        year:   props['卡片顯示年份']?.checkbox ?? true,
+        client: (props['卡片顯示類型'] ?? props['卡片顯示委託方'])?.checkbox ?? true,
+        year:   (props['卡片顯示年份'])?.checkbox ?? true,
       },
       page: {
         tags:   props['作品頁顯示Tag']?.checkbox ?? true,
         date:   props['作品頁顯示日期']?.checkbox ?? false,
-        client: props['作品頁顯示委託方']?.checkbox ?? true,
+        client: (props['作品頁顯示類型'] ?? props['作品頁顯示委託方'])?.checkbox ?? true,
       },
     },
   };
