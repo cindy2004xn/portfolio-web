@@ -3,11 +3,21 @@ import { Client } from '@notionhq/client';
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
-function parseCoverImage(richTextArr) {
-  if (!richTextArr?.length) return null;
-  const text = richTextArr.map(rt => rt.plain_text || '').join('');
-  const match = text.match(/!\[.*?\]\((.+?)\)/);
-  return match ? match[1] : null;
+// 「圖片」屬性可能是 files（上傳/外部檔案）或舊的 rich_text（markdown 圖片語法）
+function parseCoverImage(prop) {
+  if (!prop) return null;
+  // files 型別：取第一個檔案的 URL
+  if (prop.files?.length) {
+    const f = prop.files[0];
+    return (f.type === 'external' ? f.external?.url : f.file?.url) || null;
+  }
+  // 舊格式：rich_text 內嵌 ![](url)
+  if (prop.rich_text?.length) {
+    const text = prop.rich_text.map(rt => rt.plain_text || '').join('');
+    const match = text.match(/!\[.*?\]\((.+?)\)/);
+    return match ? match[1] : null;
+  }
+  return null;
 }
 
 function richTextStr(richTextArr) {
@@ -72,7 +82,7 @@ function formatPage(page, index = 0) {
     date: props['日期']?.date?.start
       || createdDate.toISOString().slice(0, 10),
     ratio: props['比例']?.select?.name || FALLBACK_RATIOS[index % FALLBACK_RATIOS.length],
-    coverImage: parseCoverImage(props['圖片']?.rich_text),
+    coverImage: parseCoverImage(props['圖片']),
     createdTime: page.created_time,
     display: {
       card: {
