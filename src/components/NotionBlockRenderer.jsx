@@ -198,6 +198,7 @@ function NotionBlock({ block }) {
             src={url} alt={captionText || ''}
             style={{ width: '100%', display: 'block', borderRadius: 4 }}
             loading="lazy"
+            decoding="async"
           />
           {captionText && (
             <p className="ju-mono" style={{

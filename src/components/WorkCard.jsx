@@ -37,6 +37,7 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
             alt={work.title}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div
