@@ -215,7 +215,7 @@ function NotionBlock({ block }) {
     case 'video': {
       const url = d.type === 'external' ? d.external?.url : d.file?.url;
       if (!url) return null;
-      const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?\s]+)/);
+      const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&?\s/]+)/);
       if (ytMatch) {
         return (
           <div style={{ margin: '32px 0', aspectRatio: '16/9' }}>
