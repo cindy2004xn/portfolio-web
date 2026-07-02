@@ -6,6 +6,7 @@ import BackToTop from '../components/BackToTop.jsx';
 
 const INITIAL_COUNT = 6;
 const LOAD_MORE_COUNT = 4;
+const PRELOAD_TIMEOUT = 6000;
 
 function distributeMasonry(works, cols) {
   const heights = Array(cols).fill(0);
@@ -96,13 +97,15 @@ export default function HomePage() {
 
   const [works, setWorks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [imagesReady, setImagesReady] = useState(false);
   const [error, setError] = useState(null);
   const [selectedTags, setSelectedTags] = useState(initialTag ? [decodeURIComponent(initialTag)] : []);
   const [isSearchFixed, setIsSearchFixed] = useState(false);
   const [displayCount, setDisplayCount] = useState(INITIAL_COUNT);
 
   const searchRef = useRef(null);
-  const sentinelRef = useRef(null);
+  const scrollAnchorRef = useRef(null);
+  const observerRef = useRef(null);
   const API_BASE = import.meta.env.VITE_API_URL ?? '/api';
 
   useEffect(() => {
@@ -116,6 +119,28 @@ export default function HomePage() {
     if (initialTag) setSearchParams({}, { replace: true });
   }, []);
 
+  /* Preload the first-screen cover images so the page reveals fully loaded,
+     instead of popping in card by card. Caps the wait so one slow/broken
+     image can't block the page forever — WorkCard's own fade-in covers the rest. */
+  useEffect(() => {
+    if (loading) return;
+    const urls = works.slice(0, INITIAL_COUNT).map(w => w.coverImage).filter(Boolean);
+    if (urls.length === 0) { setImagesReady(true); return; }
+
+    let remaining = urls.length;
+    let done = false;
+    const finish = () => { if (!done) { done = true; setImagesReady(true); } };
+
+    urls.forEach(src => {
+      const img = new Image();
+      img.onload = img.onerror = () => { remaining -= 1; if (remaining === 0) finish(); };
+      img.src = src;
+    });
+
+    const timeout = setTimeout(finish, PRELOAD_TIMEOUT);
+    return () => clearTimeout(timeout);
+  }, [loading, works]);
+
   useEffect(() => {
     function f() {
       if (searchRef.current) setIsSearchFixed(searchRef.current.getBoundingClientRect().top <= 56);
@@ -125,14 +150,26 @@ export default function HomePage() {
   }, []);
 
   const loadMore = useCallback(() => setDisplayCount(n => n + LOAD_MORE_COUNT), []);
-  useEffect(() => {
-    if (!sentinelRef.current) return;
-    const io = new IntersectionObserver(entries => { if (entries[0].isIntersecting) loadMore(); }, { rootMargin: '320px' });
-    io.observe(sentinelRef.current);
-    return () => io.disconnect();
-  }, [loadMore, loading]);
 
-  useEffect(() => { setDisplayCount(INITIAL_COUNT); }, [selectedTags]);
+  /* Callback ref — the sentinel node mounts/unmounts as filters change,
+     so the observer must be (re)created against whichever node is current. */
+  const sentinelCallbackRef = useCallback(node => {
+    observerRef.current?.disconnect();
+    if (node) {
+      observerRef.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) loadMore();
+      }, { rootMargin: '320px' });
+      observerRef.current.observe(node);
+    }
+  }, [loadMore]);
+
+  useEffect(() => {
+    setDisplayCount(INITIAL_COUNT);
+    if (scrollAnchorRef.current) {
+      const top = scrollAnchorRef.current.offsetTop - 56;
+      window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+    }
+  }, [selectedTags]);
 
   /* Tag counts sorted by frequency */
   const allTagCounts = useMemo(() => {
@@ -154,6 +191,7 @@ export default function HomePage() {
     : filteredWorks.slice(0, displayCount);
 
   const allLoaded = selectedTags.length > 0 || displayCount >= filteredWorks.length;
+  const showSkeleton = loading || !imagesReady;
   const cols = 2;
   const buckets = distributeMasonry(visibleWorks, cols);
 
@@ -181,6 +219,10 @@ export default function HomePage() {
         </h1>
       </section>
 
+      {/* Non-sticky anchor for scroll targeting — searchRef itself is position:sticky,
+          whose measured offset becomes unreliable once already scrolled past it. */}
+      <div ref={scrollAnchorRef} />
+
       {/* Search bar — desktop sticky */}
       <section
         ref={searchRef}
@@ -200,7 +242,7 @@ export default function HomePage() {
       <BottomDock applied={selectedTags} allTagCounts={allTagCounts} onApply={setSelectedTags} resultCount={filteredWorks.length} />
 
       {/* Result count */}
-      {!loading && (
+      {!showSkeleton && (
         <section style={{ maxWidth: 880, margin: '0 auto', padding: '28px 24px 0' }}>
           <CountDivider>{resultLabel}</CountDivider>
         </section>
@@ -208,7 +250,7 @@ export default function HomePage() {
 
       {/* Work grid — masonry */}
       <main style={{ maxWidth: 880, margin: '0 auto', padding: '40px 24px 64px' }}>
-        {loading ? (
+        {showSkeleton ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'clamp(24px, 4vw, 40px)', alignItems: 'start' }}>
             {[...Array(cols)].map((_, k) => (
               <div key={k} style={{ display: 'grid', gap: 'clamp(40px, 6vw, 56px)' }}>
@@ -241,7 +283,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            {!allLoaded && <div ref={sentinelRef} style={{ textAlign: 'center', padding: '48px 0 0' }}>
+            {!allLoaded && <div ref={sentinelCallbackRef} style={{ textAlign: 'center', padding: '48px 0 0' }}>
               <span className="ju-mono" style={{ fontSize: 10, letterSpacing: '0.24em', color: 'var(--ju-text3)' }}>載入更多…</span>
             </div>}
 

@@ -112,7 +112,7 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
           value={query}
           onChange={e => { setQuery(e.target.value); setOpen(true); }}
           onKeyDown={onKeyDown}
-          placeholder={draft.length === 0 ? '輸入或下拉選擇關鍵字' : ''}
+          placeholder={draft.length === 0 ? '請選擇標籤' : ''}
           className="ju-sans"
           style={{ flex: 1, minWidth: 110, border: 'none', outline: 'none', background: 'transparent', fontSize: 14, color: 'var(--ju-text)', padding: '6px 0' }}
         />
@@ -157,7 +157,7 @@ export function BottomDock({ applied, allTagCounts, onApply, resultCount }) {
         >
           <span className="ju-mono" style={{ fontSize: 12, color: 'var(--ju-green)' }}>⌕</span>
           <span className="ju-sans" style={{ flex: 1, fontSize: 13, color: applied.length ? 'var(--ju-text)' : 'var(--ju-text3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {applied.length ? applied.join('・') : '輸入或下拉選擇關鍵字'}
+            {applied.length ? applied.join('・') : '請選擇標籤'}
           </span>
           <span className="ju-mono" style={{ fontSize: 10, letterSpacing: '0.1em', color: 'var(--ju-text3)', flexShrink: 0 }}>{resultCount} 件</span>
         </button>

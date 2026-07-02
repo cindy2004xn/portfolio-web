@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 export default function WorkCard({ work, index = 0, openInNewTab = false }) {
   const navigate = useNavigate();
   const [hov, setHov] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   if (!work) return null;
 
   const card = work.display?.card ?? {};
@@ -24,6 +25,7 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
       {/* Thumbnail — only the thumbnail gets the border */}
       <div
         style={{
+          position: 'relative',
           aspectRatio: ratio,
           overflow: 'hidden',
           border: `0.5px solid ${hov ? 'var(--ju-green)' : 'var(--ju-border)'}`,
@@ -32,13 +34,24 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
         }}
       >
         {work.coverImage ? (
-          <img
-            src={work.coverImage}
-            alt={work.title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            loading="lazy"
-            decoding="async"
-          />
+          <>
+            {!imgLoaded && (
+              <div className="animate-pulse" style={{ position: 'absolute', inset: 0, backgroundColor: 'var(--ju-surface)' }} />
+            )}
+            <img
+              src={work.coverImage}
+              alt={work.title}
+              onLoad={() => setImgLoaded(true)}
+              style={{
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                opacity: imgLoaded ? 1 : 0,
+                transition: 'opacity .3s ease',
+              }}
+              loading="lazy"
+              decoding="async"
+            />
+          </>
         ) : (
           <div
             style={{
