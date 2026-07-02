@@ -163,15 +163,18 @@ export default function HomePage() {
     }
   }, [loadMore]);
 
-  const didMountRef = useRef(false);
-  useEffect(() => {
-    setDisplayCount(INITIAL_COUNT);
-    if (!didMountRef.current) { didMountRef.current = true; return; }
+  useEffect(() => { setDisplayCount(INITIAL_COUNT); }, [selectedTags]);
+
+  /* Scrolling only happens as a direct response to the user applying a search —
+     never tied to a mount/state-change effect, so it can't misfire on initial load
+     (and isn't sensitive to StrictMode's dev-only double-invoking of effects). */
+  const applyTags = useCallback(tags => {
+    setSelectedTags(tags);
     if (scrollAnchorRef.current) {
       const top = scrollAnchorRef.current.offsetTop - 56;
       window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
     }
-  }, [selectedTags]);
+  }, []);
 
   /* Tag counts sorted by frequency */
   const allTagCounts = useMemo(() => {
@@ -235,13 +238,13 @@ export default function HomePage() {
           <SearchPanel
             applied={selectedTags}
             allTagCounts={allTagCounts}
-            onApply={setSelectedTags}
+            onApply={applyTags}
           />
         </div>
       </section>
 
       {/* Mobile bottom dock */}
-      <BottomDock applied={selectedTags} allTagCounts={allTagCounts} onApply={setSelectedTags} resultCount={filteredWorks.length} />
+      <BottomDock applied={selectedTags} allTagCounts={allTagCounts} onApply={applyTags} resultCount={filteredWorks.length} />
 
       {/* Result count */}
       {!showSkeleton && (
@@ -266,7 +269,7 @@ export default function HomePage() {
               目前沒有符合的作品，試試其他關鍵字？
             </p>
             <button
-              onClick={() => setSelectedTags([])}
+              onClick={() => applyTags([])}
               className="ju-mono"
               style={{ marginTop: 20, height: 40, padding: '0 20px', background: 'transparent', border: '0.5px solid var(--ju-green)', borderRadius: 8, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.14em', cursor: 'pointer' }}
             >
