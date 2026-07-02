@@ -163,8 +163,10 @@ export default function HomePage() {
     }
   }, [loadMore]);
 
+  const didMountRef = useRef(false);
   useEffect(() => {
     setDisplayCount(INITIAL_COUNT);
+    if (!didMountRef.current) { didMountRef.current = true; return; }
     if (scrollAnchorRef.current) {
       const top = scrollAnchorRef.current.offsetTop - 56;
       window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
