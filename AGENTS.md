@@ -37,7 +37,7 @@ dist/ ──→ Vercel CDN（線上網站，完全不碰 Notion API）
 | 路徑 | 職責 |
 |------|------|
 | `scripts/notion.js` | Notion API 存取與資料正規化（`formatPage`、遞迴抓 blocks）。欄位改名時保留舊欄名 fallback（見檔內既有模式） |
-| `scripts/fetch-content.js` | 建置時抓取、圖片本地化、sitemap 產生。抓取失敗必須 `process.exit(1)` 讓部署中止、線上維持前一版 |
+| `scripts/fetch-content.js` | 建置時抓取、圖片本地化＋壓縮（sharp 轉 WebP、寬度上限 1600px；GIF/SVG/影片保留原檔）、sitemap 產生。抓取失敗必須 `process.exit(1)` 讓部署中止、線上維持前一版 |
 | `src/lib/` | 共用邏輯（`data.js` 資料讀取、`masonry.js` 瀑布流與 reduced-motion 工具）。跨頁面的函式放這裡，不要在頁面間複製貼上 |
 | `src/components/` | 可重用元件。`NotionBlockRenderer.jsx` 負責所有 Notion block 型別的渲染 |
 | `src/pages/` | 路由頁面（路由定義在 `src/App.jsx`） |

@@ -10,6 +10,7 @@
 import 'dotenv/config';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import sharp from 'sharp';
 import { getWorks, getWork } from './notion.js';
 
 const OUT_DIR = path.resolve('public/content');
@@ -26,12 +27,37 @@ function isNotionHosted(url) {
   }
 }
 
+// 這些格式會壓成 WebP；GIF（動圖）、SVG、影片等保留原檔
+const COMPRESSIBLE = new Set(['.png', '.jpg', '.jpeg', '.webp', '.tiff', '.avif']);
+const MAX_WIDTH = 1600; // 版面最寬約 850px，1600 足夠 2x retina
+const WEBP_QUALITY = 82;
+
+let bytesBefore = 0;
+let bytesAfter = 0;
+
 async function download(url, name) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`下載失敗 HTTP ${res.status}：${url.slice(0, 100)}`);
   const ext = path.extname(new URL(url).pathname).toLowerCase() || '.jpg';
-  const file = `${name}${ext}`;
-  await fs.writeFile(path.join(IMG_DIR, file), Buffer.from(await res.arrayBuffer()));
+  let buf = Buffer.from(await res.arrayBuffer());
+  let file = `${name}${ext}`;
+
+  if (COMPRESSIBLE.has(ext)) {
+    bytesBefore += buf.length;
+    try {
+      buf = await sharp(buf)
+        .rotate() // 套用 EXIF 方向
+        .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+        .webp({ quality: WEBP_QUALITY })
+        .toBuffer();
+      file = `${name}.webp`;
+    } catch (err) {
+      console.warn(`  ⚠ 壓縮失敗，保留原檔（${name}${ext}）：${err.message}`);
+    }
+    bytesAfter += buf.length;
+  }
+
+  await fs.writeFile(path.join(IMG_DIR, file), buf);
   return `/content/images/${file}`;
 }
 
@@ -81,6 +107,10 @@ async function main() {
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`
   );
 
+  const mb = n => (n / 1048576).toFixed(1);
+  if (bytesBefore > 0) {
+    console.log(`圖片壓縮：${mb(bytesBefore)}MB → ${mb(bytesAfter)}MB（省 ${Math.round((1 - bytesAfter / bytesBefore) * 100)}%）`);
+  }
   console.log(`完成 → ${path.relative(process.cwd(), OUT_DIR)}/ + sitemap.xml`);
 }
 
