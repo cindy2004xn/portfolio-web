@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchPanel, { BottomDock } from '../components/SearchBar.jsx';
+import { fetchWorks } from '../lib/data.js';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
 
@@ -106,12 +107,10 @@ export default function HomePage() {
   const searchRef = useRef(null);
   const scrollAnchorRef = useRef(null);
   const observerRef = useRef(null);
-  const API_BASE = import.meta.env.VITE_API_URL ?? '/api';
 
   useEffect(() => {
-    fetch(`${API_BASE}/works`)
-      .then(res => { if (!res.ok) throw new Error('API error'); return res.json(); })
-      .then(data => { setWorks((data.works ?? []).filter(Boolean)); setLoading(false); })
+    fetchWorks()
+      .then(data => { setWorks(data); setLoading(false); })
       .catch(err => { setError(err.message); setLoading(false); });
   }, []);
 

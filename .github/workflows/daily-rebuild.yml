@@ -1,0 +1,19 @@
+# 每天觸發一次 Vercel Deploy Hook 重建網站——就算改完 Notion 忘記手動發布，
+# 最晚隔天早上也會自動上線。
+# 需要在 GitHub repo 的 Settings → Secrets and variables → Actions
+# 新增 secret：VERCEL_DEPLOY_HOOK（值為 Vercel 後台建立的 Deploy Hook 網址）。
+name: Daily rebuild
+
+on:
+  schedule:
+    - cron: '0 21 * * *' # UTC 21:00 = 台北時間早上 5 點
+  workflow_dispatch: # 也可在 GitHub Actions 頁面手動觸發
+
+jobs:
+  trigger-vercel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy hook
+        run: curl -sf -X POST "$DEPLOY_HOOK" > /dev/null && echo "已觸發重建"
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}

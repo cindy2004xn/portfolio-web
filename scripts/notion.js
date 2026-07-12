@@ -102,11 +102,18 @@ function formatPage(page, index = 0) {
 }
 
 export async function getWorks() {
-  const response = await notion.databases.query({
-    database_id: DATABASE_ID,
-    sorts: [{ timestamp: 'created_time', direction: 'descending' }],
-  });
-  return response.results.map(formatPage);
+  const pages = [];
+  let cursor;
+  do {
+    const response = await notion.databases.query({
+      database_id: DATABASE_ID,
+      sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+      start_cursor: cursor,
+    });
+    pages.push(...response.results);
+    cursor = response.has_more ? response.next_cursor : undefined;
+  } while (cursor);
+  return pages.map(formatPage);
 }
 
 export async function getWork(id) {

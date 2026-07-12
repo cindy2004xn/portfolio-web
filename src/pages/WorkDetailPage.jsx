@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import NotionBlockRenderer from '../components/NotionBlockRenderer.jsx';
+import { fetchWork, fetchWorks } from '../lib/data.js';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
 
@@ -68,16 +69,11 @@ export default function WorkDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_BASE = import.meta.env.VITE_API_URL ?? '/api';
-
   useEffect(() => {
-    Promise.all([
-      fetch(`${API_BASE}/works/${id}`).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
-      fetch(`${API_BASE}/works`).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
-    ])
+    Promise.all([fetchWork(id), fetchWorks()])
       .then(([workData, worksData]) => {
         setWork(workData);
-        setAllWorks((worksData.works ?? []).filter(Boolean));
+        setAllWorks(worksData);
         setLoading(false);
       })
       .catch(err => { setError(err.message); setLoading(false); });

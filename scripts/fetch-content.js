@@ -1,0 +1,78 @@
+/**
+ * 建置時內容抓取：把 Notion 資料存成靜態 JSON、Notion 託管的圖片/影片
+ * 下載到 public/content/，讓正式站完全不依賴 Notion API 與會過期的簽章網址。
+ *
+ * 產出（gitignored，每次 build 重新生成）：
+ *   public/content/works.json        作品列表
+ *   public/content/works/<id>.json   各作品內頁（含 blocks）
+ *   public/content/images/           下載回來的圖片與影片
+ */
+import 'dotenv/config';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { getWorks, getWork } from './notion.js';
+
+const OUT_DIR = path.resolve('public/content');
+const IMG_DIR = path.join(OUT_DIR, 'images');
+
+// 只有 Notion 託管的檔案（S3 簽章網址）需要下載；外部連結不會過期，保持原樣
+function isNotionHosted(url) {
+  try {
+    const host = new URL(url).hostname;
+    return host.endsWith('.amazonaws.com') || host.endsWith('notion-static.com');
+  } catch {
+    return false;
+  }
+}
+
+async function download(url, name) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`下載失敗 HTTP ${res.status}：${url.slice(0, 100)}`);
+  const ext = path.extname(new URL(url).pathname).toLowerCase() || '.jpg';
+  const file = `${name}${ext}`;
+  await fs.writeFile(path.join(IMG_DIR, file), Buffer.from(await res.arrayBuffer()));
+  return `/content/images/${file}`;
+}
+
+// 走訪 blocks，把 Notion 託管的 image/video 檔案換成本地路徑
+async function localizeBlocks(blocks) {
+  for (const block of blocks) {
+    const d = block[block.type];
+    if ((block.type === 'image' || block.type === 'video') && d?.type === 'file' && d.file?.url) {
+      d.file.url = await download(d.file.url, block.id);
+    }
+    if (block.children?.length) await localizeBlocks(block.children);
+  }
+}
+
+async function main() {
+  await fs.rm(OUT_DIR, { recursive: true, force: true });
+  await fs.mkdir(IMG_DIR, { recursive: true });
+  await fs.mkdir(path.join(OUT_DIR, 'works'), { recursive: true });
+
+  const works = await getWorks();
+  console.log(`共 ${works.length} 件作品`);
+
+  for (const work of works) {
+    if (work.coverImage && isNotionHosted(work.coverImage)) {
+      work.coverImage = await download(work.coverImage, `${work.id}-cover`);
+    }
+
+    const detail = await getWork(work.id);
+    detail.coverImage = work.coverImage; // 沿用已本地化的封面
+    await localizeBlocks(detail.blocks);
+    await fs.writeFile(
+      path.join(OUT_DIR, 'works', `${work.id}.json`),
+      JSON.stringify(detail)
+    );
+    console.log(`✓ ${work.title}（${detail.blocks.length} blocks）`);
+  }
+
+  await fs.writeFile(path.join(OUT_DIR, 'works.json'), JSON.stringify({ works }));
+  console.log(`完成 → ${path.relative(process.cwd(), OUT_DIR)}/`);
+}
+
+main().catch(err => {
+  console.error('內容抓取失敗：', err);
+  process.exit(1); // build 失敗即中止部署，線上維持前一版
+});
