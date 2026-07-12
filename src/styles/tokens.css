@@ -12,7 +12,9 @@
   --ju-dark:     #1a1a1a;
   --ju-text:     #1a1a1a;
   --ju-text2:    #6b6560;
-  --ju-text3:    #b2afa9;
+  /* 原 #b2afa9 對 --ju-base 對比僅 1.9:1；調深至約 3.5:1 兼顧層次
+     （若要完全符合 WCAG AA 4.5:1 需 ~#726d67，但會與 text2 幾乎相同） */
+  --ju-text3:    #857f78;
   --ju-border:   #ddd7cc;
 
   /* Background */
@@ -24,7 +26,7 @@
   /* Text */
   --color-text-main:      #1a1a1a;
   --color-text-secondary: #6b6560;
-  --color-text-disabled:  #b2afa9;
+  --color-text-disabled:  #857f78;
 
   /* Border */
   --color-border-default: #ddd7cc;

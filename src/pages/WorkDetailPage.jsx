@@ -2,21 +2,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import NotionBlockRenderer from '../components/NotionBlockRenderer.jsx';
 import { fetchWork, fetchWorks } from '../lib/data.js';
+import { distributeMasonry } from '../lib/masonry.js';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
-
-function distributeMasonry(works, cols) {
-  const heights = Array(cols).fill(0);
-  const buckets = Array.from({ length: cols }, () => []);
-  works.forEach(w => {
-    const [rw, rh] = (w.ratio || '4 / 3').split('/').map(s => parseFloat(s.trim()));
-    const h = rh / rw + 0.42;
-    const k = heights.indexOf(Math.min(...heights));
-    buckets[k].push(w);
-    heights[k] += h;
-  });
-  return buckets;
-}
 
 function CountDivider({ children }) {
   return (
@@ -78,6 +66,10 @@ export default function WorkDetailPage() {
       })
       .catch(err => { setError(err.message); setLoading(false); });
   }, [id]);
+
+  useEffect(() => {
+    if (work?.title) document.title = `${work.title}｜朱千慧作品集`;
+  }, [work]);
 
   const recommended = useMemo(() => {
     if (!work) return [];

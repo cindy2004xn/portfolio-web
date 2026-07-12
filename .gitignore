@@ -2,4 +2,5 @@
 node_modules/
 dist/
 public/content/
+public/sitemap.xml
 .DS_Store

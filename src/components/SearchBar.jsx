@@ -103,7 +103,7 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
           borderRadius: 8, transition: 'border-color .15s ease',
         }}
       >
-        <span className="ju-mono" style={{ fontSize: 12, color: 'var(--ju-text3)', flexShrink: 0 }}>⌕</span>
+        <span className="ju-mono" aria-hidden="true" style={{ fontSize: 12, color: 'var(--ju-text3)', flexShrink: 0 }}>⌕</span>
         {draft.map(t => (
           <TagChip key={t} label={t} selected small onClick={e => { e.stopPropagation(); toggleDraft(t); }} />
         ))}
@@ -113,6 +113,7 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
           onChange={e => { setQuery(e.target.value); setOpen(true); }}
           onKeyDown={onKeyDown}
           placeholder={draft.length === 0 ? '請選擇標籤' : ''}
+          aria-label="搜尋標籤"
           className="ju-sans"
           style={{ flex: 1, minWidth: 110, border: 'none', outline: 'none', background: 'transparent', fontSize: 14, color: 'var(--ju-text)', padding: '6px 0' }}
         />
@@ -167,7 +168,7 @@ export function BottomDock({ applied, allTagCounts, onApply, resultCount }) {
           <div className="p-sheet" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <span className="ju-mono" style={{ fontSize: 10, letterSpacing: '0.24em', color: 'var(--ju-text3)' }}>搜尋作品</span>
-              <button onClick={() => setOpen(false)} className="ju-mono" style={{ background: 'transparent', border: 'none', fontSize: 13, color: 'var(--ju-text2)', cursor: 'pointer', padding: 4 }}>✕</button>
+              <button onClick={() => setOpen(false)} aria-label="關閉搜尋" className="ju-mono" style={{ background: 'transparent', border: 'none', fontSize: 13, color: 'var(--ju-text2)', cursor: 'pointer', padding: 4 }}>✕</button>
             </div>
             <SearchPanel applied={applied} allTagCounts={allTagCounts} onApply={onApply} popover={false} onDone={() => setOpen(false)} />
           </div>

@@ -14,6 +14,7 @@ import { getWorks, getWork } from './notion.js';
 
 const OUT_DIR = path.resolve('public/content');
 const IMG_DIR = path.join(OUT_DIR, 'images');
+const SITE_URL = process.env.SITE_URL || 'https://portfolio-web-ten-dusky.vercel.app';
 
 // 只有 Notion 託管的檔案（S3 簽章網址）需要下載；外部連結不會過期，保持原樣
 function isNotionHosted(url) {
@@ -69,7 +70,18 @@ async function main() {
   }
 
   await fs.writeFile(path.join(OUT_DIR, 'works.json'), JSON.stringify({ works }));
-  console.log(`完成 → ${path.relative(process.cwd(), OUT_DIR)}/`);
+
+  // sitemap.xml（首頁 + 各作品頁）
+  const urls = [
+    `  <url><loc>${SITE_URL}/</loc></url>`,
+    ...works.map(w => `  <url><loc>${SITE_URL}/work/${w.id}</loc><lastmod>${w.date}</lastmod></url>`),
+  ];
+  await fs.writeFile(
+    path.resolve('public/sitemap.xml'),
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`
+  );
+
+  console.log(`完成 → ${path.relative(process.cwd(), OUT_DIR)}/ + sitemap.xml`);
 }
 
 main().catch(err => {

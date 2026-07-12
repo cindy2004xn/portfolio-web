@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { scrollToY } from '../lib/masonry.js';
 
 export default function BackToTop() {
   const [visible, setVisible] = useState(false);
@@ -14,7 +15,7 @@ export default function BackToTop() {
   return (
     <button
       className="p-backtop"
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      onClick={() => scrollToY(0)}
       aria-label="回到頂端"
     >
       ↑

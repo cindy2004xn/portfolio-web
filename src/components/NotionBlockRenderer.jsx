@@ -81,18 +81,24 @@ function Toggle({ block }) {
 
   return (
     <div style={{ margin: '3px 0' }}>
-      <div
+      <button
         onClick={() => setOpen(o => !o)}
-        style={{ display: 'flex', alignItems: 'flex-start', gap: 6, cursor: 'pointer', userSelect: 'none', lineHeight: 1.75 }}
+        aria-expanded={open}
+        className="ju-sans"
+        style={{
+          display: 'flex', alignItems: 'flex-start', gap: 6, cursor: 'pointer', userSelect: 'none', lineHeight: 1.75,
+          background: 'transparent', border: 'none', padding: 0, margin: 0,
+          font: 'inherit', color: 'inherit', textAlign: 'left', width: '100%',
+        }}
       >
-        <span style={{
+        <span aria-hidden="true" style={{
           display: 'inline-block', flexShrink: 0, marginTop: '0.35em',
           fontSize: 9, color: 'var(--ju-text3)',
           transform: `rotate(${open ? 90 : 0}deg)`,
           transition: 'transform .15s ease',
         }}>▶</span>
         <span>{renderRichText(rt)}</span>
-      </div>
+      </button>
       {open && block.children?.length > 0 && (
         <div style={{ marginLeft: 20, marginTop: 4 }}>
           <NotionBlocks blocks={block.children} />

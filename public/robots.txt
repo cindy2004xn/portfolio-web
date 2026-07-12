@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://portfolio-web-ten-dusky.vercel.app/sitemap.xml

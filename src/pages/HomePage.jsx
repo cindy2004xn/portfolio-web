@@ -2,25 +2,13 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SearchPanel, { BottomDock } from '../components/SearchBar.jsx';
 import { fetchWorks } from '../lib/data.js';
+import { distributeMasonry, prefersReducedMotion, scrollToY } from '../lib/masonry.js';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
 
 const INITIAL_COUNT = 6;
 const LOAD_MORE_COUNT = 4;
 const PRELOAD_TIMEOUT = 6000;
-
-function distributeMasonry(works, cols) {
-  const heights = Array(cols).fill(0);
-  const buckets = Array.from({ length: cols }, () => []);
-  works.forEach(w => {
-    const [rw, rh] = (w.ratio || '4 / 3').split('/').map(s => parseFloat(s.trim()));
-    const h = rh / rw + 0.42;
-    const k = heights.indexOf(Math.min(...heights));
-    buckets[k].push(w);
-    heights[k] += h;
-  });
-  return buckets;
-}
 
 function CountDivider({ children }) {
   return (
@@ -54,7 +42,7 @@ function RotatingTag({ tags, selectedTags }) {
   }, [tags]);
 
   useEffect(() => {
-    if (selectedTags.length > 0 || tags.length < 2) return;
+    if (selectedTags.length > 0 || tags.length < 2 || prefersReducedMotion()) return;
     const t = setInterval(() => {
       setPhase('out');
       setTimeout(() => {
@@ -100,7 +88,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [imagesReady, setImagesReady] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedTags, setSelectedTags] = useState(initialTag ? [decodeURIComponent(initialTag)] : []);
+  const [selectedTags, setSelectedTags] = useState(initialTag ? [initialTag] : []);
   const [isSearchFixed, setIsSearchFixed] = useState(false);
   const [displayCount, setDisplayCount] = useState(INITIAL_COUNT);
 
@@ -115,6 +103,7 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    document.title = '朱千慧作品集';
     if (initialTag) setSearchParams({}, { replace: true });
   }, []);
 
@@ -171,7 +160,7 @@ export default function HomePage() {
     setSelectedTags(tags);
     if (scrollAnchorRef.current) {
       const top = scrollAnchorRef.current.offsetTop - 56;
-      window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+      scrollToY(Math.max(top, 0));
     }
   }, []);
 
@@ -295,7 +284,7 @@ export default function HomePage() {
               <footer style={{ padding: '72px 0 96px', textAlign: 'center' }}>
                 <CountDivider>已是全部 {filteredWorks.length} 件作品</CountDivider>
                 <button
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  onClick={() => scrollToY(0)}
                   className="ju-mono"
                   style={{ marginTop: 28, height: 42, padding: '0 22px', background: 'transparent', border: '0.5px solid var(--ju-green)', borderRadius: 999, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.18em', cursor: 'pointer' }}
                 >

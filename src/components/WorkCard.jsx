@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function WorkCard({ work, index = 0, openInNewTab = false }) {
-  const navigate = useNavigate();
   const [hov, setHov] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   if (!work) return null;
@@ -15,12 +14,17 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
   if (card.tags !== false && work.tags?.length > 0) metaParts.push(work.tags.slice(0, 3).join('・'));
   if (card.year !== false && work.year) metaParts.push(work.year);
 
+  const linkProps = openInNewTab ? { target: '_blank', rel: 'noopener' } : {};
+
   return (
-    <div
-      onClick={() => openInNewTab ? window.open(`${import.meta.env.BASE_URL}work/${work.id}`, '_blank', 'noopener') : navigate(`/work/${work.id}`)}
+    <Link
+      to={`/work/${work.id}`}
+      {...linkProps}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
-      style={{ cursor: 'pointer' }}
+      onFocus={() => setHov(true)}
+      onBlur={() => setHov(false)}
+      style={{ display: 'block', cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}
     >
       {/* Thumbnail — only the thumbnail gets the border */}
       <div
@@ -81,7 +85,7 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
           }}
         >
           {work.title}
-          <span style={{ opacity: hov ? 1 : 0, transition: 'opacity .15s ease' }}> ↗</span>
+          <span style={{ opacity: hov ? 1 : 0, transition: 'opacity .15s ease' }} aria-hidden="true"> ↗</span>
         </h3>
         {metaParts.length > 0 && (
           <p
@@ -92,6 +96,6 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
           </p>
         )}
       </div>
-    </div>
+    </Link>
   );
 }

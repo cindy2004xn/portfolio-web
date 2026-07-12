@@ -4,6 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 尊重使用者的「減少動態效果」系統設定 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer base {
   html {
     font-family: 'Noto Sans TC', system-ui, sans-serif;
