@@ -97,9 +97,10 @@ async function main() {
 
   await fs.writeFile(path.join(OUT_DIR, 'works.json'), JSON.stringify({ works }));
 
-  // sitemap.xml（首頁 + 各作品頁）
+  // sitemap.xml（landing + 作品列表 + 各作品頁）
   const urls = [
     `  <url><loc>${SITE_URL}/</loc></url>`,
+    `  <url><loc>${SITE_URL}/works</loc></url>`,
     ...works.map(w => `  <url><loc>${SITE_URL}/work/${w.id}</loc><lastmod>${w.date}</lastmod></url>`),
   ];
   await fs.writeFile(

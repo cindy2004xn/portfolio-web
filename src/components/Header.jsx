@@ -17,12 +17,21 @@ export default function Header() {
       >
         Ju
       </Link>
-      <span
-        className="ju-mono"
-        style={{ fontSize: 10, letterSpacing: '0.24em', color: 'var(--ju-text3)' }}
-      >
-        PORTFOLIO — CHAIN HUEI JU
-      </span>
+      <nav style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+        <Link
+          to="/works"
+          className="ju-mono"
+          style={{ fontSize: 12, letterSpacing: '0.16em', color: 'var(--ju-green)', textDecoration: 'none', borderBottom: '1px solid var(--ju-green)', paddingBottom: 2 }}
+        >
+          作品
+        </Link>
+        <span
+          className="ju-mono p-header-label"
+          style={{ fontSize: 10, letterSpacing: '0.24em', color: 'var(--ju-text3)' }}
+        >
+          PORTFOLIO — CHAIN HUEI JU
+        </span>
+      </nav>
     </header>
   );
 }

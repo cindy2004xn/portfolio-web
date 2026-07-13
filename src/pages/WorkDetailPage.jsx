@@ -87,8 +87,8 @@ export default function WorkDetailPage() {
       <div style={{ minHeight: '100vh', paddingTop: 56, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', marginBottom: 16 }}>作品載入失敗</p>
-          <Link to="/" className="ju-mono" style={{ display: 'inline-block', height: 40, lineHeight: '40px', padding: '0 20px', background: 'var(--ju-green)', color: 'var(--ju-on-green)', borderRadius: 999, fontSize: 11, letterSpacing: '0.14em', textDecoration: 'none' }}>
-            返回首頁
+          <Link to="/works" className="ju-mono" style={{ display: 'inline-block', height: 40, lineHeight: '40px', padding: '0 20px', background: 'var(--ju-green)', color: 'var(--ju-on-green)', borderRadius: 999, fontSize: 11, letterSpacing: '0.14em', textDecoration: 'none' }}>
+            返回作品列表
           </Link>
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function WorkDetailPage() {
 
         {/* Breadcrumb */}
         <p className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.12em', color: 'var(--ju-text3)', margin: 0 }}>
-          <Link to="/" style={{ color: 'var(--ju-green)', textDecoration: 'none' }}>首頁</Link>
+          <Link to="/works" style={{ color: 'var(--ju-green)', textDecoration: 'none' }}>作品</Link>
           <span>　—　{work.tags?.[0] ?? '作品'}</span>
         </p>
 

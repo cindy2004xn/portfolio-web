@@ -119,5 +119,15 @@ button:active:not(:disabled) { transform: scale(0.97); }
   .p-search-inline { display: none !important; }
   .p-dock { display: block; }
   .p-backtop { bottom: 86px; right: 16px; }
+  .p-header-label { display: none; }
+}
+
+/* ── Landing page ── */
+.lp-skills { grid-template-columns: repeat(3, 1fr); }
+.lp-card { grid-template-columns: 1fr 1fr; }
+.lp-cta:hover { background: var(--ju-green-hover) !important; }
+@media (max-width: 719px) {
+  .lp-skills { grid-template-columns: 1fr; }
+  .lp-card { grid-template-columns: 1fr; }
 }
 

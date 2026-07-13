@@ -103,7 +103,7 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    document.title = '朱千慧作品集';
+    document.title = '作品｜朱千慧作品集';
     if (initialTag) setSearchParams({}, { replace: true });
   }, []);
 
