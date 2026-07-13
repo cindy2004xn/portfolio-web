@@ -130,8 +130,8 @@ export default function WorkDetailPage() {
           )}
         </div>
 
-        {/* Article content — 開放閱讀面，不關進浮框；限制行長以利閱讀 */}
-        <div style={{ marginTop: 40, maxWidth: 720 }}>
+        {/* Article content — 收進 --ju-card 淺色閱讀面板，統一 Notion 內容視覺 */}
+        <div style={{ marginTop: 40, background: 'var(--ju-card)', border: '1px solid var(--ju-border-card)', borderRadius: 20, boxShadow: 'var(--ju-shadow-rest)', padding: 'clamp(24px, 5vw, 56px)' }}>
           {work.blocks?.length > 0
             ? <NotionBlockRenderer blocks={work.blocks} />
             : <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text3)', margin: 0 }}>尚無內容</p>
