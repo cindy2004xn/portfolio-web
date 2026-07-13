@@ -1,38 +1,52 @@
 :root {
-  /* Brand */
-  --color-brand-primary:    #2c6e4f;
-  --color-brand-primary-bg: #d4ede2;
+  /* ============================================================
+     Armonia Foundations v1.1（正本：project/Design System.dc.html）
+     色彩原則：暖灰米基底、單一深森林綠主色，不使用純白與純黑。
+     ============================================================ */
 
-  /* Prototype design token aliases */
-  --ju-green:    #2c6e4f;
-  --ju-green-bg: #d4ede2;
-  --ju-base:     #f5f1eb;
-  --ju-surface:  #eae4d8;
-  --ju-card:     #ffffff;
-  --ju-dark:     #1a1a1a;
-  --ju-text:     #1a1a1a;
-  --ju-text2:    #6b6560;
-  /* 原 #b2afa9 對 --ju-base 對比僅 1.9:1；調深至約 3.5:1 兼顧層次
-     （若要完全符合 WCAG AA 4.5:1 需 ~#726d67，但會與 text2 幾乎相同） */
-  --ju-text3:    #857f78;
-  --ju-border:   #ddd7cc;
+  /* Brand */
+  --color-brand-primary:    #35431F;
+  --color-brand-primary-bg: #C9D89B;
+
+  /* Design token aliases（元件一律用這組） */
+  --ju-green:    #35431F;  /* Forest 主色 */
+  --ju-green-bg: #C9D89B;  /* Lime 淺底 */
+  --ju-base:     #D9D5C7;  /* Paper 頁面底色 */
+  --ju-surface:  #E6E2D5;  /* Surface 2 次表面（chips、輸入框底） */
+  --ju-card:     #EEEBE1;  /* Surface 卡片面（DS 不用純白） */
+  --ju-card2:    #F4F1E8;  /* 內層面（卡中卡、icon 格） */
+  --ju-surface-hover: #D6D0BF;  /* chip/次表面 hover 加深 */
+  --ju-dark:     #23231D;  /* Ink */
+  --ju-text:     #23231D;
+  --ju-text2:    #6E6E62;  /* 次要文字，對 Paper 約 3.5:1 */
+  /* 僅限小型 mono 標籤與 caption 使用（對 Paper 約 2.3:1）——
+     跟隨 DS 的刻意取捨，見 DECISIONS.md 2026-07-13；不得用於正文 */
+  --ju-text3:    #8A8A7C;
+  --ju-border:   rgba(0, 0, 0, 0.1);
+
+  /* 互動狀態（DS 08 元件狀態） */
+  --ju-green-hover:  #2A3518;  /* hover 加深一階 */
+  --ju-green-active: #1F2912;  /* active 再加深 */
+  --ju-on-green:     #EEEBE1;  /* 綠底上的文字 */
+  --ju-error:        #A6483A;  /* 磚紅錯誤 */
+  --ju-focus-ring:   rgba(53, 67, 31, 0.22);  /* focus 半透明綠光環 */
 
   /* Background */
-  --color-bg-base:    #f5f1eb;
-  --color-bg-surface: #eae4d8;
-  --color-bg-card:    #ffffff;
-  --color-bg-dark:    #1a1a1a;
+  --color-bg-base:    #D9D5C7;
+  --color-bg-surface: #E6E2D5;
+  --color-bg-card:    #EEEBE1;
+  --color-bg-dark:    #23231D;
 
   /* Text */
-  --color-text-main:      #1a1a1a;
-  --color-text-secondary: #6b6560;
-  --color-text-disabled:  #857f78;
+  --color-text-main:      #23231D;
+  --color-text-secondary: #6E6E62;
+  --color-text-disabled:  #8A8A7C;
 
   /* Border */
-  --color-border-default: #ddd7cc;
-  --color-border-strong:  #1a1a1a;
+  --color-border-default: rgba(0, 0, 0, 0.1);
+  --color-border-strong:  #23231D;
 
-  /* Spacing */
+  /* Spacing（4px 步階，與 DS 一致） */
   --spacing-xs:  4px;
   --spacing-sm:  8px;
   --spacing-md:  16px;
@@ -40,10 +54,10 @@
   --spacing-xl:  40px;
   --spacing-2xl: 64px;
 
-  /* Radius */
-  --radius-sm:   4px;
-  --radius-md:   8px;
-  --radius-lg:   12px;
+  /* Radius（DS：8 sm / 12 md / 20 lg / pill） */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
   --radius-pill: 999px;
 
   /* Typography sizes */

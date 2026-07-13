@@ -32,8 +32,11 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
           position: 'relative',
           aspectRatio: ratio,
           overflow: 'hidden',
+          borderRadius: 12,
           border: `0.5px solid ${hov ? 'var(--ju-green)' : 'var(--ju-border)'}`,
-          transition: 'border-color .15s ease',
+          boxShadow: hov ? '0 16px 34px -18px rgba(40, 50, 25, 0.45)' : 'none',
+          transform: hov ? 'translateY(-4px)' : 'none',
+          transition: 'border-color .15s ease, box-shadow .2s ease, transform .2s ease',
           backgroundColor: 'var(--ju-surface)',
         }}
       >
@@ -60,7 +63,7 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
           <div
             style={{
               width: '100%', height: '100%',
-              background: `repeating-linear-gradient(${45 + (index % 3) * 45}deg, var(--ju-surface) 0px, var(--ju-surface) 7px, #efe9df 7px, #efe9df 14px)`,
+              background: `repeating-linear-gradient(${45 + (index % 3) * 45}deg, var(--ju-surface) 0px, var(--ju-surface) 7px, var(--ju-card2) 7px, var(--ju-card2) 14px)`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >

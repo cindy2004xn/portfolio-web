@@ -45,7 +45,7 @@ export function renderRichText(arr) {
     if (a.code) {
       node = (
         <code style={{
-          fontFamily: "'IBM Plex Mono', monospace",
+          fontFamily: "'Space Mono', monospace",
           fontSize: '0.875em',
           background: 'rgba(135,131,120,0.15)',
           borderRadius: 3,
@@ -202,7 +202,7 @@ function NotionBlock({ block }) {
         <div style={{ margin: '32px 0' }}>
           <img
             src={url} alt={captionText || ''}
-            style={{ width: '100%', display: 'block', borderRadius: 4 }}
+            style={{ width: '100%', display: 'block', borderRadius: 8 }}
             loading="lazy"
             decoding="async"
           />
@@ -246,9 +246,9 @@ function NotionBlock({ block }) {
       return (
         <div style={{ margin: '24px 0' }}>
           <pre style={{
-            padding: '20px', backgroundColor: '#1a1a1a', color: '#f5f1eb',
-            borderRadius: 6, overflowX: 'auto',
-            fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, lineHeight: 1.7,
+            padding: '20px', backgroundColor: 'var(--ju-dark)', color: 'var(--ju-on-green)',
+            borderRadius: 8, overflowX: 'auto',
+            fontFamily: "'Space Mono', monospace", fontSize: 13, lineHeight: 1.7,
             margin: 0,
           }}>
             <code>{code}</code>

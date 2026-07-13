@@ -23,12 +23,25 @@
     background-color: var(--ju-base);
     color: var(--ju-text);
   }
+  ::selection { background: var(--ju-green-bg); }
+  /* DS 08：focus 一律綠色外環（僅鍵盤操作時顯示） */
+  a:focus-visible, button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ju-base), 0 0 0 4px var(--ju-green);
+    border-radius: 4px;
+  }
+  input:focus-visible, textarea:focus-visible {
+    outline: none;
+    border-color: var(--ju-green);
+    box-shadow: 0 0 0 3px var(--ju-focus-ring);
+  }
 }
 
 /* ── Font family helpers ── */
 .ju-sans  { font-family: 'Noto Sans TC', system-ui, sans-serif; }
 .ju-serif { font-family: 'Noto Serif TC', serif; }
-.ju-mono  { font-family: 'IBM Plex Mono', monospace; }
+.ju-mono  { font-family: 'Space Mono', monospace; }
+.ju-en    { font-family: 'Hanken Grotesk', sans-serif; }
 
 @layer utilities {
   /* ── Responsive page titles ── */
@@ -37,11 +50,11 @@
 
   /* ── Mono utilities ── */
   .text-mono-label {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Space Mono', monospace;
     font-size: 11px; letter-spacing: 0.08em; font-weight: 400;
   }
   .text-caption {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Space Mono', monospace;
     font-size: 10.5px; letter-spacing: 0.14em; font-weight: 400;
   }
   .text-label { font-size: 12px; line-height: 1.5; font-weight: 500; }
@@ -49,19 +62,24 @@
   .text-body-sm { font-size: 14px; line-height: 1.7;  font-weight: 400; }
 }
 
-/* ── Tag chip hover ── */
-.p-chip:hover { border-color: var(--ju-green) !important; color: var(--ju-green) !important; }
+/* ── Tag chip states（DS 08 Filter chip：default 次表面 / hover 加深 / selected 森林綠填色） ── */
+.p-chip:hover { background: var(--ju-surface-hover) !important; }
+.p-chip--selected:hover { background: var(--ju-green-hover) !important; }
 
-/* ── BackToTop ── */
+/* ── DS 08：按鈕 active 縮放 97% ── */
+button { transition: transform 0.1s ease; }
+button:active:not(:disabled) { transform: scale(0.97); }
+
+/* ── BackToTop（DS 08 圓形圖示鈕：hover 填入森林綠） ── */
 .p-backtop {
   position: fixed; right: 24px; bottom: 24px; z-index: 35;
   width: 44px; height: 44px; border-radius: 999px;
-  background: var(--ju-base); border: 0.5px solid var(--ju-text);
-  color: var(--ju-text); font-size: 15px; cursor: pointer;
+  background: var(--ju-base); border: 1px solid rgba(0, 0, 0, 0.25);
+  color: var(--ju-green); font-size: 15px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
-.p-backtop:hover { color: var(--ju-green); border-color: var(--ju-green); }
+.p-backtop:hover { background: var(--ju-green); border-color: var(--ju-green); color: var(--ju-on-green); }
 
 /* ── Mobile: sticky bottom dock + bottom sheet ── */
 .p-dock {
@@ -73,7 +91,7 @@
 }
 .p-sheet-backdrop {
   position: fixed; inset: 0; z-index: 50;
-  background: rgba(26, 26, 26, 0.32);
+  background: rgba(35, 35, 29, 0.32);
   display: flex; align-items: flex-end;
 }
 .p-sheet {
@@ -129,10 +147,10 @@
 .article-content .img-wrapper { margin: 40px 0; }
 .article-content .img-wrapper img {
   width: 100%; aspect-ratio: 16 / 10; object-fit: cover;
-  display: block; border-radius: 4px;
+  display: block; border-radius: var(--radius-sm);
 }
 .article-content .img-caption {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Space Mono', monospace;
   font-size: 10px; letter-spacing: 0.14em;
   color: var(--ju-text3); text-align: center; margin-top: 10px;
 }

@@ -23,8 +23,8 @@ function TagChip({ label }) {
       style={{
         display: 'inline-block', height: 28, lineHeight: '28px',
         padding: '0 11px', borderRadius: 999, fontSize: 10.5,
-        letterSpacing: '0.08em', background: 'transparent',
-        border: '0.5px solid var(--ju-border)', color: 'var(--ju-text2)',
+        letterSpacing: '0.08em', background: 'var(--ju-surface)',
+        border: 'none', color: 'var(--ju-text)',
       }}
     >
       {label}
@@ -87,7 +87,7 @@ export default function WorkDetailPage() {
       <div style={{ minHeight: '100vh', paddingTop: 56, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', marginBottom: 16 }}>作品載入失敗</p>
-          <Link to="/" className="ju-mono" style={{ display: 'inline-block', height: 40, lineHeight: '40px', padding: '0 20px', background: 'var(--ju-green)', color: 'var(--ju-green-bg)', borderRadius: 8, fontSize: 11, letterSpacing: '0.14em', textDecoration: 'none' }}>
+          <Link to="/" className="ju-mono" style={{ display: 'inline-block', height: 40, lineHeight: '40px', padding: '0 20px', background: 'var(--ju-green)', color: 'var(--ju-on-green)', borderRadius: 999, fontSize: 11, letterSpacing: '0.14em', textDecoration: 'none' }}>
             返回首頁
           </Link>
         </div>
@@ -131,7 +131,7 @@ export default function WorkDetailPage() {
         </div>
 
         {/* Article content */}
-        <div style={{ marginTop: 40, background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 12, padding: 'clamp(24px, 5vw, 56px)' }}>
+        <div style={{ marginTop: 40, background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 20, padding: 'clamp(24px, 5vw, 56px)' }}>
           {work.blocks?.length > 0
             ? <NotionBlockRenderer blocks={work.blocks} />
             : <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text3)', margin: 0 }}>尚無內容</p>

@@ -23,7 +23,7 @@ function CountDivider({ children }) {
 function SkeletonCard() {
   return (
     <div style={{ cursor: 'default' }}>
-      <div className="animate-pulse" style={{ aspectRatio: '4/3', backgroundColor: 'var(--ju-surface)', border: '0.5px solid var(--ju-border)' }} />
+      <div className="animate-pulse" style={{ aspectRatio: '4/3', backgroundColor: 'var(--ju-surface)', border: '0.5px solid var(--ju-border)', borderRadius: 12 }} />
       <div style={{ paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div className="animate-pulse" style={{ height: 20, width: '80%', borderRadius: 4, backgroundColor: 'var(--ju-surface)' }} />
         <div className="animate-pulse" style={{ height: 12, width: '50%', borderRadius: 4, backgroundColor: 'var(--ju-surface)' }} />
@@ -259,7 +259,7 @@ export default function HomePage() {
             <button
               onClick={() => applyTags([])}
               className="ju-mono"
-              style={{ marginTop: 20, height: 40, padding: '0 20px', background: 'transparent', border: '0.5px solid var(--ju-green)', borderRadius: 8, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.14em', cursor: 'pointer' }}
+              style={{ marginTop: 20, height: 40, padding: '0 20px', background: 'transparent', border: '1px solid var(--ju-green)', borderRadius: 999, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.14em', cursor: 'pointer' }}
             >
               清除篩選
             </button>

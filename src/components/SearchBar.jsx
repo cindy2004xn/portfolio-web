@@ -4,15 +4,15 @@ function TagChip({ label, count = null, selected = false, small = false, onClick
   return (
     <button
       onClick={onClick}
-      className="ju-mono p-chip"
+      className={`ju-mono ${selected ? 'p-chip--selected' : 'p-chip'}`}
       style={{
         height: small ? 28 : 32,
         padding: small ? '0 11px' : '0 14px',
         borderRadius: 999, fontSize: small ? 10.5 : 11, letterSpacing: '0.08em',
-        cursor: 'pointer', background: 'transparent', whiteSpace: 'nowrap',
-        border: selected ? '0.5px solid var(--ju-green)' : '0.5px solid var(--ju-border)',
-        color: selected ? 'var(--ju-green)' : 'var(--ju-text2)',
-        transition: 'color .15s ease, border-color .15s ease', flexShrink: 0,
+        cursor: 'pointer', whiteSpace: 'nowrap', border: 'none',
+        background: selected ? 'var(--ju-green)' : 'var(--ju-surface)',
+        color: selected ? 'var(--ju-on-green)' : 'var(--ju-text)',
+        transition: 'color .15s ease, background .15s ease', flexShrink: 0,
       }}
     >
       {label}
@@ -66,11 +66,11 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <button onClick={() => setDraft([...allTags])} className="ju-mono p-chip"
-          style={{ height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5, letterSpacing: '0.08em', cursor: 'pointer', background: 'transparent', border: '0.5px solid var(--ju-text)', color: 'var(--ju-text)' }}>
+          style={{ height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5, letterSpacing: '0.08em', cursor: 'pointer', background: 'transparent', border: '1px solid var(--ju-green)', color: 'var(--ju-green)' }}>
           全選
         </button>
         <button onClick={() => setDraft([])} className="ju-mono p-chip"
-          style={{ height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5, letterSpacing: '0.08em', cursor: 'pointer', background: 'transparent', border: '0.5px solid var(--ju-border)', color: 'var(--ju-text2)' }}>
+          style={{ height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5, letterSpacing: '0.08em', cursor: 'pointer', background: 'var(--ju-surface)', border: 'none', color: 'var(--ju-text)' }}>
           清除
         </button>
         <span className="ju-mono" style={{ marginLeft: 'auto', fontSize: 9.5, letterSpacing: '0.14em', color: 'var(--ju-text3)' }}>
@@ -99,8 +99,9 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
           display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8,
           minHeight: 52, padding: '8px 8px 8px 14px', cursor: 'text',
           background: 'var(--ju-card)',
-          border: `0.5px solid ${open && popover ? 'var(--ju-text)' : 'var(--ju-border)'}`,
-          borderRadius: 8, transition: 'border-color .15s ease',
+          border: `1px solid ${open && popover ? 'var(--ju-green)' : 'var(--ju-border)'}`,
+          boxShadow: open && popover ? '0 0 0 3px var(--ju-focus-ring)' : 'none',
+          borderRadius: 12, transition: 'border-color .15s ease, box-shadow .15s ease',
         }}
       >
         <span className="ju-mono" aria-hidden="true" style={{ fontSize: 12, color: 'var(--ju-text3)', flexShrink: 0 }}>⌕</span>
@@ -121,11 +122,11 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
           onClick={e => { e.stopPropagation(); doSearch(); }}
           className="ju-mono"
           style={{
-            height: 38, padding: '0 18px', borderRadius: 6, fontSize: 11.5, letterSpacing: '0.16em',
+            height: 38, padding: '0 18px', borderRadius: 999, fontSize: 11.5, letterSpacing: '0.16em',
             cursor: 'pointer', flexShrink: 0, alignSelf: 'center',
             background: dirty ? 'var(--ju-green)' : 'transparent',
-            border: '0.5px solid var(--ju-green)',
-            color: dirty ? 'var(--ju-green-bg)' : 'var(--ju-green)',
+            border: '1px solid var(--ju-green)',
+            color: dirty ? 'var(--ju-on-green)' : 'var(--ju-green)',
             transition: 'background .15s ease, color .15s ease',
           }}
         >
@@ -135,7 +136,7 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
 
       {popover ? (
         open && (
-          <div style={{ position: 'absolute', left: 0, right: 0, top: 'calc(100% + 8px)', zIndex: 30, padding: 16, background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 8 }}>
+          <div style={{ position: 'absolute', left: 0, right: 0, top: 'calc(100% + 8px)', zIndex: 30, padding: 16, background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 12, boxShadow: '0 16px 34px -18px rgba(40, 50, 25, 0.45)' }}>
             {tagList}
           </div>
         )
@@ -154,7 +155,7 @@ export function BottomDock({ applied, allTagCounts, onApply, resultCount }) {
       <div className="p-dock">
         <button
           onClick={() => setOpen(true)}
-          style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, height: 50, padding: '0 16px', background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 8, cursor: 'pointer', textAlign: 'left' }}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, height: 50, padding: '0 16px', background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 12, cursor: 'pointer', textAlign: 'left' }}
         >
           <span className="ju-mono" style={{ fontSize: 12, color: 'var(--ju-green)' }}>⌕</span>
           <span className="ju-sans" style={{ flex: 1, fontSize: 13, color: applied.length ? 'var(--ju-text)' : 'var(--ju-text3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

@@ -2,6 +2,7 @@
 
 | 日期 | 決定了什麼 | 為什麼 | 放棄了什麼選項 |
 |------|-----------|--------|----------------|
+| 2026-07-13 | 視覺改版採用新設計系統「Armonia Foundations v1.1」（正本：`project/Design System.dc.html`，唯讀參考、會隨迭代更新）：色彩換為暖灰米底＋深森林綠主色（不用純白純黑）、mono 字體 IBM Plex Mono → Space Mono、新增 Hanken Grotesk 英文點綴、襯線 Noto Serif TC 保留、圓角階層 8/12/20/pill、元件狀態依 DS 定義（hover 加深、active 縮 97%、focus 綠外環、disabled 40%）。實作方式：值集中在 `src/styles/tokens.css` 的 `--ju-*`，DS 更新時只動 tokens 一處。已知取捨：`--ju-text2` 對比降至約 3.5:1、`--ju-text3` 約 2.3:1（僅限小型 mono 標籤），為跟隨 DS 的刻意決定，取代原無障礙底線註記 | 作品集要換上自己的 DS 識別；集中 token 讓後續 DS 迭代成本最低 | 維持原「米白＋純白卡片」配色；把 DS 直接寫死在各元件（改版成本高） |
 | 2026-07-12 | 【已完成】每日自動重建保險已啟用：GitHub secret `VERCEL_DEPLOY_HOOK` 已設定，手動觸發 workflow 實測成功（run 29194624223）。每天台北時間早上 5 點自動重建 | 靜態化後內容更新靠手動點 Deploy Hook；若忘記點，每日自動重建保證最晚隔天上線 | —（原待辦，當日設定完成） |
 | 2026-07-12 | Notion 從「即時後端」改為「建置時資料來源」：build 時（`scripts/fetch-content.js`）抓取全部作品存成靜態 JSON、Notion 託管圖片下載到 `public/content/` 自行託管，移除 `/api` serverless 與 Express；內容更新靠 Vercel Deploy Hook 手動觸發 + GitHub Action 每日自動重建。此決策同時解決 2026-06-25 那筆「簽章網址過期」待辦 | 即時串接讓每位訪客每次瀏覽都等 Notion API（實測 0.7～2.5 秒），且簽章網址約 1 小時過期導致無法加長效快取；靜態化後載入 <100ms、圖片永不過期、不受 Notion 限速/停機/改版影響，全程零費用。代價僅是內容更新從即時變成「觸發重建後約 1 分鐘」 | 路線 A：維持即時 API + CDN 短快取 + 封面圖搬 Cloudinary（圖片過期問題只解一半）；遷移 Next.js 用 ISR（工程量大） |
 | 2026-06-25 | 【待辦】封面圖目前用「上傳到 Notion」的檔案，URL 為 S3 簽章網址、約 1 小時過期。未來若要加 CDN/快取，需改用不過期的圖源（外部圖床，或 Notion files 的 external 連結） | 簽章網址過期後封面會壞；目前每次請求即時向 Notion 取得新簽章，低流量可接受，但加快取後會踩雷 | 暫不改圖源（維持即時取得簽章 URL） |
