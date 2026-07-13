@@ -2,28 +2,29 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchWorks } from '../lib/data.js';
 import BackToTop from '../components/BackToTop.jsx';
+import HeroParticles from '../components/HeroParticles.jsx';
 
-/* Landing 文案正本：作品集網站_Landing_Page文案初稿 v3。
-   日期/客戶以文案字串直接呈現（與 Notion 年份標註略有差異，刻意不從資料拉）。 */
+/* Landing 文案正本：作品集網站_Landing_Page文案初稿 v2.2。
+   meta 一律「客戶｜專案名」格式（v2.2 拿掉日期，刻意不從資料拉）。 */
 
 const SELECTED_WORKS = [
   {
     id: '37baa7a7-8108-8082-8a2b-cbd642c2b604',
     title: '高壓救災情境：降低視覺干擾以提升決策速度',
-    meta: '2024/8 – 2024/12　新竹市消防局｜颱洪行動匯報系統 2.0',
-    desc: '透過 User Flow 釐清消防員、指揮中心、里長、應變小組之間的資訊落差，我們將散落的災情資料整合進單一頁面，並以視覺化呈現讓指揮中心快速掌握狀況，消防員與指揮官的決策壓力不同，需要各自專屬的介面。',
+    meta: '新竹市消防局｜颱洪行動匯報系統 2.0',
+    desc: '透過 User Flow 釐清消防員、指揮中心、里長、應變小組之間的資訊傳遞，依照實際救災情境，梳理出各使用者主要提供與接收的資訊。',
   },
   {
     id: '38aaa7a7-8108-8032-afed-c0ea0a972f94',
     title: 'AI 客服系統：建立使用者與 AI 之間的信任機制',
-    meta: '2023/5 – 2023/12　華碩｜線上客服導入 AI 技術',
-    desc: '透過與客服單位的訪談與親和圖分類，我們將複雜情境收斂為三種類型，設計出決策樹、AI+KM 客服、真人客服的三層架構，當情緒化語彙被偵測到，AI 會優雅地把使用者轉交給真人。',
+    meta: '華碩｜線上客服導入 AI 技術',
+    desc: '與客服單位的訪談，將情境收斂為三種類型，依此架構設計出決策樹、AI+KM 客服、真人客服的三層架構，在 AI 無法接住用戶的需求時，也能夠有即時處理的機制。',
   },
   {
     id: '37baa7a7-8108-80c4-9f01-e003adfbf4df',
-    title: '福利政策後台重構：從人工比對到系統化查找',
-    meta: '2023/3 – 2024/1　長穩基金會｜iFare 福利政策小幫手（UX 設計師／PM 雙棲）',
-    desc: '社工人員原本得靠人工比對政策條件，後台老舊、更新一次要花一年。我以 Excel 原型與客戶共同測試，收斂搜尋條件並導入排程功能，將政策維護更新時間從 1 年縮短至 1 個月，同時身兼 PM 與設計師角色，在需求、時程與團隊執行之間取得平衡。',
+    title: '福利政策搜尋：降低思考選擇負擔，提升精準篩選機制',
+    meta: '長穩基金會｜iFare 福利政策小幫手',
+    desc: '以 Excel 原型快速測試各種搜尋角度，並透過收斂搜尋條件，讓使用者精準提供必要資料，且可快速找出符合資格與需求的福利政策。',
   },
 ];
 
@@ -31,33 +32,56 @@ const AI_WORKS = [
   {
     id: '38aaa7a7-8108-8028-9ebb-e750f4aa9fdf',
     title: '分析現有流程，協助導入 AI Agent',
-    meta: '2026　旻寬科技',
+    meta: '旻寬科技｜報價/議價 Agent',
     desc: '各廠商報價單格式不一，人工比對耗時且容易出錯。初期讓 AI 直接處理，實際產出與預期有落差；於是加入人類審核點並建立學習型同義詞庫，逐步提高辨識精準度。',
   },
   {
     id: '37baa7a7-8108-8021-b632-e36abbef5fcf',
     title: '透過 PRD 控管與 AI 進行協作',
-    meta: '2026　個人專案',
+    meta: '個人專案｜個人作品網站',
     desc: '我負責定義網站架構、內容邏輯與 PRD 規格，AI 依規格產出程式碼與初版介面，我再檢視、調整、回饋修正方向，你現在看到的網站，就是這個協作模式的產出結果。',
   },
   {
     id: '38aaa7a7-8108-8070-875c-f491ba76455c',
     title: 'AI 協助有效提升資料分析',
-    meta: '2025 – 仍在職　資訊工業策進會',
-    desc: '需要快速閱讀多家廠商計劃書並產出精準報告。我負責描述預期的資料呈現方式與邏輯，AI 協助生成函式、建立分析表結構，我再檢查產出是否符合實際決策需求。',
+    meta: '資訊工業策進會｜115智慧雨林健康照護_資料庫',
+    desc: '在需要快速閱讀多家廠商計劃書並產出精準報告，我負責描述預期的資料呈現方式與邏輯，AI 協助生成函式、建立分析表結構，我再檢查產出是否符合實際決策需求。',
   },
 ];
 
 const WORK_SKILLS = [
-  { title: '梳理複雜資訊', desc: '把散落、混亂的資料與流程，重構成可彈性擴張且易於管理' },
-  { title: '資料分析詮釋', desc: '善於建立資料關係，並詮釋出可應用之架構' },
-  { title: '制定專案策略', desc: '傾聽需求建立共識，以利專案執行與高品質產出' },
+  { icon: 'layers', title: '梳理複雜資訊', desc: '把散落、混亂的資料與流程，重構成可彈性擴張且易於管理' },
+  { icon: 'chart',  title: '資料分析詮釋', desc: '善於建立資料關係，並詮釋出可應用之架構' },
+  { icon: 'target', title: '制定專案策略', desc: '傾聽需求建立共識，以利專案執行與高品質產出' },
 ];
 
+/* 技能區塊的線性 icon（森林綠單色，24px；純 inline SVG 無相依） */
+function SkillIcon({ name }) {
+  const common = { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'var(--ju-green)', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true };
+  if (name === 'layers') return (
+    <svg {...common}><path d="M12 3 3 8l9 5 9-5-9-5Z" /><path d="M3 13l9 5 9-5" /><path d="M3 18l9 5 9-5" /></svg>
+  );
+  if (name === 'chart') return (
+    <svg {...common}><path d="M4 20V10" /><path d="M10 20V4" /><path d="M16 20v-7" /><path d="M22 20H2" /></svg>
+  );
+  if (name === 'collab') return (
+    <svg {...common}><circle cx="9" cy="12" r="6" /><circle cx="15" cy="12" r="6" /></svg>
+  );
+  if (name === 'shield') return (
+    <svg {...common}><path d="M12 3l7 3v5c0 4.4-2.9 7.6-7 9-4.1-1.4-7-4.6-7-9V6l7-3Z" /><path d="M9 12l2 2 4-4" /></svg>
+  );
+  if (name === 'flow') return (
+    <svg {...common}><circle cx="4.5" cy="12" r="2.2" /><circle cx="12" cy="12" r="2.2" /><circle cx="19.5" cy="12" r="2.2" /><path d="M6.7 12h3.1M14.2 12h3.1" /></svg>
+  );
+  return (
+    <svg {...common}><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3.5" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg>
+  );
+}
+
 const AI_SKILLS = [
-  { desc: '把描述性需求轉譯成可執行的 AI 協作框架' },
-  { desc: '在流程中建立人類審核點，把關 AI 產出品質' },
-  { desc: '應用場景涵蓋資料分析、格式辨識自動化、AI 輔助網站與原型開發' },
+  { icon: 'collab', title: '人機協作', desc: '透過撰寫專案 PRD 與 AI 進行專案發想、研究、設計。' },
+  { icon: 'shield', title: 'AI 品質管控', desc: '前期可建立多項審核點，後期可建立審核標準。' },
+  { icon: 'flow',   title: 'AI 導入流程', desc: '針對使用頻率高、可標準化、例外狀況多之情境進行導入。' },
 ];
 
 /* 段標：綠色短標記（單一品牌 tick，非編號鷹架、非 mono eyebrow）+ 襯線標題 */
@@ -65,9 +89,9 @@ function SectionHeader({ zh, en }) {
   return (
     <div style={{ marginBottom: 28 }}>
       <span aria-hidden="true" style={{ display: 'block', width: 28, height: 3, borderRadius: 999, background: 'var(--ju-green)', marginBottom: 18 }} />
-      <h2 className="ju-serif" style={{ fontSize: 'clamp(22px, 3.4vw, 28px)', fontWeight: 500, margin: 0, lineHeight: 1.4 }}>
+      <h2 className="ju-serif" style={{ fontSize: 'clamp(28px, 4.6vw, 42px)', fontWeight: 500, margin: 0, lineHeight: 1.3, letterSpacing: '-0.01em' }}>
         {zh}
-        {en && <span className="ju-en" style={{ fontWeight: 500, fontSize: '0.6em', color: 'var(--ju-text2)', marginLeft: 12 }}>{en}</span>}
+        {en && <span className="ju-en" style={{ fontWeight: 500, fontSize: '0.5em', color: 'var(--ju-text2)', marginLeft: 14, letterSpacing: '0.02em' }}>{en}</span>}
       </h2>
     </div>
   );
@@ -79,6 +103,7 @@ function SkillGrid({ items }) {
     <div className="lp-skills" style={{ display: 'grid', gap: '0 40px', margin: '0 0 40px' }}>
       {items.map((s, i) => (
         <div key={i} style={{ padding: '22px 0 4px', borderTop: '1px solid var(--ju-border)' }}>
+          {s.icon && <div style={{ marginBottom: 12 }}><SkillIcon name={s.icon} /></div>}
           {s.title && <div className="ju-sans" style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>{s.title}</div>}
           <p className="ju-sans" style={{ fontSize: 14, lineHeight: 1.8, color: 'var(--ju-text2)', margin: 0 }}>{s.desc}</p>
         </div>
@@ -147,26 +172,30 @@ export default function LandingPage() {
   return (
     <div style={{ minHeight: '100vh', paddingTop: 56 }}>
 
-      {/* 1. Hero */}
-      <section style={{ minHeight: 'min(86vh, 760px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 880, margin: '0 auto', padding: '48px 24px 32px', textAlign: 'center', boxSizing: 'border-box' }}>
-        <p className="ju-mono" style={{ fontSize: 12, letterSpacing: '0.24em', color: 'var(--ju-text3)', margin: 0 }}>朱千慧　CINDY JU</p>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
-          <span className="ju-sans" style={{ display: 'inline-block', background: 'var(--ju-green-bg)', color: 'var(--ju-green)', padding: '7px 16px', borderRadius: 999, fontSize: 13, fontWeight: 500 }}>
-            五年乙方與多元專案經歷
-          </span>
+      {/* 1. Hero — 置中構圖（3jigen 式：巨大標語 + 間隔字距副標 + 垂直細線導引）+ 粒子流場 */}
+      <section style={{ position: 'relative', overflow: 'hidden', minHeight: 'min(92vh, 820px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '48px 24px 110px', boxSizing: 'border-box', textAlign: 'center' }}>
+        <HeroParticles />
+        <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 960, margin: '0 auto' }}>
+          <p className="ju-mono" style={{ fontSize: 'clamp(14px, 1.6vw, 16px)', letterSpacing: '0.3em', color: 'var(--ju-text)', margin: 0 }}>
+            朱千慧　CINDY JU
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 26 }}>
+            <span className="ju-sans" style={{ display: 'inline-block', background: 'var(--ju-green-bg)', color: 'var(--ju-green)', padding: '9px 22px', borderRadius: 999, fontSize: 'clamp(14px, 1.6vw, 16px)', fontWeight: 500 }}>
+              五年乙方與多元專案經歷
+            </span>
+          </div>
+          <h1 className="ju-sans" style={{ fontSize: 'clamp(44px, 8.5vw, 88px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.15, margin: '40px 0 0', textWrap: 'balance' }}>
+            跨領域 UX 設計師
+          </h1>
+          <p className="ju-serif" style={{ fontSize: 'clamp(20px, 3.2vw, 30px)', fontWeight: 500, lineHeight: 1.6, letterSpacing: '0.14em', margin: '34px 0 0', color: 'var(--ju-text)' }}>
+            信任，是體驗與記憶的接軌
+          </p>
+          <p className="ju-sans" style={{ fontSize: 15, color: 'var(--ju-text2)', margin: '44px 0 0' }}>
+            曾任職　全能資訊有限公司（UX 設計師）
+          </p>
         </div>
-        <h1 className="ju-sans" style={{ fontSize: 'clamp(32px, 6vw, 56px)', fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.25, margin: '20px 0 0' }}>
-          跨領域 UX 設計師
-        </h1>
-        <p className="ju-serif" style={{ fontSize: 'clamp(22px, 4vw, 34px)', fontWeight: 500, lineHeight: 1.6, margin: '28px 0 0', color: 'var(--ju-text)' }}>
-          信任，是體驗與記憶的接軌
-        </p>
-        <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', margin: '36px 0 0' }}>
-          曾任職　全能資訊有限公司（UX 設計師）
-        </p>
-        <div style={{ marginTop: 'auto', paddingTop: 48, display: 'flex', justifyContent: 'center' }}>
-          <span aria-hidden="true" style={{ width: 44, height: 44, borderRadius: 999, border: '1px solid rgba(0,0,0,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ju-green)', fontSize: 18 }}>↓</span>
-        </div>
+        {/* 3jigen 式捲動導引：自中央垂下的細直線 */}
+        <div aria-hidden="true" style={{ position: 'absolute', left: '50%', bottom: 0, width: 1, height: 88, background: 'var(--ju-green)', opacity: 0.55, zIndex: 1 }} />
       </section>
 
       {/* 2. 定位論述 — Forest Panel（全幅綠帶，綠撐面主視覺；紙色襯線反白） */}
@@ -177,10 +206,10 @@ export default function LandingPage() {
             AI 時代下，作為設計師的定位
           </h2>
           <p className="ju-sans" style={{ fontSize: 'clamp(16px, 1.5vw, 18px)', lineHeight: 2.1, margin: '32px 0 0', color: 'var(--ju-on-green)' }}>
-            我習慣在看似不相關的事物之間，找出底層共通的結構，不管是格式混亂的原始資料，還是分散各處的資訊邏輯，我會先把它轉譯成一套可以被執行、被複製的框架，再交給 AI 在框架裡延伸與執行。但延伸不會永遠準確，所以我在流程裡保留人的審核點，持續用真實結果校正框架本身。
+            在技術快速發展時代，每天都有新技術、新資訊，而設計師更是需要保持學習心態，擁抱接納不同時代下的變化。但對我來說，AI 技術像是增強人類的技能，讓設計師的創意能夠實際落實，回到設計師作為 maker 的本質。
           </p>
           <p className="ju-sans" style={{ fontSize: 'clamp(16px, 1.5vw, 18px)', lineHeight: 2.1, margin: '26px 0 0', color: 'var(--ju-on-green)' }}>
-            在這樣的協作裡，我的位置不是「被取代」或「取代 AI」的關係，而是負責觸發、定義邊界、把關品質的那個人。這是我認為 AI 時代的設計師需要具備的能力，不是比 AI 更會做，而是比 AI 更早知道要做什麼、怎麼判斷做得好不好。
+            我擅長在繁雜的事物之間，找出底層共通的結構，轉譯成一套可以被執行、被複製的框架，這不只能應用在概念詮釋，更能夠將使用者研究、資料架構、設計流程等方法能夠落地應用。這些簡單的思考架構，是經過多方面的知識與資訊柔和，提煉與驗證而來的。
           </p>
         </div>
       </section>
@@ -197,7 +226,7 @@ export default function LandingPage() {
       {/* 4. AI 專區 */}
       <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(56px, 8vw, 96px) 24px 0' }}>
         <SectionHeader zh="AI 專區" en="Working with AI" />
-        <p className="ju-sans" style={{ fontSize: 15, fontWeight: 700, margin: '0 0 14px' }}>我的 AI 應用能力</p>
+        <p className="ju-sans" style={{ fontSize: 15, fontWeight: 700, margin: '0 0 14px' }}>AI 應用能力</p>
         <SkillGrid items={AI_SKILLS} />
         <div style={{ display: 'grid', gap: 'clamp(24px, 4vw, 40px)' }}>
           {AI_WORKS.map(w => <LandingWorkCard key={w.id} work={w} cover={covers[w.id]} />)}
