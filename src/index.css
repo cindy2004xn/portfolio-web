@@ -125,7 +125,7 @@ button:active:not(:disabled) { transform: scale(0.97); }
 /* ── Landing page ── */
 .lp-skills { grid-template-columns: repeat(3, 1fr); }
 .lp-card { grid-template-columns: 1fr 1fr; }
-.lp-cta:hover { background: var(--ju-green-hover) !important; }
+.lp-cta-invert:hover { background: var(--ju-on-green-2) !important; }
 @media (max-width: 719px) {
   .lp-skills { grid-template-columns: 1fr; }
   .lp-card { grid-template-columns: 1fr; }

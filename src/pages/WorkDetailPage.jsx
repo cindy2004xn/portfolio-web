@@ -21,10 +21,10 @@ function TagChip({ label }) {
     <span
       className="ju-mono"
       style={{
-        display: 'inline-block', height: 28, lineHeight: '28px',
+        display: 'inline-block', height: 28, lineHeight: '26px',
         padding: '0 11px', borderRadius: 999, fontSize: 10.5,
-        letterSpacing: '0.08em', background: 'var(--ju-surface)',
-        border: 'none', color: 'var(--ju-text)',
+        letterSpacing: '0.08em', background: 'transparent',
+        border: '1px solid var(--ju-green)', color: 'var(--ju-green)',
       }}
     >
       {label}
@@ -130,8 +130,8 @@ export default function WorkDetailPage() {
           )}
         </div>
 
-        {/* Article content */}
-        <div style={{ marginTop: 40, background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 20, padding: 'clamp(24px, 5vw, 56px)' }}>
+        {/* Article content — 開放閱讀面，不關進浮框；限制行長以利閱讀 */}
+        <div style={{ marginTop: 40, maxWidth: 720 }}>
           {work.blocks?.length > 0
             ? <NotionBlockRenderer blocks={work.blocks} />
             : <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text3)', margin: 0 }}>尚無內容</p>

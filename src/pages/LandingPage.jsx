@@ -60,25 +60,26 @@ const AI_SKILLS = [
   { desc: '應用場景涵蓋資料分析、格式辨識自動化、AI 輔助網站與原型開發' },
 ];
 
-function SectionHeader({ index, zh, en }) {
+/* 段標：綠色短標記（單一品牌 tick，非編號鷹架、非 mono eyebrow）+ 襯線標題 */
+function SectionHeader({ zh, en }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, marginBottom: 28 }}>
-      <span className="ju-mono" style={{ fontSize: 12, letterSpacing: '0.18em', color: 'var(--ju-text3)' }} aria-hidden="true">{index}</span>
-      <h2 className="ju-serif" style={{ fontSize: 'clamp(22px, 3.4vw, 28px)', fontWeight: 500, margin: 0 }}>
+    <div style={{ marginBottom: 28 }}>
+      <span aria-hidden="true" style={{ display: 'block', width: 28, height: 3, borderRadius: 999, background: 'var(--ju-green)', marginBottom: 18 }} />
+      <h2 className="ju-serif" style={{ fontSize: 'clamp(22px, 3.4vw, 28px)', fontWeight: 500, margin: 0, lineHeight: 1.4 }}>
         {zh}
-        {en && <span className="ju-en" style={{ fontWeight: 500, fontSize: '0.6em', color: 'var(--ju-text3)', marginLeft: 12 }}>{en}</span>}
+        {en && <span className="ju-en" style={{ fontWeight: 500, fontSize: '0.6em', color: 'var(--ju-text2)', marginLeft: 12 }}>{en}</span>}
       </h2>
     </div>
   );
 }
 
-/* 技能特點：作品區與 AI 專區共用的三欄卡 */
+/* 技能特點：去框的編列式三欄（上緣細線分隔，消除重複卡片牆） */
 function SkillGrid({ items }) {
   return (
-    <div className="lp-skills" style={{ display: 'grid', gap: 14, margin: '0 0 40px' }}>
+    <div className="lp-skills" style={{ display: 'grid', gap: '0 40px', margin: '0 0 40px' }}>
       {items.map((s, i) => (
-        <div key={i} style={{ background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 16, padding: '22px 24px' }}>
-          {s.title && <div className="ju-sans" style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{s.title}</div>}
+        <div key={i} style={{ padding: '22px 0 4px', borderTop: '1px solid var(--ju-border)' }}>
+          {s.title && <div className="ju-sans" style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>{s.title}</div>}
           <p className="ju-sans" style={{ fontSize: 14, lineHeight: 1.8, color: 'var(--ju-text2)', margin: 0 }}>{s.desc}</p>
         </div>
       ))}
@@ -100,8 +101,8 @@ function LandingWorkCard({ work, cover }) {
       style={{
         display: 'grid', gap: 0, textDecoration: 'none', color: 'inherit', overflow: 'hidden',
         background: 'var(--ju-card)', borderRadius: 20,
-        border: `0.5px solid ${hov ? 'var(--ju-green)' : 'var(--ju-border)'}`,
-        boxShadow: hov ? '0 16px 34px -18px rgba(40, 50, 25, 0.45)' : 'none',
+        border: `1px solid ${hov ? 'var(--ju-green)' : 'var(--ju-border-card)'}`,
+        boxShadow: hov ? 'var(--ju-shadow-hover)' : 'var(--ju-shadow-rest)',
         transform: hov ? 'translateY(-4px)' : 'none',
         transition: 'border-color .15s ease, box-shadow .2s ease, transform .2s ease',
       }}
@@ -147,7 +148,7 @@ export default function LandingPage() {
     <div style={{ minHeight: '100vh', paddingTop: 56 }}>
 
       {/* 1. Hero */}
-      <section style={{ minHeight: 'calc(100vh - 56px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 880, margin: '0 auto', padding: '48px 24px 32px', textAlign: 'center', boxSizing: 'border-box' }}>
+      <section style={{ minHeight: 'min(86vh, 760px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 880, margin: '0 auto', padding: '48px 24px 32px', textAlign: 'center', boxSizing: 'border-box' }}>
         <p className="ju-mono" style={{ fontSize: 12, letterSpacing: '0.24em', color: 'var(--ju-text3)', margin: 0 }}>朱千慧　CINDY JU</p>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
           <span className="ju-sans" style={{ display: 'inline-block', background: 'var(--ju-green-bg)', color: 'var(--ju-green)', padding: '7px 16px', borderRadius: 999, fontSize: 13, fontWeight: 500 }}>
@@ -168,14 +169,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 2. 定位論述 */}
-      <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(56px, 8vw, 96px) 24px 0' }}>
-        <SectionHeader index="01" zh="AI 時代下，作為設計師的定位" />
-        <div style={{ background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 20, padding: 'clamp(28px, 5vw, 48px)' }}>
-          <p className="ju-sans" style={{ fontSize: 16, lineHeight: 2, margin: 0 }}>
+      {/* 2. 定位論述 — Forest Panel（全幅綠帶，綠撐面主視覺；紙色襯線反白） */}
+      <section style={{ background: 'var(--ju-green)', color: 'var(--ju-on-green)', padding: 'clamp(64px, 11vw, 132px) 24px' }}>
+        <div style={{ maxWidth: 800, margin: '0 auto' }}>
+          <span aria-hidden="true" style={{ display: 'block', width: 28, height: 3, borderRadius: 999, background: 'var(--ju-on-green-2)', marginBottom: 22 }} />
+          <h2 className="ju-serif" style={{ fontSize: 'clamp(24px, 4vw, 36px)', fontWeight: 500, lineHeight: 1.5, margin: 0, color: 'var(--ju-on-green)' }}>
+            AI 時代下，作為設計師的定位
+          </h2>
+          <p className="ju-sans" style={{ fontSize: 'clamp(16px, 1.5vw, 18px)', lineHeight: 2.1, margin: '32px 0 0', color: 'var(--ju-on-green)' }}>
             我習慣在看似不相關的事物之間，找出底層共通的結構，不管是格式混亂的原始資料，還是分散各處的資訊邏輯，我會先把它轉譯成一套可以被執行、被複製的框架，再交給 AI 在框架裡延伸與執行。但延伸不會永遠準確，所以我在流程裡保留人的審核點，持續用真實結果校正框架本身。
           </p>
-          <p className="ju-sans" style={{ fontSize: 16, lineHeight: 2, margin: '24px 0 0' }}>
+          <p className="ju-sans" style={{ fontSize: 'clamp(16px, 1.5vw, 18px)', lineHeight: 2.1, margin: '26px 0 0', color: 'var(--ju-on-green)' }}>
             在這樣的協作裡，我的位置不是「被取代」或「取代 AI」的關係，而是負責觸發、定義邊界、把關品質的那個人。這是我認為 AI 時代的設計師需要具備的能力，不是比 AI 更會做，而是比 AI 更早知道要做什麼、怎麼判斷做得好不好。
           </p>
         </div>
@@ -183,7 +187,7 @@ export default function LandingPage() {
 
       {/* 3. 精選作品 */}
       <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(56px, 8vw, 96px) 24px 0' }}>
-        <SectionHeader index="02" zh="精選作品" en="Selected Works" />
+        <SectionHeader zh="精選作品" en="Selected Works" />
         <SkillGrid items={WORK_SKILLS} />
         <div style={{ display: 'grid', gap: 'clamp(24px, 4vw, 40px)' }}>
           {SELECTED_WORKS.map(w => <LandingWorkCard key={w.id} work={w} cover={covers[w.id]} />)}
@@ -192,7 +196,7 @@ export default function LandingPage() {
 
       {/* 4. AI 專區 */}
       <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(56px, 8vw, 96px) 24px 0' }}>
-        <SectionHeader index="03" zh="AI 專區" en="Working with AI" />
+        <SectionHeader zh="AI 專區" en="Working with AI" />
         <p className="ju-sans" style={{ fontSize: 15, fontWeight: 700, margin: '0 0 14px' }}>我的 AI 應用能力</p>
         <SkillGrid items={AI_SKILLS} />
         <div style={{ display: 'grid', gap: 'clamp(24px, 4vw, 40px)' }}>
@@ -200,19 +204,21 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 5. CTA → /works */}
-      <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(72px, 10vw, 120px) 24px 120px', textAlign: 'center' }}>
-        <p className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.24em', color: 'var(--ju-text3)', margin: 0 }}>MORE WORKS · 完整 12 篇</p>
-        <p className="ju-serif" style={{ fontSize: 'clamp(20px, 3.4vw, 28px)', fontWeight: 500, margin: '18px 0 0' }}>
-          依主題瀏覽完整作品集
-        </p>
-        <Link
-          to="/works"
-          className="ju-sans lp-cta"
-          style={{ display: 'inline-block', marginTop: 28, background: 'var(--ju-green)', color: 'var(--ju-on-green)', padding: '14px 30px', borderRadius: 999, fontSize: 15, fontWeight: 500, textDecoration: 'none', transition: 'background .15s ease' }}
-        >
-          查看完整作品集
-        </Link>
+      {/* 5. CTA → /works（綠色收尾帶：圓角綠面板 + 反白按鈕） */}
+      <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(64px, 9vw, 112px) 24px 120px' }}>
+        <div style={{ background: 'var(--ju-green)', color: 'var(--ju-on-green)', borderRadius: 24, padding: 'clamp(48px, 8vw, 88px) 24px', textAlign: 'center' }}>
+          <p className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.24em', color: 'var(--ju-on-green-2)', margin: 0 }}>MORE WORKS · 完整 12 篇</p>
+          <p className="ju-serif" style={{ fontSize: 'clamp(20px, 3.4vw, 28px)', fontWeight: 500, margin: '18px 0 0', color: 'var(--ju-on-green)' }}>
+            依主題瀏覽完整作品集
+          </p>
+          <Link
+            to="/works"
+            className="ju-sans lp-cta-invert"
+            style={{ display: 'inline-block', marginTop: 28, background: 'var(--ju-on-green)', color: 'var(--ju-green)', padding: '14px 30px', borderRadius: 999, fontSize: 15, fontWeight: 700, textDecoration: 'none', transition: 'background .15s ease' }}
+          >
+            查看完整作品集
+          </Link>
+        </div>
       </section>
 
       <BackToTop />

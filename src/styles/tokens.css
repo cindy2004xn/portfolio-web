@@ -25,11 +25,17 @@
   --ju-border:   rgba(0, 0, 0, 0.1);
 
   /* 互動狀態（DS 08 元件狀態） */
-  --ju-green-hover:  #2A3518;  /* hover 加深一階 */
+  --ju-green-hover:  #2A3518;  /* hover 加深一階（也用於綠面內分層 Forest Deep） */
   --ju-green-active: #1F2912;  /* active 再加深 */
-  --ju-on-green:     #EEEBE1;  /* 綠底上的文字 */
+  --ju-on-green:     #EEEBE1;  /* 綠底上的主要文字（反白排版） */
+  --ju-on-green-2:   #C9D89B;  /* 綠底上的次要文字／mono 標籤（lime） */
   --ju-error:        #A6483A;  /* 磚紅錯誤 */
   --ju-focus-ring:   rgba(53, 67, 31, 0.22);  /* focus 半透明綠光環 */
+
+  /* Elevation（DS 04：扁平為底，陰影只在狀態時出現；卡片靜止給極輕浮起） */
+  --ju-shadow-rest:  0 8px 24px -16px rgba(35, 35, 29, 0.14);   /* 卡片靜止 rest-lift */
+  --ju-shadow-hover: 0 16px 34px -18px rgba(40, 50, 25, 0.45);  /* 卡片 hover-lift（森林冷調） */
+  --ju-border-card:  rgba(35, 35, 29, 0.14);  /* 卡片 1px 實線邊框，比 --ju-border 稍實 */
 
   /* Background */
   --color-bg-base:    #D9D5C7;
