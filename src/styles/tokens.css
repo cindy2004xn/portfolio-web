@@ -41,6 +41,17 @@
   --ju-shadow-hover: 0 18px 38px -18px rgba(0, 0, 0, 0.75);
   --ju-border-card:  rgba(244, 243, 239, 0.14);
 
+  /* ── Figma 266-175 帶進的灰階（v3.3）。全部 R=G=B，零彩度原則不變。
+     這幾階比上面的畫布色亮，因為它們是「光」不是「面」：粒子圓與光暈是
+     發光體，pill 是浮在粒子雲上的實心徽章。 ── */
+  --ju-hero-disc:    #D3D3D3;  /* Hero 粒子圓漸層主色 */
+  --ju-pill-bg:      #2E2E2E;  /* Hero pill 底（≈ 近白 14.7% 疊上近黑） */
+  --ju-pill-border:  #4C4C4C;  /* Hero pill 邊 */
+  --ju-hairline:     #B8B8B8;  /* Hero 中央垂線導引 */
+  --ju-glow-1:       #D9D9D9;  /* 光暈漸層 0% */
+  --ju-glow-2:       #A7A7A7;  /* 光暈漸層 49.37% */
+  --ju-glow-3:       #737373;  /* 光暈漸層 100% */
+
   /* Background */
   --color-bg-base:    #0C0C0C;
   --color-bg-surface: #141414;

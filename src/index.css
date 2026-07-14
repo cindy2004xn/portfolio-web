@@ -122,7 +122,14 @@ button:active:not(:disabled) { transform: scale(0.97); }
   .p-backtop { bottom: 86px; right: 16px; }
 }
 
-/* ── Landing page（v3 連續畫布） ── */
+/* ── Landing page（v3.3 連續畫布 + Figma 噴點） ── */
+
+/* Hero 粒子圓的可控參數。改 interval 調躁動速度、改 count 需同步 NoiseDefs 的 NOISE_SEEDS 長度。 */
+:root {
+  --ju-noise-interval: 0.6s;
+  --ju-noise-count: 4;
+}
+
 .lp-skills { grid-template-columns: repeat(3, 1fr); }
 .lp-card { grid-template-columns: 1fr 1fr; }
 /* 定位卡：桌機左文右圓形人像，行動版直疊 */
@@ -144,8 +151,8 @@ button:active:not(:disabled) { transform: scale(0.97); }
 .lp-rail--right { left: calc(50% + 540px); }
 @media (max-width: 1160px) { .lp-rail { display: none; } }
 
-/* ── 手寫簽名：英文行用 Caveat；中文名用她提供的真跡 signature.png ── */
-.ju-hand-en { font-family: 'Caveat', cursive; }
+/* ── 手寫簽名：英文行用 Nothing You Could Do（Figma 266:184 指定）；中文名用她提供的真跡 signature.png ── */
+.ju-hand-en { font-family: 'Nothing You Could Do', cursive; }
 
 /* ── Hero 圓的上下漂浮（Figma 版動態）：整個圓含簽名緩慢往復。
    reduced-motion 時全域規則會把動畫縮到 0.01ms（iteration 1），停在原位 ── */
@@ -153,6 +160,26 @@ button:active:not(:disabled) { transform: scale(0.97); }
 @keyframes lp-float {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-12px); }
+}
+
+/* ── Hero 粒子圓的雜訊躁動：4 層不同 seed 的濾鏡輪流現身。
+   steps(1) 硬切而非淡入淡出——雜訊本來就是跳的，交叉淡出會糊成一團。
+   濾鏡各只算一次（瀏覽器快取），這裡切的只是 opacity，成本趨近於零。 ── */
+.lp-noise-layer {
+  opacity: 0;
+  animation: lp-noise-cycle calc(var(--ju-noise-interval) * var(--ju-noise-count)) steps(1, end) infinite;
+}
+@keyframes lp-noise-cycle {
+  0%   { opacity: 1; }
+  25%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* reduced-motion：檔案開頭的全域規則會把動畫縮到 0.01ms／iteration 1，
+   四層會全部停在 opacity 0（＝圓整個消失）。必須明確讓第一層留下來。 */
+@media (prefers-reduced-motion: reduce) {
+  .lp-noise-layer { animation: none; opacity: 0; }
+  .lp-noise-layer:first-child { opacity: 1; }
 }
 
 /* ── Landing hero：逐段進場 ── */
