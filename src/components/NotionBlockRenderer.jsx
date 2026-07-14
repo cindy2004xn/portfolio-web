@@ -65,7 +65,7 @@ export function renderRichText(arr) {
     if (href) {
       node = (
         <a href={href} target="_blank" rel="noopener noreferrer"
-          style={{ color: 'var(--ju-green)', textDecoration: 'underline', textUnderlineOffset: '2px' }}>
+          style={{ color: 'var(--ju-accent)', textDecoration: 'underline', textUnderlineOffset: '2px' }}>
           {node}
         </a>
       );
@@ -246,7 +246,7 @@ function NotionBlock({ block }) {
       return (
         <div style={{ margin: '24px 0' }}>
           <pre style={{
-            padding: '20px', backgroundColor: 'var(--ju-dark)', color: 'var(--ju-on-green)',
+            padding: '20px', backgroundColor: 'var(--ju-dark)', color: 'var(--ju-on-accent)',
             borderRadius: 8, overflowX: 'auto',
             fontFamily: "'Space Mono', monospace", fontSize: 13, lineHeight: 1.7,
             margin: 0,
@@ -270,7 +270,7 @@ function NotionBlock({ block }) {
       return (
         <div className="ju-sans" style={{ display: 'flex', alignItems: 'flex-start', gap: 8, margin: '3px 0', lineHeight: 1.75, fontSize: 16 }}>
           <input type="checkbox" checked={checked} readOnly
-            style={{ marginTop: '0.35em', accentColor: 'var(--ju-green)', flexShrink: 0, cursor: 'default' }} />
+            style={{ marginTop: '0.35em', accentColor: 'var(--ju-accent)', flexShrink: 0, cursor: 'default' }} />
           <span style={{ textDecoration: checked ? 'line-through' : 'none', color: checked ? 'var(--ju-text3)' : 'inherit' }}>
             {renderRichText(d.rich_text || [])}
           </span>
@@ -289,7 +289,7 @@ function NotionBlock({ block }) {
           textDecoration: 'none', color: 'var(--ju-text)',
           transition: 'border-color .15s ease',
         }}
-          onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--ju-green)'}
+          onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--ju-accent)'}
           onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--ju-border)'}
         >
           <span className="ju-mono" style={{ fontSize: 11, color: 'var(--ju-text3)', wordBreak: 'break-all', display: 'block' }}>{url}</span>

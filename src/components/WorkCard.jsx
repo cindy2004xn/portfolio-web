@@ -33,7 +33,7 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
           aspectRatio: ratio,
           overflow: 'hidden',
           borderRadius: 12,
-          border: `1px solid ${hov ? 'var(--ju-green)' : 'var(--ju-border-card)'}`,
+          border: `1px solid ${hov ? 'var(--ju-accent)' : 'var(--ju-border-card)'}`,
           boxShadow: hov ? 'var(--ju-shadow-hover)' : 'var(--ju-shadow-rest)',
           transform: hov ? 'translateY(-4px)' : 'none',
           transition: 'border-color .15s ease, box-shadow .2s ease, transform .2s ease',
@@ -80,10 +80,10 @@ export default function WorkCard({ work, index = 0, openInNewTab = false }) {
       {/* Title + meta — no card container */}
       <div style={{ paddingTop: 16 }}>
         <h3
-          className="ju-serif"
+          className="ju-sans"
           style={{
-            fontSize: 20, lineHeight: 1.45, margin: 0,
-            color: hov ? 'var(--ju-green)' : 'var(--ju-text)',
+            fontSize: 20, fontWeight: 600, lineHeight: 1.45, margin: 0,
+            color: hov ? 'var(--ju-accent)' : 'var(--ju-text)',
             transition: 'color .15s ease',
           }}
         >

@@ -23,16 +23,17 @@
     background-color: var(--ju-base);
     color: var(--ju-text);
   }
-  ::selection { background: var(--ju-green-bg); }
+  ::selection { background: rgba(244, 243, 239, 0.28); }
+  .ju-light ::selection { background: rgba(35, 35, 29, 0.18); }
   /* DS 08：focus 一律綠色外環（僅鍵盤操作時顯示） */
   a:focus-visible, button:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--ju-base), 0 0 0 4px var(--ju-green);
+    box-shadow: 0 0 0 2px var(--ju-base), 0 0 0 4px var(--ju-accent);
     border-radius: 4px;
   }
   input:focus-visible, textarea:focus-visible {
     outline: none;
-    border-color: var(--ju-green);
+    border-color: var(--ju-accent);
     box-shadow: 0 0 0 3px var(--ju-focus-ring);
   }
 }
@@ -64,7 +65,7 @@
 
 /* ── Tag chip states（DS 08 Filter chip：default 次表面 / hover 加深 / selected 森林綠填色） ── */
 .p-chip:hover { background: var(--ju-surface-hover) !important; }
-.p-chip--selected:hover { background: var(--ju-green-hover) !important; }
+.p-chip--selected:hover { background: var(--ju-accent-hover) !important; }
 
 /* ── DS 08：按鈕 active 縮放 97% ── */
 button { transition: transform 0.1s ease; }
@@ -74,12 +75,12 @@ button:active:not(:disabled) { transform: scale(0.97); }
 .p-backtop {
   position: fixed; right: 24px; bottom: 24px; z-index: 35;
   width: 44px; height: 44px; border-radius: 999px;
-  background: var(--ju-base); border: 1px solid rgba(0, 0, 0, 0.25);
-  color: var(--ju-green); font-size: 15px; cursor: pointer;
+  background: var(--ju-base); border: 1px solid rgba(238, 235, 225, 0.22);
+  color: var(--ju-accent); font-size: 15px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
-.p-backtop:hover { background: var(--ju-green); border-color: var(--ju-green); color: var(--ju-on-green); }
+.p-backtop:hover { background: var(--ju-accent); border-color: var(--ju-accent); color: var(--ju-on-accent); }
 
 /* ── Mobile: sticky bottom dock + bottom sheet ── */
 .p-dock {
@@ -91,7 +92,7 @@ button:active:not(:disabled) { transform: scale(0.97); }
 }
 .p-sheet-backdrop {
   position: fixed; inset: 0; z-index: 50;
-  background: rgba(35, 35, 29, 0.32);
+  background: rgba(13, 13, 12, 0.6);
   display: flex; align-items: flex-end;
 }
 .p-sheet {
@@ -119,13 +120,62 @@ button:active:not(:disabled) { transform: scale(0.97); }
   .p-search-inline { display: none !important; }
   .p-dock { display: block; }
   .p-backtop { bottom: 86px; right: 16px; }
-  .p-header-label { display: none; }
 }
 
-/* ── Landing page ── */
+/* ── Landing page（v3 連續畫布） ── */
 .lp-skills { grid-template-columns: repeat(3, 1fr); }
 .lp-card { grid-template-columns: 1fr 1fr; }
-.lp-cta-invert:hover { background: var(--ju-on-green-2) !important; }
+/* 定位卡：桌機左文右圓形人像，行動版直疊 */
+.lp-about { grid-template-columns: 1fr clamp(220px, 30%, 320px); }
+@media (max-width: 719px) {
+  .lp-about { grid-template-columns: 1fr; }
+}
+
+/* 統一容器與區塊節奏：一條脊椎、等拍呼吸 */
+.lp-container { max-width: 1080px; margin: 0 auto; }
+.lp-section { padding: var(--ju-section-pad) 24px 0; }
+
+/* 垂直導引線：全頁貫穿的兩條 hairline，把區塊縫在同一張畫布上 */
+.lp-rail {
+  position: fixed; top: 0; bottom: 0; width: 1px;
+  background: var(--ju-border); z-index: 5; pointer-events: none;
+}
+.lp-rail--left  { left: calc(50% - 540px); }
+.lp-rail--right { left: calc(50% + 540px); }
+@media (max-width: 1160px) { .lp-rail { display: none; } }
+
+/* ── 手寫簽名：英文行用 Caveat；中文名用她提供的真跡 signature.png ── */
+.ju-hand-en { font-family: 'Caveat', cursive; }
+
+/* ── Hero 圓的上下漂浮（Figma 版動態）：整個圓含簽名緩慢往復。
+   reduced-motion 時全域規則會把動畫縮到 0.01ms（iteration 1），停在原位 ── */
+.lp-float { animation: lp-float 7s ease-in-out infinite; }
+@keyframes lp-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
+}
+
+/* ── Landing hero：逐段進場 ── */
+/* 逐段上浮 + 去模糊進場；stagger 由 inline animationDelay 控制。
+   reduced-motion 時全域規則會把動畫縮到 0.01ms，forwards 讓內容立即定格可見 */
+.lp-fade-up {
+  opacity: 0;
+  animation: lp-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes lp-fade-up {
+  from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+
+/* ── 收尾 CTA（近白實心 pill，hover 微降明度） ── */
+.lp-cta:hover { background: var(--ju-accent-hover) !important; }
+
+/* ── 扁平深色卡：全站唯一卡材質（近黑微提亮＋極細邊，無玻璃亮邊、無光暈） ── */
+.lp-flat {
+  background: var(--ju-card);
+  border: 1px solid var(--ju-border);
+  transition: border-color .2s ease, transform .2s ease;
+}
 @media (max-width: 719px) {
   .lp-skills { grid-template-columns: 1fr; }
   .lp-card { grid-template-columns: 1fr; }

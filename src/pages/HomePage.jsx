@@ -64,11 +64,11 @@ function RotatingTag({ tags, selectedTags }) {
   return (
     <span style={{ display: 'inline-flex', overflow: 'hidden', verticalAlign: 'bottom' }}>
       <span
-        className="ju-serif"
+        className="ju-sans"
         style={{
           display: 'inline-block',
-          color: 'var(--ju-green)',
-          borderBottom: '0.5px solid var(--ju-green)',
+          color: 'var(--ju-accent)',
+          borderBottom: '0.5px solid var(--ju-accent)',
           padding: '0 6px',
           transform: `translateY(${y})`,
           transition: phase === 'enter' ? 'none' : 'transform .3s cubic-bezier(.33, 0, .2, 1)',
@@ -207,7 +207,7 @@ export default function HomePage() {
         <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', margin: 0, letterSpacing: '0.02em' }}>
           Hi, I&apos;m Chain Huei Ju
         </p>
-        <h1 className="ju-serif p-hero-title" style={{ margin: '18px 0 0', fontWeight: 500 }}>
+        <h1 className="ju-sans p-hero-title" style={{ margin: '18px 0 0', fontWeight: 600 }}>
           尋找 <RotatingTag tags={allTagCounts.map(([t]) => t)} selectedTags={selectedTags} /> 的作品
         </h1>
       </section>
@@ -259,7 +259,7 @@ export default function HomePage() {
             <button
               onClick={() => applyTags([])}
               className="ju-mono"
-              style={{ marginTop: 20, height: 40, padding: '0 20px', background: 'transparent', border: '1px solid var(--ju-green)', borderRadius: 999, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.14em', cursor: 'pointer' }}
+              style={{ marginTop: 20, height: 40, padding: '0 20px', background: 'transparent', border: '1px solid var(--ju-accent)', borderRadius: 999, color: 'var(--ju-accent)', fontSize: 11, letterSpacing: '0.14em', cursor: 'pointer' }}
             >
               清除篩選
             </button>
@@ -286,7 +286,7 @@ export default function HomePage() {
                 <button
                   onClick={() => scrollToY(0)}
                   className="ju-mono"
-                  style={{ marginTop: 28, height: 42, padding: '0 22px', background: 'transparent', border: '0.5px solid var(--ju-green)', borderRadius: 999, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.18em', cursor: 'pointer' }}
+                  style={{ marginTop: 28, height: 42, padding: '0 22px', background: 'transparent', border: '0.5px solid var(--ju-accent)', borderRadius: 999, color: 'var(--ju-accent)', fontSize: 11, letterSpacing: '0.18em', cursor: 'pointer' }}
                 >
                   回到最頂端 ↑
                 </button>
