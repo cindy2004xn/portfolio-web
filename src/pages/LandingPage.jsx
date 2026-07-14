@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { fetchWorks } from '../lib/data.js';
 import BackToTop from '../components/BackToTop.jsx';
 import HeroCircle from '../components/HeroCircle.jsx';
+import NoiseDefs from '../components/NoiseDefs.jsx';
 
 /* Landing 版面正本：DESIGN.md v3.2「灰階畫布」——
    hero 依她提供的示意圖：白噴點粒子圓置頂（頂部出血裁切）、圓內手寫簽名、
@@ -199,6 +200,9 @@ export default function LandingPage() {
 
   return (
     <div style={{ minHeight: '100vh' }}>
+
+      {/* SVG 濾鏡定義：Hero 圓與光暈共用，必須在使用前掛載 */}
+      <NoiseDefs />
 
       {/* 連續畫布的脊椎：兩條垂直導引線全頁貫穿（窄視窗自動隱藏） */}
       <div className="lp-rail lp-rail--left" aria-hidden="true" />
