@@ -261,10 +261,6 @@ export default function LandingPage() {
       {/* SVG 濾鏡定義：Hero 圓與光暈共用，必須在使用前掛載 */}
       <NoiseDefs />
 
-      {/* 連續畫布的脊椎：兩條垂直導引線全頁貫穿（窄視窗自動隱藏） */}
-      <div className="lp-rail lp-rail--left" aria-hidden="true" />
-      <div className="lp-rail lp-rail--right" aria-hidden="true" />
-
       {/* 1. Hero — 正本 Figma 266-175。
           圓心在視窗上方外（-84），只露下半弧；pill 底緣貼齊圓底（398），
           這個重疊是稿上的設計，也是第一屏能露出定位卡 128px 的關鍵。

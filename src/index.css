@@ -158,21 +158,12 @@ button:active:not(:disabled) { transform: scale(0.97); }
   .lp-about { grid-template-columns: 1fr; }
 }
 
-/* 統一容器與區塊節奏：一條脊椎、等拍呼吸。
+/* 統一容器與區塊節奏：等拍呼吸。
    區塊是光暈的定位脈絡；內容浮在光暈之上。
    光暈刻意溢出視窗左右（標題那顆圓心壓在 x=99、半徑 447），不裁會產生橫向捲動。
    用 clip 不用 hidden：單軸 hidden 會讓另一軸隱含變 auto、把區塊變成捲動容器。 */
 .lp-container { max-width: 1080px; margin: 0 auto; position: relative; z-index: 1; }
 .lp-section { padding: var(--ju-section-pad) 24px 0; position: relative; overflow-x: clip; }
-
-/* 垂直導引線：全頁貫穿的兩條 hairline，把區塊縫在同一張畫布上 */
-.lp-rail {
-  position: fixed; top: 0; bottom: 0; width: 1px;
-  background: var(--ju-border); z-index: 5; pointer-events: none;
-}
-.lp-rail--left  { left: calc(50% - 540px); }
-.lp-rail--right { left: calc(50% + 540px); }
-@media (max-width: 1160px) { .lp-rail { display: none; } }
 
 /* ── 手寫簽名：英文行用 Nothing You Could Do（Figma 266:184 指定）；中文名用她提供的真跡 signature.png ── */
 .ju-hand-en { font-family: 'Nothing You Could Do', cursive; }
