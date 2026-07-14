@@ -14,12 +14,8 @@ export default function Header() {
         borderBottom: '0.5px solid var(--ju-border)',
       }}
     >
-      <Link
-        to="/"
-        className="ju-sans"
-        style={{ fontSize: 20, fontWeight: 700, color: 'var(--ju-accent)', lineHeight: 1, textDecoration: 'none', letterSpacing: '-0.01em' }}
-      >
-        Ju
+      <Link to="/" aria-label="回首頁" style={{ display: 'flex', alignItems: 'center', lineHeight: 0 }}>
+        <img src="/logo.svg" alt="朱千慧" style={{ width: 30, height: 'auto', display: 'block' }} />
       </Link>
       <nav style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
         <Link
@@ -27,7 +23,7 @@ export default function Header() {
           className="ju-mono"
           style={{ fontSize: 12, letterSpacing: '0.16em', color: 'var(--ju-accent)', textDecoration: 'none', borderBottom: '1px solid var(--ju-accent)', paddingBottom: 2 }}
         >
-          作品
+          搜尋作品
         </Link>
       </nav>
     </header>
