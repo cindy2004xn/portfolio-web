@@ -120,8 +120,10 @@ function SectionHeader({ zh, en }) {
    v3.3 的扁平深色卡退場——稿上沒有容器，內容直接落在畫布上。
    icon 與內文維持系統值（24px／--ju-text2）；只有標題升到 20px 與排版依稿調整。 */
 function SkillGrid({ items }) {
+  /* 下邊距刻意大於作品卡彼此的間距（clamp(24,4vw,40)）——技能卡的框拿掉後，
+     它跟下方的卡片牆之間沒有任何視覺分隔，同樣的間距會讓它讀起來像卡片牆的一員 */
   return (
-    <div className="lp-skills" style={{ display: 'grid', margin: '0 0 40px' }}>
+    <div className="lp-skills" style={{ display: 'grid', margin: '0 0 clamp(64px, 8vw, 96px)' }}>
       {items.map((s, i) => (
         <div key={i} style={{ display: 'flex', flexDirection: 'column' }}>
           {s.icon && <SkillIcon name={s.icon} />}
