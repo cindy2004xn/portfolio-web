@@ -126,8 +126,8 @@ button:active:not(:disabled) { transform: scale(0.97); }
 
 /* Hero 粒子圓的可控參數。改 interval 調躁動速度、改 count 需同步 NoiseDefs 的 NOISE_SEEDS 長度。 */
 :root {
-  --ju-noise-interval: 0.6s;
-  --ju-noise-count: 4;
+  --ju-noise-interval: 0.9s;
+  --ju-noise-count: 3;
 
   /* ── Hero 幾何：全部由圓直徑推導，維持 Figma 266-175 的比例關係。
      66.94vw = 964/1440（Figma 基準）。
@@ -150,62 +150,77 @@ button:active:not(:disabled) { transform: scale(0.97); }
   );
 }
 
-.lp-skills { grid-template-columns: repeat(3, 1fr); }
+/* 技能卡：三欄，Figma 274-2 的 315px 欄寬 + 57px 間距（1059 = 315×3 + 57×2） */
+.lp-skills { grid-template-columns: repeat(3, 1fr); gap: 57px; }
 .lp-card { grid-template-columns: 1fr 1fr; }
-/* 定位卡：桌機左文右圓形人像，行動版直疊 */
-.lp-about { grid-template-columns: 1fr clamp(220px, 30%, 320px); }
-@media (max-width: 719px) {
-  .lp-about { grid-template-columns: 1fr; }
-}
 
 /* 統一容器與區塊節奏：等拍呼吸。
    區塊是光暈的定位脈絡；內容浮在光暈之上。
    光暈刻意溢出視窗左右（標題那顆圓心壓在 x=99、半徑 447），不裁會產生橫向捲動。
    用 clip 不用 hidden：單軸 hidden 會讓另一軸隱含變 auto、把區塊變成捲動容器。 */
 .lp-container { max-width: 1080px; margin: 0 auto; position: relative; z-index: 1; }
+
+/* 定位論述：置中直落（人像在上、標題、內文），無容器——Figma 274:121/274:126。
+   內文 858px 是稿上的值，容器窄於此時自動跟著縮。 */
+.lp-about-text { max-width: 858px; margin: 0 auto; }
 .lp-section { padding: var(--ju-section-pad) 24px 0; position: relative; overflow-x: clip; }
 
 /* ── 手寫簽名：英文行用 Nothing You Could Do（Figma 266:184 指定）；中文名用她提供的真跡 signature.png ── */
 .ju-hand-en { font-family: 'Nothing You Could Do', cursive; }
 
 /* ── Hero 圓的上下漂浮（Figma 版動態）：整個圓含簽名緩慢往復。
+   cubic-bezier(0.37, 0, 0.63, 1) ≈ 正弦曲線——端點速度比 ease-in-out 緩，
+   沒有中段的加速感；9s 的慢週期讓浮動讀起來是「飄」不是「晃」。
    reduced-motion 時全域規則會把動畫縮到 0.01ms（iteration 1），停在原位 ── */
-.lp-float { animation: lp-float 7s ease-in-out infinite; }
+.lp-float {
+  animation: lp-float 9s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  will-change: transform;
+}
 @keyframes lp-float {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-12px); }
 }
 
-/* ── Hero 粒子圓的雜訊躁動：4 層不同 seed 的濾鏡輪流現身。
-   steps(1) 硬切而非淡入淡出——雜訊本來就是跳的，交叉淡出會糊成一團。
+/* ── Hero 粒子圓的雜訊躁動：3 層不同 seed 的濾鏡輪流現身，steps(1) 硬切。
+   曾改用短交叉淡出想讓切換更順，結果更糟：alpha 合成不守恆——
+   最終亮度 = 上層×α上 + 下層×α下×(1−α上)，兩層各 0.5 時只有 0.75，
+   圓每個切換點都暗 25% 再回來，讀起來是閃爍。硬切沒有中間態，亮度恆定。
+
+   代價是內容瞬變（「跳」）。這是根因的必然：兩張不連續的雜訊圖之間沒有無痛過渡，
+   除非逐幀動 seed（濾鏡太貴、低階機器掉幀）或乾脆不切換（粒子靜止）。
    濾鏡各只算一次（瀏覽器快取），這裡切的只是 opacity，成本趨近於零。 ── */
 .lp-noise-layer {
   opacity: 0;
   animation: lp-noise-cycle calc(var(--ju-noise-interval) * var(--ju-noise-count)) steps(1, end) infinite;
+  will-change: opacity;
 }
+/* 33.33% = 1/3，與三層接力。改 --ju-noise-count 時這個值要跟著改。 */
 @keyframes lp-noise-cycle {
-  0%   { opacity: 1; }
-  25%  { opacity: 0; }
-  100% { opacity: 0; }
+  0%     { opacity: 1; }
+  33.33% { opacity: 0; }
+  100%   { opacity: 0; }
 }
 
 /* reduced-motion：檔案開頭的全域規則會把動畫縮到 0.01ms／iteration 1，
-   四層會全部停在 opacity 0（＝圓整個消失）。必須明確讓第一層留下來。 */
+   三層會全部停在 opacity 0（＝圓整個消失）。必須明確讓第一層留下來。 */
 @media (prefers-reduced-motion: reduce) {
   .lp-noise-layer { animation: none; opacity: 0; }
   .lp-noise-layer:first-child { opacity: 1; }
 }
 
 /* ── Landing hero：逐段進場 ── */
-/* 逐段上浮 + 去模糊進場；stagger 由 inline animationDelay 控制。
+/* 逐段上浮＋淡入；stagger 由 inline animationDelay 控制。
+   v3.3 初版還有 blur(4px)→0 的去模糊——那是逐幀濾鏡運算，載入第一秒
+   與粒子圓、簽名的 multiply 疊加撞在一起最重；拿掉後視覺差異極小
+   （20px 上浮＋淡入本來就承擔了絕大部分的進場感）。
    reduced-motion 時全域規則會把動畫縮到 0.01ms，forwards 讓內容立即定格可見 */
 .lp-fade-up {
   opacity: 0;
   animation: lp-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 @keyframes lp-fade-up {
-  from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
-  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── 收尾 CTA（近白實心 pill，hover 微降明度） ── */

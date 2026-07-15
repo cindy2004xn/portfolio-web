@@ -116,28 +116,30 @@ function SectionHeader({ zh, en }) {
   );
 }
 
-/* 技能卡（banking 參考圖節奏）：標題在上、內文在中、icon 沉左下；
-   字級拉開主次——標題 18/600 近白滿對比、內文 15/1.85 text2 */
+/* 技能卡（Figma 277:267）：icon → 標題 → 內文，由上而下。
+   v3.3 的扁平深色卡退場——稿上沒有容器，內容直接落在畫布上。
+   icon 與內文維持系統值（24px／--ju-text2）；只有標題升到 20px 與排版依稿調整。 */
 function SkillGrid({ items }) {
   return (
-    <div className="lp-skills" style={{ display: 'grid', gap: 16, margin: '0 0 40px' }}>
+    <div className="lp-skills" style={{ display: 'grid', margin: '0 0 40px' }}>
       {items.map((s, i) => (
-        <div key={i} className="lp-flat" style={{ borderRadius: 16, padding: '24px 24px 20px', display: 'flex', flexDirection: 'column' }}>
-          <div className="ju-sans" style={{ fontSize: 18, fontWeight: 600, color: 'var(--ju-text)', lineHeight: 1.4 }}>{s.title}</div>
-          <p className="ju-sans" style={{ fontSize: 15, lineHeight: 1.85, color: 'var(--ju-text2)', margin: '12px 0 0' }}>{s.desc}</p>
-          <div style={{ marginTop: 'auto', paddingTop: 18 }}>{s.icon && <SkillIcon name={s.icon} />}</div>
+        <div key={i} style={{ display: 'flex', flexDirection: 'column' }}>
+          {s.icon && <SkillIcon name={s.icon} />}
+          <div className="ju-sans" style={{ fontSize: 20, fontWeight: 600, color: 'var(--ju-text)', lineHeight: 1.4, marginTop: 12 }}>{s.title}</div>
+          <p className="ju-sans" style={{ fontSize: 15, lineHeight: 1.85, color: 'var(--ju-text2)', margin: '28px 0 0' }}>{s.desc}</p>
         </div>
       ))}
     </div>
   );
 }
 
-/* 圓形大頭照：素材檔她之後提供（放 public/portrait.jpg 即自動生效），
+/* 圓形大頭照。Figma 274:126 是 171px 置中在定位論述上方。
+   11.88vw = 171/1440；下限 120 讓行動版不至於小到看不出是誰。
    檔案不存在時顯示中性佔位圓 */
 function Portrait() {
   const [ok, setOk] = useState(true);
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: 320, aspectRatio: '1', borderRadius: '50%', overflow: 'hidden', background: 'var(--ju-card2)', border: '1px solid var(--ju-border)', margin: '0 auto' }}>
+    <div style={{ position: 'relative', width: 'clamp(120px, 11.88vw, 171px)', aspectRatio: '1', borderRadius: '50%', overflow: 'hidden', background: 'var(--ju-card2)', border: '1px solid var(--ju-border)', margin: '0 auto', flex: '0 0 auto' }}>
       {ok ? (
         <img
           src="/portrait.png"
@@ -359,22 +361,24 @@ export default function LandingPage() {
         />
       </section>
 
-      {/* 2. 定位論述 — 扁平深色卡：左「What make me different」＋內文、右圓形人像 */}
+      {/* 2. 定位論述 — 置中直落：人像在上、標題置中、內文左對齊（Figma 274:126 + 274:121）。
+          v3.3 的扁平深色卡退場——稿上內容直接落在畫布上，沒有容器。
+          文字樣式（字級／行高／明度）維持系統值，只有排版與人像尺寸依稿調整。 */}
       <section className="lp-section" style={{ paddingTop: 0 }}>
         <div className="lp-container">
-          <div className="lp-flat lp-about" style={{ borderRadius: 24, padding: 'clamp(28px, 5vw, 56px)', display: 'grid', gap: 'clamp(28px, 4vw, 56px)', alignItems: 'center' }}>
-            <div>
-              <h2 className="ju-sans ju-en" style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 700, margin: 0, letterSpacing: '-0.01em' }}>
-                What make me different
-              </h2>
-              <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
-                在技術快速發展時代，每天都有新技術、新資訊，而設計師更是需要保持學習心態，擁抱接納不同時代下的變化。但對我來說，AI 技術像是增強人類的技能，讓設計師的創意能夠實際落實，回到設計師作為 maker 的本質。
-              </p>
-              <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '18px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
-                我擅長在繁雜的事物之間，找出底層共通的結構，轉譯成一套可以被執行、被複製的框架，這不只能應用在概念詮釋，更能夠將使用者研究、資料架構、設計流程等方法能夠落地應用。這些簡單的思考架構，是經過多方面的知識與資訊柔和，提煉與驗證而來的。
-              </p>
-            </div>
-            <Portrait />
+          <Portrait />
+          {/* 人像底到標題 35px（Figma：人像 869–1040、標題 1075） */}
+          <div className="lp-about-text" style={{ marginTop: 35 }}>
+            <h2 className="ju-sans ju-en" style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 700, margin: 0, letterSpacing: '-0.01em', textAlign: 'center' }}>
+              What make me different
+            </h2>
+            {/* 長中文置中會難讀，稿上也是左對齊——標題置中、內文左對齊是刻意的混合 */}
+            <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '31px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
+              在技術快速發展時代，每天都有新技術、新資訊，而設計師更是需要保持學習心態，擁抱接納不同時代下的變化。但對我來說，AI 技術像是增強人類的技能，讓設計師的創意能夠實際落實，回到設計師作為 maker 的本質。
+            </p>
+            <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
+              我擅長在繁雜的事物之間，找出底層共通的結構，轉譯成一套可以被執行、被複製的框架，這不只能應用在概念詮釋，更能夠將使用者研究、資料架構、設計流程等方法能夠落地應用。這些簡單的思考架構，是經過多方面的知識與資訊柔和，提煉與驗證而來的。
+            </p>
           </div>
         </div>
       </section>
@@ -397,7 +401,6 @@ export default function LandingPage() {
         <Glow size={1038} align="right" top="65%" />
         <div className="lp-container">
           <SectionHeader zh="AI 相關應用" en="Working with AI" />
-          <p className="ju-sans" style={{ fontSize: 15, fontWeight: 700, margin: '0 0 14px' }}>AI 應用能力</p>
           <SkillGrid items={AI_SKILLS} />
           <div style={{ display: 'grid', gap: 'clamp(24px, 4vw, 40px)' }}>
             {AI_WORKS.map(w => <LandingWorkCard key={w.id} work={w} cover={covers[w.id]} />)}
@@ -429,7 +432,7 @@ export default function LandingPage() {
             不能用 50%——那是 section 的中點，會隨 paddingBottom 浮動。
             算式＝ section 內距 + container 內距 + 半個標題高。 */}
         <Glow size={844} align="center" top="calc(var(--ju-section-pad) * 2 + clamp(28px, 4.44vw, 64px) * 0.7)" />
-        <div className="lp-container" style={{ borderTop: '1px solid var(--ju-border)', paddingTop: 'var(--ju-section-pad)', textAlign: 'center' }}>
+        <div className="lp-container" style={{ paddingTop: 'var(--ju-section-pad)', textAlign: 'center' }}>
           <p className="ju-sans" style={{ fontSize: 'clamp(28px, 4.44vw, 64px)', fontWeight: 700, margin: 0, lineHeight: 1.4, color: 'var(--ju-text)', textWrap: 'balance', letterSpacing: '-0.01em' }}>
             探索更多作品
           </p>

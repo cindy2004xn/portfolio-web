@@ -5,6 +5,8 @@ import { fetchWorks } from '../lib/data.js';
 import { distributeMasonry, prefersReducedMotion, scrollToY } from '../lib/masonry.js';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
+import NoiseDefs from '../components/NoiseDefs.jsx';
+import Glow from '../components/Glow.jsx';
 
 const INITIAL_COUNT = 6;
 const LOAD_MORE_COUNT = 4;
@@ -201,13 +203,17 @@ export default function HomePage() {
     : `全部作品 · ${works.length} 件`;
 
   return (
-    <div style={{ minHeight: '100vh', paddingTop: 56 }}>
+    <div style={{ minHeight: '100vh', paddingTop: 56, position: 'relative', overflowX: 'clip' }}>
+      {/* SVG 濾鏡定義：光暈與 landing 的粒子圓共用同一組 turbulence */}
+      <NoiseDefs />
+      {/* 標題光暈（Figma 275-128 的 277:271）：894 圓心 (720, 139)——x 正中央、
+          y 在 header 下方，圓大半在畫面上方外往下灑。
+          掛在最外層而非 hero section：section 只有 880 寬，會把光暈裁掉一大截。 */}
+      <Glow size={894} align="center" top="139px" />
+
       {/* Hero — centered */}
-      <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(48px, 8vw, 88px) 24px 0', textAlign: 'center' }}>
-        <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', margin: 0, letterSpacing: '0.02em' }}>
-          Hi, I&apos;m Chain Huei Ju
-        </p>
-        <h1 className="ju-sans p-hero-title" style={{ margin: '18px 0 0', fontWeight: 600 }}>
+      <section style={{ position: 'relative', zIndex: 1, maxWidth: 880, margin: '0 auto', padding: 'clamp(48px, 8vw, 88px) 24px 0', textAlign: 'center' }}>
+        <h1 className="ju-sans p-hero-title" style={{ margin: 0, fontWeight: 600 }}>
           尋找 <RotatingTag tags={allTagCounts.map(([t]) => t)} selectedTags={selectedTags} /> 的作品
         </h1>
       </section>

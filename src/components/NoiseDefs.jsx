@@ -3,11 +3,12 @@
    位移量 200 讓圓的輪廓整個被打散成噴灑的點，而不只是邊緣模糊。
    baseFrequency / numOctaves / scale 三個值是 Figma 原值，改動即偏離設計稿。
 
-   4 個 seed 供 Hero 圓交替製造雜訊躁動感（濾鏡各只算一次，不逐幀重算）；
-   seed 3124 是 Figma 原值，其餘三個是為了動態而生的同族亂數。
-   光暈固定用 ju-noise-0（Figma 原 seed），保持靜態。 */
+   3 個 seed 供 Hero 圓交替製造雜訊躁動感（濾鏡各只算一次，不逐幀重算）；
+   seed 3124 是 Figma 原值，其餘兩個是為了動態而生的同族亂數。
+   每層約 1164px²，DPR 2 時記憶體可觀——初版用 4 個，減到 3 是效能取捨，
+   視覺上三個輪替仍夠隨機。光暈固定用 ju-noise-0（Figma 原 seed），保持靜態。 */
 
-export const NOISE_SEEDS = [3124, 4218, 5307, 6491];
+export const NOISE_SEEDS = [3124, 4218, 5307];
 
 export default function NoiseDefs() {
   return (

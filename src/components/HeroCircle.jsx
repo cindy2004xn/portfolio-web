@@ -7,7 +7,7 @@ import { NOISE_SEEDS } from './NoiseDefs.jsx';
    viewBox 用 1164 而非 964：feDisplacementMap 的 scale=200 讓圖形向外擴 100px（各邊），
    viewBox 不留這 100px 餘裕的話最外圈噴點會被裁掉。圓心因此在 (582, 582)。
 
-   雜訊動態：4 層同圓、各掛不同 seed 的濾鏡，用 CSS 輪流切換 opacity。
+   雜訊動態：3 層同圓、各掛不同 seed 的濾鏡，用 CSS 短交叉淡出輪流現身。
    濾鏡各只算一次（瀏覽器會快取），切換純合成 → 低階機器也不掉幀。
    上下浮動由外層 .lp-float 負責，與本元件無關。 */
 
