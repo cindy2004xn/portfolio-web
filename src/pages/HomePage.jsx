@@ -135,6 +135,9 @@ export default function HomePage() {
     function f() {
       if (searchRef.current) setIsSearchFixed(searchRef.current.getBoundingClientRect().top <= 56);
     }
+    /* 掛載時先同步一次：底色也吃這個 state，若載入時已在捲動位置（瀏覽器的
+       scroll restoration），只靠 scroll 事件會停在「黏住但沒底」的糊狀態。 */
+    f();
     window.addEventListener('scroll', f, { passive: true });
     return () => window.removeEventListener('scroll', f);
   }, []);
@@ -226,7 +229,10 @@ export default function HomePage() {
       <section
         ref={searchRef}
         className="p-search-inline p-search-sticky"
-        style={{ borderBottom: isSearchFixed ? '0.5px solid var(--ju-border)' : '0.5px solid transparent' }}
+        style={{
+          background: isSearchFixed ? 'var(--ju-base)' : 'transparent',
+          borderBottom: isSearchFixed ? '0.5px solid var(--ju-border)' : '0.5px solid transparent',
+        }}
       >
         <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 24px' }}>
           <SearchPanel
