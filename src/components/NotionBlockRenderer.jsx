@@ -401,7 +401,7 @@ function NotionBlocks({ blocks }) {
       const items = [];
       while (i < blocks.length && blocks[i].type === 'bulleted_list_item') items.push(blocks[i++]);
       result.push(
-        <ul key={`ul-${items[0].id}`} style={{ paddingLeft: 24, margin: '4px 0', lineHeight: 1.75 }}>
+        <ul key={`ul-${items[0].id}`} style={{ paddingLeft: 24, margin: '4px 0', lineHeight: 1.75, listStyleType: 'disc' }}>
           {items.map(item => (
             <li key={item.id} className="ju-sans" style={{ margin: '3px 0', fontSize: 16 }}>
               {renderRichText(item.bulleted_list_item?.rich_text || [])}
@@ -414,7 +414,7 @@ function NotionBlocks({ blocks }) {
       const items = [];
       while (i < blocks.length && blocks[i].type === 'numbered_list_item') items.push(blocks[i++]);
       result.push(
-        <ol key={`ol-${items[0].id}`} style={{ paddingLeft: 24, margin: '4px 0', lineHeight: 1.75 }}>
+        <ol key={`ol-${items[0].id}`} style={{ paddingLeft: 24, margin: '4px 0', lineHeight: 1.75, listStyleType: 'decimal' }}>
           {items.map(item => (
             <li key={item.id} className="ju-sans" style={{ margin: '3px 0', fontSize: 16 }}>
               {renderRichText(item.numbered_list_item?.rich_text || [])}
