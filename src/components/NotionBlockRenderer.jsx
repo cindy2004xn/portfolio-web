@@ -150,6 +150,21 @@ function NotionBlock({ block }) {
         </h3>
       );
 
+    // Notion 已支援到 heading_4/5，缺 case 會被 default 丟成 null（小標整段消失）
+    case 'heading_4':
+      return (
+        <h4 className="ju-sans" style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.5, margin: '24px 0 2px', color: 'var(--ju-text)' }}>
+          {renderRichText(d.rich_text || [])}
+        </h4>
+      );
+
+    case 'heading_5':
+      return (
+        <h5 className="ju-sans" style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.5, margin: '20px 0 2px', color: 'var(--ju-text)' }}>
+          {renderRichText(d.rich_text || [])}
+        </h5>
+      );
+
     case 'quote': {
       return (
         <blockquote style={{
@@ -196,13 +211,22 @@ function NotionBlock({ block }) {
     case 'image': {
       const url = d.type === 'file' ? d.file?.url : d.external?.url;
       const caption = d.caption || [];
-      const captionText = caption.map(rt => rt.plain_text || '').join('');
+      const rawCaption = caption.map(rt => rt.plain_text || '').join('');
       if (!url) return null;
+      // 方案 A：caption 開頭寫 [50%] 或 [380px] 控制圖寬（Notion API 不回傳拖曳尺寸）
+      // 標記後的文字照常當圖說；縮小時置中。分欄的 width_ratio（方案 B）另行處理。
+      const sizeMatch = rawCaption.match(/^\s*\[(\d+)(px|%)?\]\s*/);
+      const maxWidth = sizeMatch ? `${sizeMatch[1]}${sizeMatch[2] === 'px' ? 'px' : '%'}` : null;
+      const captionText = sizeMatch ? rawCaption.slice(sizeMatch[0].length) : rawCaption;
       return (
         <div style={{ margin: '32px 0' }}>
           <img
             src={url} alt={captionText || ''}
-            style={{ width: '100%', display: 'block', borderRadius: 8 }}
+            style={{
+              width: '100%', maxWidth: maxWidth || undefined,
+              margin: maxWidth ? '0 auto' : undefined,
+              display: 'block', borderRadius: 8,
+            }}
             loading="lazy"
             decoding="async"
           />
@@ -347,7 +371,8 @@ function NotionBlock({ block }) {
       return (
         <div style={{ display: 'flex', gap: 24, margin: '12px 0', flexWrap: 'wrap' }}>
           {block.children.map(col => (
-            <div key={col.id} style={{ flex: 1, minWidth: 180 }}>
+            // 尊重 Notion 欄寬比例（width_ratio）：拖曳欄寬即可控制欄內圖片大小
+            <div key={col.id} style={{ flex: `${col.column?.width_ratio ?? 1} 1 0`, minWidth: 180 }}>
               {col.children?.length > 0 && <NotionBlocks blocks={col.children} />}
             </div>
           ))}
