@@ -86,7 +86,7 @@ function Toggle({ block }) {
         aria-expanded={open}
         className="ju-sans"
         style={{
-          display: 'flex', alignItems: 'flex-start', gap: 6, cursor: 'pointer', userSelect: 'none', lineHeight: 1.75,
+          display: 'flex', alignItems: 'flex-start', gap: 6, cursor: 'pointer', userSelect: 'none', lineHeight: 1.9,
           background: 'transparent', border: 'none', padding: 0, margin: 0,
           font: 'inherit', color: 'inherit', textAlign: 'left', width: '100%',
         }}
@@ -123,7 +123,7 @@ function NotionBlock({ block }) {
       }
       if (!rt.length) return <div style={{ height: '0.7em' }} />;
       return (
-        <p className="ju-sans" style={{ margin: '3px 0', lineHeight: 1.75, fontSize: 16, ...sty }}>
+        <p className="ju-sans" style={{ margin: '16px 0', lineHeight: 1.9, fontSize: 16, ...sty }}>
           {renderRichText(rt)}
         </p>
       );
@@ -172,7 +172,7 @@ function NotionBlock({ block }) {
           borderLeft: '3px solid var(--ju-border)',
           color: 'var(--ju-text2)',
         }}>
-          <p className="ju-sans" style={{ margin: 0, lineHeight: 1.75, fontSize: 16 }}>
+          <p className="ju-sans" style={{ margin: 0, lineHeight: 1.9, fontSize: 16 }}>
             {renderRichText(d.rich_text || [])}
           </p>
           {block.children?.length > 0 && (
@@ -188,7 +188,7 @@ function NotionBlock({ block }) {
       return (
         <div style={{
           display: 'flex', gap: 12, padding: '14px 16px', margin: '16px 0',
-          backgroundColor: bg, borderRadius: 6, lineHeight: 1.75,
+          backgroundColor: bg, borderRadius: 6, lineHeight: 1.9,
         }}>
           {icon && (
             <span style={{ flexShrink: 0, fontSize: 18, lineHeight: 1.4, marginTop: 1 }}>
@@ -292,7 +292,7 @@ function NotionBlock({ block }) {
     case 'to_do': {
       const checked = d.checked ?? false;
       return (
-        <div className="ju-sans" style={{ display: 'flex', alignItems: 'flex-start', gap: 8, margin: '3px 0', lineHeight: 1.75, fontSize: 16 }}>
+        <div className="ju-sans" style={{ display: 'flex', alignItems: 'flex-start', gap: 8, margin: '3px 0', lineHeight: 1.9, fontSize: 16 }}>
           <input type="checkbox" checked={checked} readOnly
             style={{ marginTop: '0.35em', accentColor: 'var(--ju-accent)', flexShrink: 0, cursor: 'default' }} />
           <span style={{ textDecoration: checked ? 'line-through' : 'none', color: checked ? 'var(--ju-text3)' : 'inherit' }}>
@@ -401,7 +401,7 @@ function NotionBlocks({ blocks }) {
       const items = [];
       while (i < blocks.length && blocks[i].type === 'bulleted_list_item') items.push(blocks[i++]);
       result.push(
-        <ul key={`ul-${items[0].id}`} style={{ paddingLeft: 24, margin: '4px 0', lineHeight: 1.75, listStyleType: 'disc' }}>
+        <ul key={`ul-${items[0].id}`} style={{ paddingLeft: 24, margin: '4px 0', lineHeight: 1.9, listStyleType: 'disc' }}>
           {items.map(item => (
             <li key={item.id} className="ju-sans" style={{ margin: '3px 0', fontSize: 16 }}>
               {renderRichText(item.bulleted_list_item?.rich_text || [])}
@@ -414,7 +414,7 @@ function NotionBlocks({ blocks }) {
       const items = [];
       while (i < blocks.length && blocks[i].type === 'numbered_list_item') items.push(blocks[i++]);
       result.push(
-        <ol key={`ol-${items[0].id}`} style={{ paddingLeft: 24, margin: '4px 0', lineHeight: 1.75, listStyleType: 'decimal' }}>
+        <ol key={`ol-${items[0].id}`} style={{ paddingLeft: 24, margin: '4px 0', lineHeight: 1.9, listStyleType: 'decimal' }}>
           {items.map(item => (
             <li key={item.id} className="ju-sans" style={{ margin: '3px 0', fontSize: 16 }}>
               {renderRichText(item.numbered_list_item?.rich_text || [])}

@@ -101,7 +101,7 @@ export default function WorkDetailPage() {
 
   return (
     <div style={{ minHeight: '100vh', paddingTop: 56 }}>
-      <div style={{ maxWidth: 'clamp(600px, 74vw, 960px)', margin: '0 auto', padding: 'clamp(40px, 6vw, 64px) 24px 0' }}>
+      <div style={{ maxWidth: 'clamp(600px, 74vw, 820px)', margin: '0 auto', padding: 'clamp(40px, 6vw, 64px) 24px 0' }}>
 
         {/* Breadcrumb */}
         <p className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.12em', color: 'var(--ju-text3)', margin: 0 }}>
