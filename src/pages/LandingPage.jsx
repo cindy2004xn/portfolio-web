@@ -17,7 +17,7 @@ import Glow from '../components/Glow.jsx';
 const SELECTED_WORKS = [
   {
     id: '37baa7a7-8108-8082-8a2b-cbd642c2b604',
-    title: '高壓救災情境：降低視覺干擾以提升決策速度',
+    title: '高壓救災情境：降低干擾以提升決策速度',
     meta: '新竹市消防局｜颱洪行動匯報系統 2.0',
     desc: '透過 User Flow 釐清消防員、指揮中心、里長、應變小組之間的資訊傳遞，依照實際救災情境，梳理出各使用者主要提供與接收的資訊。',
   },
@@ -29,7 +29,7 @@ const SELECTED_WORKS = [
   },
   {
     id: '37baa7a7-8108-80c4-9f01-e003adfbf4df',
-    title: '福利政策搜尋：降低思考選擇負擔，提升精準篩選機制',
+    title: '福利政策搜尋：降低認知負擔，提升精準篩選機制',
     meta: '長穩基金會｜iFare 福利政策小幫手',
     desc: '以 Excel 原型快速測試各種搜尋角度，並透過收斂搜尋條件，讓使用者精準提供必要資料，且可快速找出符合資格與需求的福利政策。',
   },
@@ -38,21 +38,21 @@ const SELECTED_WORKS = [
 const AI_WORKS = [
   {
     id: '38aaa7a7-8108-8028-9ebb-e750f4aa9fdf',
-    title: '分析現有流程，協助導入 AI Agent',
-    meta: '旻寬科技｜報價/議價 Agent',
-    desc: '各廠商報價單格式不一，人工比對耗時且容易出錯。初期讓 AI 直接處理，實際產出與預期有落差；於是加入人類審核點並建立學習型同義詞庫，逐步提高辨識精準度。',
+    title: 'AI 導入流程，找出 AI 擅長的工作',
+    meta: '旻寬科技｜報價/議價 AI 系統',
+    desc: '各廠商報價單格式不一，人工比對耗時且容易出錯。我與 AI 共同定義規格，釐清例外情境，建立學習型同義詞庫並加入人類審核點，逐步提高辨識精準度。',
   },
   {
     id: '37baa7a7-8108-8021-b632-e36abbef5fcf',
-    title: '透過 PRD 控管與 AI 進行協作',
+    title: '人機協作應用於設計流程',
     meta: '個人專案｜個人作品網站',
-    desc: '我負責定義網站架構、內容邏輯與 PRD 規格，AI 依規格產出程式碼與初版介面，我再檢視、調整、回饋修正方向，你現在看到的網站，就是這個協作模式的產出結果。',
+    desc: '我負責定義網站架構、內容邏輯與規格，並反覆測試多種人機協作方式。最後發現 AI 擅長讀取已定案的規格、精準執行，而不是在方向還模糊時自己生成答案，你現在看到的網站，就是這個判斷下的產出結果。',
   },
   {
     id: '38aaa7a7-8108-8070-875c-f491ba76455c',
-    title: 'AI 協助有效提升資料分析',
+    title: '資料治理，提升 AI 應用的精準度與信任',
     meta: '資訊工業策進會｜115智慧雨林健康照護_資料庫',
-    desc: '在需要快速閱讀多家廠商計劃書並產出精準報告，我負責描述預期的資料呈現方式與邏輯，AI 協助生成函式、建立分析表結構，我再檢查產出是否符合實際決策需求。',
+    desc: '面對 21 份格式各異的計畫書，我判斷哪些欄位該由系統計算、哪些該留給人核對，建立公式計算層與查證標記層兩套機制，讓系統不只是提供答案，更是誠實揭露資料的可信程度。',
   },
 ];
 
@@ -75,8 +75,8 @@ function SkillIcon({ name }) {
 }
 
 const AI_SKILLS = [
-  { icon: 'collab', title: '人機協作', desc: '透過撰寫專案 PRD 與 AI 進行專案發想、研究、設計。' },
-  { icon: 'shield', title: 'AI 品質管控', desc: '前期可建立多項審核點，後期可建立審核標準。' },
+  { icon: 'collab', title: '人機協作', desc: '與 AI 進行專案發想、研究、設計，並整理出專案文件。' },
+  { icon: 'shield', title: 'AI 品質管控', desc: '優化資料治理，建立多項審核點，進而建立審核標準。' },
   { icon: 'flow',   title: 'AI 導入流程', desc: '針對使用頻率高、可標準化、例外狀況多之情境進行導入。' },
 ];
 
@@ -346,7 +346,7 @@ export default function LandingPage() {
             className="ju-sans lp-fade-up"
             style={{ animationDelay: '0.45s', fontSize: 'clamp(40px, 4.44vw, 64px)', fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.2, margin: 0 }}
           >
-            UX Designer
+            Product Designer
           </h1>
           <p
             className="ju-sans lp-fade-up"
@@ -372,14 +372,24 @@ export default function LandingPage() {
           {/* 人像底到標題 35px（Figma：人像 869–1040、標題 1075） */}
           <div className="lp-about-text" style={{ marginTop: 35 }}>
             <h2 className="ju-sans ju-en" style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 700, margin: 0, letterSpacing: '-0.01em', textAlign: 'center' }}>
-              What make me different
+              What makes me different
             </h2>
+            {/* 文件第二版的定調主張句：置中承接英文標題，領起下方四段論述 */}
+            <p className="ju-sans" style={{ fontSize: 'clamp(19px, 2.4vw, 26px)', fontWeight: 700, lineHeight: 1.5, margin: '18px 0 0', textAlign: 'center', textWrap: 'balance' }}>
+              AI 不是取代，而是能力放大器
+            </p>
             {/* 長中文置中會難讀，稿上也是左對齊——標題置中、內文左對齊是刻意的混合 */}
             <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '31px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
-              在技術快速發展時代，每天都有新技術、新資訊，而設計師更是需要保持學習心態，擁抱接納不同時代下的變化。但對我來說，AI 技術像是增強人類的技能，讓設計師的創意能夠實際落實，回到設計師作為 maker 的本質。
+              我擅長在繁雜的事物之間，找出底層共通的邏輯。過去面對需求、面對問題，我會不停追問，不輕易讓問題只停在表面，就像兩個角色、兩種訴求，看起來是該分開處理的兩件事，但往下追問「真正卡住的是什麼」，常常會發現，兩者卡住的其實是同一個問題，最終指向的也是同一個目標。
             </p>
             <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
-              我擅長在繁雜的事物之間，找出底層共通的結構，轉譯成一套可以被執行、被複製的框架，這不只能應用在概念詮釋，更能夠將使用者研究、資料架構、設計流程等方法能夠落地應用。這些簡單的思考架構，是經過多方面的知識與資訊柔和，提煉與驗證而來的。
+              過去要花大量時間整理的資訊，現在我可以先把看似無關的想法丟出來，讓 AI 幫我快速整理，我能更聚焦在思考問題的本質，那些憑經驗做出的判斷，過去往往是反射動作、自己都沒意識到，透過反覆梳理，我開始看見那些藏在經驗裡，與原本說不出口的邏輯。
+            </p>
+            <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
+              設計師的價值，在於能把想法做成可以被驗證的東西，親自動手做出來、親自測試過，這件事不會因為有了 AI 而改變，只會因為 AI 而變得可以更快執行。
+            </p>
+            <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
+              AI 把原本被時間掩埋住的判斷邏輯，重新還給了我，讓我更專注在找出真正的問題，並驗證解決的方法。
             </p>
           </div>
         </div>
