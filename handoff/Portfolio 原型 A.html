@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>朱千慧 Portfolio — 原型 A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Sans+TC:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ju-green:   #2c6e4f;
+    --ju-green-bg:#d4ede2;
+    --ju-base:    #f5f1eb;
+    --ju-surface: #eae4d8;
+    --ju-card:    #ffffff;
+    --ju-dark:    #1a1a1a;
+    --ju-text:    #1a1a1a;
+    --ju-text2:   #6b6560;
+    --ju-text3:   #b2afa9;
+    --ju-border:  #ddd7cc;
+  }
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--ju-base); color: var(--ju-text); }
+  button, input { font-family: inherit; }
+  .ju-sans  { font-family: 'Noto Sans TC', system-ui, sans-serif; }
+  .ju-serif { font-family: 'Noto Serif TC', serif; }
+  .ju-mono  { font-family: 'IBM Plex Mono', monospace; }
+
+  .p-header {
+    position: sticky; top: 0; z-index: 30; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(20px, 4vw, 32px);
+    background: var(--ju-base);
+    border-bottom: 0.5px solid var(--ju-border);
+  }
+
+  .p-hero-title   { font-size: clamp(28px, 5vw, 44px); line-height: 1.4; }
+  .p-detail-title { font-size: clamp(28px, 5vw, 40px); line-height: 1.4; }
+
+  /* 搜尋列:滾動時 fix 在 header 下緣 */
+  .p-search-sticky {
+    position: sticky; top: 56px; z-index: 25;
+    background: var(--ju-base);
+    padding: 20px 0 14px;
+    transition: border-color 0.15s ease;
+  }
+
+  .p-chip:hover { border-color: var(--ju-green) !important; color: var(--ju-green) !important; }
+
+  /* 行動版:吸底搜尋列 + 上滑面板 */
+  .p-dock {
+    display: none;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    padding: 10px 16px calc(14px + env(safe-area-inset-bottom));
+    background: var(--ju-base);
+    border-top: 0.5px solid var(--ju-border);
+  }
+  .p-sheet-backdrop {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(26, 26, 26, 0.32);
+    display: flex; align-items: flex-end;
+  }
+  .p-sheet {
+    width: 100%; max-height: 78vh; overflow-y: auto;
+    background: var(--ju-base);
+    border-top: 0.5px solid var(--ju-border);
+    border-radius: 16px 16px 0 0;
+    padding: 20px 20px calc(28px + env(safe-area-inset-bottom));
+    animation: p-sheet-up 0.24s ease;
+  }
+  @keyframes p-sheet-up { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* 文章排版(白底容器內的 Blog 閱讀節奏) */
+  .p-article > :first-child { margin-top: 0; }
+  .p-article p { font-size: 16px; line-height: var(--p-lh, 1.95); margin: 24px 0 0; color: var(--ju-text); text-wrap: pretty; }
+  .p-article h2 { font-size: 24px; line-height: 1.5; font-weight: 500; margin: 56px 0 0; }
+  .p-article h2 + p { margin-top: 14px; }
+  .p-article blockquote {
+    margin: 48px 0; padding: 24px 16px;
+    border-top: 0.5px solid var(--ju-border); border-bottom: 0.5px solid var(--ju-border);
+    font-size: 18px; line-height: 1.9; color: var(--ju-text2); text-align: center; font-weight: 400;
+  }
+
+  .p-rec-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .p-rec-card h3 { transition: color 0.15s ease; }
+  .p-rec-card:hover h3 { color: var(--ju-green); }
+
+  .p-backtop {
+    position: fixed; right: 24px; bottom: 24px; z-index: 35;
+    width: 44px; height: 44px; border-radius: 999px;
+    background: var(--ju-base); border: 0.5px solid var(--ju-text);
+    color: var(--ju-text); font-size: 15px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .p-backtop:hover { color: var(--ju-green); border-color: var(--ju-green); }
+
+  @media (max-width: 719px) {
+    .p-search-inline { display: none; }
+    .p-dock { display: block; }
+    .p-backtop { bottom: 86px; right: 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="proto-data.jsx"></script>
+<script type="text/babel" src="proto-ui.jsx"></script>
+<script type="text/babel" src="proto-search.jsx"></script>
+<script type="text/babel" src="proto-pages.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "columns": 2,
+  "lineHeight": 1.95
+}/*EDITMODE-END*/;
+
+function readRoute() {
+  const h = window.location.hash;
+  const m = h.match(/^#\/work\/(\w+)/);
+  return m ? { name: 'work', id: m[1] } : { name: 'home' };
+}
+
+function PBackToTop() {
+  const [visible, setVisible] = React.useState(false);
+  React.useEffect(() => {
+    const f = () => setVisible(window.scrollY > 400);
+    window.addEventListener('scroll', f, { passive: true });
+    return () => window.removeEventListener('scroll', f);
+  }, []);
+  if (!visible) return null;
+  return (
+    <button className="p-backtop" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="回到頂端">↑</button>
+  );
+}
+
+function App() {
+  const [route, setRoute] = React.useState(readRoute());
+  const [selected, setSelected] = React.useState([]);
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [isMobile, setIsMobile] = React.useState(window.matchMedia('(max-width: 719px)').matches);
+
+  React.useEffect(() => {
+    const mq = window.matchMedia('(max-width: 719px)');
+    const f = () => setIsMobile(mq.matches);
+    mq.addEventListener('change', f);
+    return () => mq.removeEventListener('change', f);
+  }, []);
+
+  React.useEffect(() => {
+    const f = () => { setRoute(readRoute()); window.scrollTo(0, 0); };
+    window.addEventListener('hashchange', f);
+    return () => window.removeEventListener('hashchange', f);
+  }, []);
+
+  function go(hash) { window.location.hash = hash; }
+  function applySearch(tags) { setSelected(tags); }
+  function filterFromDetail(tag) { setSelected([tag]); go('/'); }
+
+  const filtered = React.useMemo(() => {
+    if (selected.length === 0) return P_WORKS;
+    return P_WORKS
+      .map(w => ({ ...w, _m: w.tags.filter(x => selected.includes(x)).length }))
+      .filter(w => w._m > 0)
+      .sort((a, b) => b._m - a._m);
+  }, [selected]);
+
+  const work = route.name === 'work' ? P_WORKS.find(w => w.id === route.id) : null;
+  const tweaks = { columns: t.columns, lineHeight: t.lineHeight, isMobile };
+
+  return (
+    <div className="ju-sans">
+      <PHeader onHome={() => { go('/'); }} />
+      {route.name === 'home' || !work ? (
+        <PHomePage
+          selected={selected}
+          onApply={applySearch}
+          filtered={filtered}
+          onOpen={(id) => go(`/work/${id}`)}
+          tweaks={tweaks}
+        />
+      ) : (
+        <PDetailPage
+          work={work}
+          onHome={() => go('/')}
+          onOpenWork={(id) => go(`/work/${id}`)}
+          onFilterTag={filterFromDetail}
+          tweaks={tweaks}
+        />
+      )}
+      {route.name === 'home' && (
+        <PBottomDock applied={selected} onApply={applySearch} resultCount={filtered.length} />
+      )}
+      <PBackToTop />
+
+      <TweaksPanel>
+        <TweakSection label="首頁列表" />
+        <TweakRadio label="瀑布流欄數" value={t.columns} options={[2, 3]} onChange={(v) => setTweak('columns', v)} />
+        <TweakSection label="文章閱讀" />
+        <TweakSlider label="內文行高" value={t.lineHeight} min={1.7} max={2.2} step={0.05} onChange={(v) => setTweak('lineHeight', v)} />
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

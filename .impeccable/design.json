@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-13T00:00:00Z",
+  "title": "Design System: Armonia — 朱千慧作品集",
+  "extensions": {
+    "colorMeta": {
+      "forest": { "role": "primary", "displayName": "森林綠 Forest", "canonical": "oklch(33% 0.05 128)", "tonalRamp": ["#14180C", "#1F2912", "#2A3518", "#35431F", "#4A5B2D", "#6B7F49", "#95A876", "#C9D89B"] },
+      "lime": { "role": "secondary", "displayName": "青檸 Lime", "canonical": "oklch(85% 0.09 118)", "tonalRamp": ["#3B4522", "#556231", "#6F8042", "#8CA05A", "#A9BE79", "#C9D89B", "#DCE6BC", "#EEF2DC"] },
+      "paper": { "role": "neutral", "displayName": "紙 Paper", "canonical": "oklch(86% 0.012 96)", "tonalRamp": ["#23231D", "#3A3A32", "#57574C", "#797467", "#A3A093", "#C4C0B1", "#D9D5C7", "#F4F1E8"] },
+      "ink": { "role": "neutral", "displayName": "墨 Ink", "canonical": "oklch(24% 0.006 96)", "tonalRamp": ["#161611", "#23231D", "#3A3A32", "#57574C", "#6E6E62", "#8A8A7C", "#B4B1A5", "#D9D5C7"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "hero 唯一的粗黑體主張大字。" },
+      "display-serif": { "displayName": "Display Serif", "purpose": "hero 副標與宣言金句；承載情感的襯線大字。" },
+      "headline": { "displayName": "Headline", "purpose": "段落標題、內頁大標（襯線）。" },
+      "title": { "displayName": "Title", "purpose": "作品卡標題（襯線）。" },
+      "body": { "displayName": "Body", "purpose": "正文段落，行長 65–75ch，一律用 Ink 色。" },
+      "label": { "displayName": "Label", "purpose": "mono 微標籤。" },
+      "caption": { "displayName": "Caption", "purpose": "座標式 meta 與分隔線文字（mono）。" }
+    },
+    "shadows": [
+      { "name": "rest-lift", "value": "0 8px 24px -16px rgba(35, 35, 29, 0.14)", "purpose": "作品卡/面板靜止態；極輕，把卡片托出暖紙。" },
+      { "name": "hover-lift", "value": "0 16px 34px -18px rgba(40, 50, 25, 0.45)", "purpose": "卡片 hover/focus，配 translateY(-4px)；陰影帶森林冷調。" }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "ease", "purpose": "多數狀態轉場（0.15s）。" },
+      { "name": "ease-emphasis", "value": "cubic-bezier(0.33, 0, 0.2, 1)", "purpose": "旋轉標籤等強調位移（0.3s）。" },
+      { "name": "press", "value": "scale(0.97)", "purpose": "按鈕 active 按壓回饋（0.1s）。" },
+      { "name": "sheet-up", "value": "translateY(24px) → translateY(0), 0.24s ease", "purpose": "行動版 bottom sheet 升起。" }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "719px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "頁面主 CTA；實心森林綠 pill。",
+      "html": "<button class=\"ds-btn-primary\">查看完整作品集</button>",
+      "css": ".ds-btn-primary { background: var(--ju-green, #35431F); color: var(--ju-on-green, #EEEBE1); font-family: 'Noto Sans TC', system-ui, sans-serif; font-size: 15px; font-weight: 500; padding: 14px 30px; border: none; border-radius: 999px; cursor: pointer; transition: background 0.15s ease, transform 0.1s ease; } .ds-btn-primary:hover { background: var(--ju-green-hover, #2A3518); } .ds-btn-primary:active { transform: scale(0.97); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ju-base, #D9D5C7), 0 0 0 4px var(--ju-green, #35431F); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "次要動作；森林綠描邊 pill，mono 字。",
+      "html": "<button class=\"ds-btn-ghost\">回到最頂端 ↑</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: var(--ju-green, #35431F); font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.18em; height: 42px; padding: 0 22px; border: 1px solid var(--ju-green, #35431F); border-radius: 999px; cursor: pointer; transition: background 0.15s ease, color 0.15s ease; } .ds-btn-ghost:hover { background: var(--ju-green, #35431F); color: var(--ju-on-green, #EEEBE1); }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip-filter",
+      "description": "標籤篩選 chip；預設次表面，選中實心森林綠。",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-chip\">介面設計</button><button class=\"ds-chip ds-chip--selected\">資料分析</button></div>",
+      "css": ".ds-chip { background: var(--ju-surface, #E6E2D5); color: var(--ju-text, #23231D); font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.08em; height: 28px; padding: 0 11px; border: none; border-radius: 999px; cursor: pointer; transition: background 0.15s ease; } .ds-chip:hover { background: #D6D0BF; } .ds-chip--selected { background: var(--ju-green, #35431F); color: var(--ju-on-green, #EEEBE1); } .ds-chip--selected:hover { background: var(--ju-green-hover, #2A3518); }"
+    },
+    {
+      "name": "Work Card",
+      "kind": "card",
+      "refersTo": "card-work",
+      "description": "作品卡；縮圖 + 襯線標題 + mono meta，靜止即有極輕浮起。",
+      "html": "<a class=\"ds-card\"><div class=\"ds-card__thumb\"></div><div class=\"ds-card__body\"><p class=\"ds-card__meta\">華碩　/　AI・客服・設計　/　2023</p><h3 class=\"ds-card__title\">AI 客服系統：建立使用者與 AI 之間的信任機制</h3></div></a>",
+      "css": ".ds-card { display: block; text-decoration: none; color: inherit; cursor: pointer; } .ds-card__thumb { aspect-ratio: 4/3; border-radius: 12px; background: var(--ju-surface, #E6E2D5); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 8px 24px -16px rgba(35,35,29,0.14); transition: border-color 0.15s ease, box-shadow 0.2s ease, transform 0.2s ease; } .ds-card:hover .ds-card__thumb { border-color: var(--ju-green, #35431F); box-shadow: 0 16px 34px -18px rgba(40,50,25,0.45); transform: translateY(-4px); } .ds-card__body { padding-top: 16px; } .ds-card__title { font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: 20px; line-height: 1.45; margin: 0; color: var(--ju-text, #23231D); transition: color 0.15s ease; } .ds-card:hover .ds-card__title { color: var(--ju-green, #35431F); } .ds-card__meta { font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.14em; color: var(--ju-text3, #8A8A7C); margin: 0 0 8px; line-height: 1.8; }"
+    },
+    {
+      "name": "Forest Panel",
+      "kind": "custom",
+      "refersTo": "panel-forest",
+      "description": "招牌元件：滿版森林綠背景 + 紙白襯線大字，用於宣言與收尾 CTA。「綠撐面」原則的化身。",
+      "html": "<section class=\"ds-forest-panel\"><p class=\"ds-forest-panel__kicker\">POSITION</p><p class=\"ds-forest-panel__lead\">不是比 AI 更會做，而是比 AI 更早知道要做什麼。</p></section>",
+      "css": ".ds-forest-panel { background: var(--ju-green, #35431F); color: var(--ju-on-green, #EEEBE1); border-radius: 20px; padding: clamp(40px, 7vw, 88px); } .ds-forest-panel__kicker { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.24em; color: var(--ju-green-bg, #C9D89B); margin: 0 0 20px; } .ds-forest-panel__lead { font-family: 'Noto Serif TC', serif; font-weight: 500; font-size: clamp(22px, 4vw, 34px); line-height: 1.7; margin: 0; }"
+    },
+    {
+      "name": "Tag Chip (detail)",
+      "kind": "chip",
+      "refersTo": "chip-tag",
+      "description": "內頁標籤；森林綠描邊，承載品牌識別而非中性灰。",
+      "html": "<span class=\"ds-tag\">使用者研究</span>",
+      "css": ".ds-tag { display: inline-block; height: 28px; line-height: 26px; padding: 0 11px; border-radius: 999px; font-family: 'Space Mono', monospace; font-size: 10.5px; letter-spacing: 0.08em; color: var(--ju-green, #35431F); background: transparent; border: 1px solid var(--ju-green, #35431F); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "有紀律的溫度 (Disciplined Warmth)",
+    "overview": "Armonia 坐落在暖米紙的溫度與深森林綠+4px 間距的紀律兩極之間，呼應主人「把混亂資料轉譯成可執行框架」的專業自述。系統克制而自信：不用純白純黑，一切在暖灰↔墨黑窄帶上呼吸，唯一高彩度的森林綠被升格為承重牆——能整段撐起滿版背景，形成紙→綠→紙的節奏。它拒絕 2026 氾濫的暖米+襯線+編號段落 AI-editorial 車道、拒絕把長文關進浮框、拒絕灰虛正文與重複卡片牆。",
+    "keyCharacteristics": [
+      "暖紙基底，永不使用純白或純黑",
+      "單一森林綠 #35431F，目標用量 30–60% 的面（committed，非點綴）",
+      "襯線承載情感、黑體承載 UI 與正文、mono 只當微標籤",
+      "扁平為底、陰影只在狀態時出現",
+      "4px 間距階、克制圓角 8/12/20/pill"
+    ],
+    "rules": [
+      { "name": "The Load-Bearing Green Rule", "body": "森林綠必須在每個主要頁面至少撐起一個滿版的面，目標 30–60% 可視面積；降級成細邊框與小連結屬架構回歸。", "section": "colors" },
+      { "name": "The No-Pure-Ink Rule", "body": "全站不得出現 #FFFFFF 與 #000000；最亮是 Card #EEEBE1，最深是 Ink #23231D。", "section": "colors" },
+      { "name": "The Two-Voice Rule", "body": "襯線=情感/展示、黑體=UI/正文、mono=微標籤、Hanken=英文點綴；選字前先問是哪種聲音，不得隨手混用。", "section": "typography" },
+      { "name": "The Body-Reads-Ink Rule", "body": "長段落正文一律用 Ink #23231D；Ink-2 只給短 meta，Ink-3 只給 mono caption。", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "面材靜止時扁平，深度來自明度分層；陰影只在 hover/浮起/focus 時出現，且為森林/墨冷暖同源色。", "section": "elevation" }
+    ],
+    "dos": [
+      "Do 讓森林綠在每個主要頁面撐起至少一個滿版的面（Forest Panel），目標 30–60%",
+      "Do 正文一律用 Ink #23231D，Ink-2 只給短 meta、Ink-3 只給 mono caption",
+      "Do 依兩種聲音規則選字：襯線=情感/展示、黑體=UI/正文、mono=微標籤",
+      "Do 用明度分層堆疊深度，陰影只在 hover/浮起/focus 時出現",
+      "Do 卡片給極輕靜止陰影 + 1px 實線邊框，讓它們浮出暖紙",
+      "Do 綠面上正文行高加 0.05–0.1 補償反白視重"
+    ],
+    "donts": [
+      "Don't 把森林綠降級成只有細邊框與小連結的點綴",
+      "Don't 使用純白 #FFFFFF 或純黑 #000000",
+      "Don't 用 01/02/03 編號段落標記當套版鷹架",
+      "Don't 在每個段落標題上加 mono eyebrow 當段落文法",
+      "Don't 把長文正文關進浮框卡片",
+      "Don't 用 Ink-2/Ink-3 當長段落正文顏色",
+      "Don't 排一整牆同尺寸同結構的卡片",
+      "Don't 使用大於 1px 的彩色側條 border-left/right",
+      "Don't 使用漸層文字 background-clip:text + gradient",
+      "Don't 把玻璃擬態當預設裝飾"
+    ]
+  }
+}

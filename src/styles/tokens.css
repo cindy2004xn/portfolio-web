@@ -1,58 +1,80 @@
 :root {
   /* ============================================================
-     Armonia Foundations v1.1（正本：project/Design System.dc.html）
-     色彩原則：暖灰米基底、單一深森林綠主色，不使用純白與純黑。
+     Armonia Foundations v3.2 — 灰階畫布（正本：DESIGN.md）
+     色彩原則：全站零彩度灰階——近黑畫布 + 近白文字，無任何色相；
+     視覺記憶點由質感承擔（hero 白噴點粒子圓、手寫簽名、攝影人像）。
+     不使用純白 (#FFFFFF) 與純黑 (#000000)。
+     內頁 Notion 長文保留淺紙閱讀面板：用 .ju-light 作用域整套切回淺色值。
      ============================================================ */
 
   /* Brand */
-  --color-brand-primary:    #35431F;
-  --color-brand-primary-bg: #C9D89B;
+  --color-brand-primary:    #F4F3EF;
+  --color-brand-primary-bg: rgba(244, 243, 239, 0.08);
 
-  /* Design token aliases（元件一律用這組） */
-  --ju-green:    #35431F;  /* Forest 主色 */
-  --ju-green-bg: #C9D89B;  /* Lime 淺底 */
-  --ju-base:     #D9D5C7;  /* Paper 頁面底色 */
-  --ju-surface:  #E6E2D5;  /* Surface 2 次表面（chips、輸入框底） */
-  --ju-card:     #EEEBE1;  /* Surface 卡片面（DS 不用純白） */
-  --ju-card2:    #F4F1E8;  /* 內層面（卡中卡、icon 格） */
-  --ju-surface-hover: #D6D0BF;  /* chip/次表面 hover 加深 */
-  --ju-dark:     #23231D;  /* Ink */
-  --ju-text:     #23231D;
-  --ju-text2:    #6E6E62;  /* 次要文字，對 Paper 約 3.5:1 */
-  /* 僅限小型 mono 標籤與 caption 使用（對 Paper 約 2.3:1）——
-     跟隨 DS 的刻意取捨，見 DECISIONS.md 2026-07-13；不得用於正文 */
-  --ju-text3:    #8A8A7C;
-  --ju-border:   rgba(0, 0, 0, 0.1);
+  /* Design token aliases（元件一律用這組）
+     --ju-accent 是無彩系統的「強調」：近白。連結、選中態、hover 強調
+     全靠明度差說話，不靠色相。 */
+  --ju-accent:    #F4F3EF;  /* 主 accent：近白（對近黑約 17:1） */
+  --ju-accent-bg: rgba(244, 243, 239, 0.08);  /* 徽章/淺註記底 */
+  --ju-base:     #0C0C0C;  /* 頁面基底：中性近黑，非 #000 */
+  --ju-surface:  #141414;  /* 次表面（chips、輸入框底、縮圖佔位） */
+  --ju-card:     #181818;  /* 卡片面 */
+  --ju-card2:    #1F1F1F;  /* 內層面（卡中卡、icon 格） */
+  --ju-surface-hover: #1E1E1E;  /* chip/次表面 hover 提亮 */
+  --ju-dark:     #F4F3EF;  /* Ink（深色系統中「墨」即近白） */
+  --ju-text:     #F4F3EF;  /* 主要文字：近白 */
+  --ju-text2:    rgba(244, 243, 239, 0.64);  /* 次要文字，約 6.8:1 —— 刻意比深色模板慣用灰亮 */
+  /* 僅限小型 mono 標籤與 caption 使用（約 4.5:1）——不得用於正文 */
+  --ju-text3:    rgba(244, 243, 239, 0.45);
+  --ju-border:   rgba(244, 243, 239, 0.1);
 
-  /* 互動狀態（DS 08 元件狀態） */
-  --ju-green-hover:  #2A3518;  /* hover 加深一階 */
-  --ju-green-active: #1F2912;  /* active 再加深 */
-  --ju-on-green:     #EEEBE1;  /* 綠底上的文字 */
-  --ju-error:        #A6483A;  /* 磚紅錯誤 */
-  --ju-focus-ring:   rgba(53, 67, 31, 0.22);  /* focus 半透明綠光環 */
+  /* 互動狀態（無彩：hover 靠明度） */
+  --ju-accent-hover:  #E5E4DE;  /* 近白實心面 hover 微降 */
+  --ju-accent-active: #D8D7D0;  /* active 再降 */
+  --ju-on-accent:     #141414;  /* 近白實心面上的文字（近黑） */
+  --ju-on-accent-2:   rgba(20, 20, 20, 0.62);  /* 近白面上的次要文字 */
+  --ju-error:        #C4705F;  /* 磚紅錯誤（唯一狀態色，用量極省） */
+  --ju-focus-ring:   rgba(244, 243, 239, 0.3);  /* focus 半透明近白光環 */
+
+  /* Elevation（深色系統的深度靠「面的提亮」＋極細邊；陰影退為落地感） */
+  --ju-shadow-rest:  0 8px 24px -16px rgba(0, 0, 0, 0.55);
+  --ju-shadow-hover: 0 18px 38px -18px rgba(0, 0, 0, 0.75);
+  --ju-border-card:  rgba(244, 243, 239, 0.14);
+
+  /* ── Figma 266-175 帶進的灰階（v3.3）。全部 R=G=B，零彩度原則不變。
+     這幾階比上面的畫布色亮，因為它們是「光」不是「面」：粒子圓與光暈是
+     發光體，pill 是浮在粒子雲上的實心徽章。 ── */
+  --ju-hero-disc:    #D3D3D3;  /* Hero 粒子圓漸層主色 */
+  --ju-pill-bg:      #2E2E2E;  /* Hero pill 底（≈ 近白 14.7% 疊上近黑） */
+  --ju-pill-border:  #4C4C4C;  /* Hero pill 邊 */
+  --ju-hairline:     #B8B8B8;  /* Hero 中央垂線導引 */
+  --ju-glow-1:       #D9D9D9;  /* 光暈漸層 0% */
+  --ju-glow-2:       #A7A7A7;  /* 光暈漸層 49.37% */
+  --ju-glow-3:       #737373;  /* 光暈漸層 100% */
 
   /* Background */
-  --color-bg-base:    #D9D5C7;
-  --color-bg-surface: #E6E2D5;
-  --color-bg-card:    #EEEBE1;
-  --color-bg-dark:    #23231D;
+  --color-bg-base:    #0C0C0C;
+  --color-bg-surface: #141414;
+  --color-bg-card:    #181818;
+  --color-bg-dark:    #080808;
 
   /* Text */
-  --color-text-main:      #23231D;
-  --color-text-secondary: #6E6E62;
-  --color-text-disabled:  #8A8A7C;
+  --color-text-main:      #F4F3EF;
+  --color-text-secondary: rgba(244, 243, 239, 0.64);
+  --color-text-disabled:  rgba(244, 243, 239, 0.45);
 
   /* Border */
-  --color-border-default: rgba(0, 0, 0, 0.1);
-  --color-border-strong:  #23231D;
+  --color-border-default: rgba(244, 243, 239, 0.1);
+  --color-border-strong:  #F4F3EF;
 
-  /* Spacing（4px 步階，與 DS 一致） */
+  /* Spacing（4px 步階；區塊間距統一階見 --ju-section-pad） */
   --spacing-xs:  4px;
   --spacing-sm:  8px;
   --spacing-md:  16px;
   --spacing-lg:  24px;
   --spacing-xl:  40px;
   --spacing-2xl: 64px;
+  --ju-section-pad: clamp(80px, 10vw, 128px);  /* 連續畫布的等拍呼吸 */
 
   /* Radius（DS：8 sm / 12 md / 20 lg / pill） */
   --radius-sm:   8px;
@@ -60,14 +82,48 @@
   --radius-lg:   20px;
   --radius-pill: 999px;
 
-  /* Typography sizes */
+  /* Typography sizes（kat-wang 降階字級，正本見 DESIGN.md） */
   --text-display:    48px;
   --text-h1:         36px;
   --text-h2:         24px;
   --text-h3:         18px;
-  --text-body:       15px;
-  --text-body-sm:    13px;
+  --text-body:       16px;
+  --text-body-sm:    14px;
   --text-label:      12px;
   --text-label-caps: 11px;
   --text-caption:    11px;
+}
+
+/* ============================================================
+   .ju-light — 淺紙閱讀作用域（Armonia v1.1 的淺色值）
+   用於作品內頁的 Notion 長文面板：「深色書房裡的一張紙」。
+   掛上此 class 的子樹內，所有 --ju-* 解析回淺色系統；
+   面板內的 accent 是墨色（綠色概念已全站退場）。
+   ============================================================ */
+.ju-light {
+  --ju-accent:    #23231D;
+  --ju-accent-bg: rgba(35, 35, 29, 0.08);
+  --ju-base:     #D9D5C7;
+  --ju-surface:  #E6E2D5;
+  --ju-card:     #EEEBE1;
+  --ju-card2:    #F4F1E8;
+  --ju-surface-hover: #D6D0BF;
+  --ju-dark:     #23231D;
+  --ju-text:     #23231D;
+  --ju-text2:    #6E6E62;
+  --ju-text3:    #8A8A7C;
+  --ju-border:   rgba(0, 0, 0, 0.1);
+
+  --ju-accent-hover:  #3A3A32;
+  --ju-accent-active: #4A4A40;
+  --ju-on-accent:     #EEEBE1;
+  --ju-on-accent-2:   rgba(238, 235, 225, 0.72);
+  --ju-error:        #A6483A;
+  --ju-focus-ring:   rgba(35, 35, 29, 0.22);
+
+  --ju-shadow-rest:  0 8px 24px -16px rgba(35, 35, 29, 0.14);
+  --ju-shadow-hover: 0 16px 34px -18px rgba(35, 35, 29, 0.4);
+  --ju-border-card:  rgba(35, 35, 29, 0.14);
+
+  color: var(--ju-text);
 }

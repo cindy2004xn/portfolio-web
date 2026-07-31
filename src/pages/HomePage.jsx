@@ -5,6 +5,8 @@ import { fetchWorks } from '../lib/data.js';
 import { distributeMasonry, prefersReducedMotion, scrollToY } from '../lib/masonry.js';
 import WorkCard from '../components/WorkCard.jsx';
 import BackToTop from '../components/BackToTop.jsx';
+import NoiseDefs from '../components/NoiseDefs.jsx';
+import Glow from '../components/Glow.jsx';
 
 const INITIAL_COUNT = 6;
 const LOAD_MORE_COUNT = 4;
@@ -64,11 +66,11 @@ function RotatingTag({ tags, selectedTags }) {
   return (
     <span style={{ display: 'inline-flex', overflow: 'hidden', verticalAlign: 'bottom' }}>
       <span
-        className="ju-serif"
+        className="ju-sans"
         style={{
           display: 'inline-block',
-          color: 'var(--ju-green)',
-          borderBottom: '0.5px solid var(--ju-green)',
+          color: 'var(--ju-accent)',
+          borderBottom: '0.5px solid var(--ju-accent)',
           padding: '0 6px',
           transform: `translateY(${y})`,
           transition: phase === 'enter' ? 'none' : 'transform .3s cubic-bezier(.33, 0, .2, 1)',
@@ -133,6 +135,9 @@ export default function HomePage() {
     function f() {
       if (searchRef.current) setIsSearchFixed(searchRef.current.getBoundingClientRect().top <= 56);
     }
+    /* 掛載時先同步一次：底色也吃這個 state，若載入時已在捲動位置（瀏覽器的
+       scroll restoration），只靠 scroll 事件會停在「黏住但沒底」的糊狀態。 */
+    f();
     window.addEventListener('scroll', f, { passive: true });
     return () => window.removeEventListener('scroll', f);
   }, []);
@@ -201,13 +206,17 @@ export default function HomePage() {
     : `全部作品 · ${works.length} 件`;
 
   return (
-    <div style={{ minHeight: '100vh', paddingTop: 56 }}>
+    <div style={{ minHeight: '100vh', paddingTop: 56, position: 'relative', overflowX: 'clip' }}>
+      {/* SVG 濾鏡定義：光暈與 landing 的粒子圓共用同一組 turbulence */}
+      <NoiseDefs />
+      {/* 標題光暈（Figma 275-128 的 277:271）：894 圓心 (720, 139)——x 正中央、
+          y 在 header 下方，圓大半在畫面上方外往下灑。
+          掛在最外層而非 hero section：section 只有 880 寬，會把光暈裁掉一大截。 */}
+      <Glow size={894} align="center" top="139px" />
+
       {/* Hero — centered */}
-      <section style={{ maxWidth: 880, margin: '0 auto', padding: 'clamp(48px, 8vw, 88px) 24px 0', textAlign: 'center' }}>
-        <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', margin: 0, letterSpacing: '0.02em' }}>
-          Hi, I&apos;m Chain Huei Ju
-        </p>
-        <h1 className="ju-serif p-hero-title" style={{ margin: '18px 0 0', fontWeight: 500 }}>
+      <section style={{ position: 'relative', zIndex: 1, maxWidth: 880, margin: '0 auto', padding: 'clamp(48px, 8vw, 88px) 24px 0', textAlign: 'center' }}>
+        <h1 className="ju-sans p-hero-title" style={{ margin: 0, fontWeight: 600 }}>
           尋找 <RotatingTag tags={allTagCounts.map(([t]) => t)} selectedTags={selectedTags} /> 的作品
         </h1>
       </section>
@@ -220,7 +229,10 @@ export default function HomePage() {
       <section
         ref={searchRef}
         className="p-search-inline p-search-sticky"
-        style={{ borderBottom: isSearchFixed ? '0.5px solid var(--ju-border)' : '0.5px solid transparent' }}
+        style={{
+          background: isSearchFixed ? 'var(--ju-base)' : 'transparent',
+          borderBottom: isSearchFixed ? '0.5px solid var(--ju-border)' : '0.5px solid transparent',
+        }}
       >
         <div style={{ maxWidth: 720, margin: '0 auto', padding: '0 24px' }}>
           <SearchPanel
@@ -259,7 +271,7 @@ export default function HomePage() {
             <button
               onClick={() => applyTags([])}
               className="ju-mono"
-              style={{ marginTop: 20, height: 40, padding: '0 20px', background: 'transparent', border: '1px solid var(--ju-green)', borderRadius: 999, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.14em', cursor: 'pointer' }}
+              style={{ marginTop: 20, height: 40, padding: '0 20px', background: 'transparent', border: '1px solid var(--ju-accent)', borderRadius: 999, color: 'var(--ju-accent)', fontSize: 11, letterSpacing: '0.14em', cursor: 'pointer' }}
             >
               清除篩選
             </button>
@@ -286,7 +298,7 @@ export default function HomePage() {
                 <button
                   onClick={() => scrollToY(0)}
                   className="ju-mono"
-                  style={{ marginTop: 28, height: 42, padding: '0 22px', background: 'transparent', border: '0.5px solid var(--ju-green)', borderRadius: 999, color: 'var(--ju-green)', fontSize: 11, letterSpacing: '0.18em', cursor: 'pointer' }}
+                  style={{ marginTop: 28, height: 42, padding: '0 22px', background: 'transparent', border: '0.5px solid var(--ju-accent)', borderRadius: 999, color: 'var(--ju-accent)', fontSize: 11, letterSpacing: '0.18em', cursor: 'pointer' }}
                 >
                   回到最頂端 ↑
                 </button>

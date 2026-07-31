@@ -21,10 +21,10 @@ function TagChip({ label }) {
     <span
       className="ju-mono"
       style={{
-        display: 'inline-block', height: 28, lineHeight: '28px',
+        display: 'inline-block', height: 28, lineHeight: '26px',
         padding: '0 11px', borderRadius: 999, fontSize: 10.5,
-        letterSpacing: '0.08em', background: 'var(--ju-surface)',
-        border: 'none', color: 'var(--ju-text)',
+        letterSpacing: '0.08em', background: 'transparent',
+        border: '1px solid var(--ju-accent)', color: 'var(--ju-accent)',
       }}
     >
       {label}
@@ -87,7 +87,7 @@ export default function WorkDetailPage() {
       <div style={{ minHeight: '100vh', paddingTop: 56, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text2)', marginBottom: 16 }}>作品載入失敗</p>
-          <Link to="/works" className="ju-mono" style={{ display: 'inline-block', height: 40, lineHeight: '40px', padding: '0 20px', background: 'var(--ju-green)', color: 'var(--ju-on-green)', borderRadius: 999, fontSize: 11, letterSpacing: '0.14em', textDecoration: 'none' }}>
+          <Link to="/works" className="ju-mono" style={{ display: 'inline-block', height: 40, lineHeight: '40px', padding: '0 20px', background: 'var(--ju-accent)', color: 'var(--ju-on-accent)', borderRadius: 999, fontSize: 11, letterSpacing: '0.14em', textDecoration: 'none' }}>
             返回作品列表
           </Link>
         </div>
@@ -105,12 +105,12 @@ export default function WorkDetailPage() {
 
         {/* Breadcrumb */}
         <p className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.12em', color: 'var(--ju-text3)', margin: 0 }}>
-          <Link to="/works" style={{ color: 'var(--ju-green)', textDecoration: 'none' }}>作品</Link>
+          <Link to="/works" style={{ color: 'var(--ju-accent)', textDecoration: 'none' }}>作品</Link>
           <span>　—　{work.tags?.[0] ?? '作品'}</span>
         </p>
 
         {/* Title */}
-        <h1 className="ju-serif p-detail-title" style={{ margin: '28px 0 0', fontWeight: 500 }}>
+        <h1 className="ju-sans p-detail-title" style={{ margin: '28px 0 0', fontWeight: 600 }}>
           {work.title}
         </h1>
 
@@ -130,8 +130,9 @@ export default function WorkDetailPage() {
           )}
         </div>
 
-        {/* Article content */}
-        <div style={{ marginTop: 40, background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 20, padding: 'clamp(24px, 5vw, 56px)' }}>
+        {/* Article content — .ju-light 淺紙閱讀面板（深色書房裡的一張紙）：
+            作用域內整套 --ju-* 切回淺色值，Notion 內容元件不需改動 */}
+        <div className="ju-light" style={{ marginTop: 40, background: 'var(--ju-card)', border: '1px solid var(--ju-border-card)', borderRadius: 20, boxShadow: 'var(--ju-shadow-rest)', padding: 'clamp(24px, 5vw, 56px)' }}>
           {work.blocks?.length > 0
             ? <NotionBlockRenderer blocks={work.blocks} />
             : <p className="ju-sans" style={{ fontSize: 14, color: 'var(--ju-text3)', margin: 0 }}>尚無內容</p>

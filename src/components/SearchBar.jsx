@@ -10,8 +10,8 @@ function TagChip({ label, count = null, selected = false, small = false, onClick
         padding: small ? '0 11px' : '0 14px',
         borderRadius: 999, fontSize: small ? 10.5 : 11, letterSpacing: '0.08em',
         cursor: 'pointer', whiteSpace: 'nowrap', border: 'none',
-        background: selected ? 'var(--ju-green)' : 'var(--ju-surface)',
-        color: selected ? 'var(--ju-on-green)' : 'var(--ju-text)',
+        background: selected ? 'var(--ju-accent)' : 'var(--ju-surface)',
+        color: selected ? 'var(--ju-on-accent)' : 'var(--ju-text)',
         transition: 'color .15s ease, background .15s ease', flexShrink: 0,
       }}
     >
@@ -66,7 +66,7 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
         <button onClick={() => setDraft([...allTags])} className="ju-mono p-chip"
-          style={{ height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5, letterSpacing: '0.08em', cursor: 'pointer', background: 'transparent', border: '1px solid var(--ju-green)', color: 'var(--ju-green)' }}>
+          style={{ height: 28, padding: '0 11px', borderRadius: 999, fontSize: 10.5, letterSpacing: '0.08em', cursor: 'pointer', background: 'transparent', border: '1px solid var(--ju-accent)', color: 'var(--ju-accent)' }}>
           全選
         </button>
         <button onClick={() => setDraft([])} className="ju-mono p-chip"
@@ -99,7 +99,7 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
           display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8,
           minHeight: 52, padding: '8px 8px 8px 14px', cursor: 'text',
           background: 'var(--ju-card)',
-          border: `1px solid ${open && popover ? 'var(--ju-green)' : 'var(--ju-border)'}`,
+          border: `1px solid ${open && popover ? 'var(--ju-accent)' : 'var(--ju-border)'}`,
           boxShadow: open && popover ? '0 0 0 3px var(--ju-focus-ring)' : 'none',
           borderRadius: 12, transition: 'border-color .15s ease, box-shadow .15s ease',
         }}
@@ -124,9 +124,9 @@ export function SearchPanel({ applied, allTagCounts, onApply, popover = true, on
           style={{
             height: 38, padding: '0 18px', borderRadius: 999, fontSize: 11.5, letterSpacing: '0.16em',
             cursor: 'pointer', flexShrink: 0, alignSelf: 'center',
-            background: dirty ? 'var(--ju-green)' : 'transparent',
-            border: '1px solid var(--ju-green)',
-            color: dirty ? 'var(--ju-on-green)' : 'var(--ju-green)',
+            background: dirty ? 'var(--ju-accent)' : 'transparent',
+            border: '1px solid var(--ju-accent)',
+            color: dirty ? 'var(--ju-on-accent)' : 'var(--ju-accent)',
             transition: 'background .15s ease, color .15s ease',
           }}
         >
@@ -157,7 +157,7 @@ export function BottomDock({ applied, allTagCounts, onApply, resultCount }) {
           onClick={() => setOpen(true)}
           style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, height: 50, padding: '0 16px', background: 'var(--ju-card)', border: '0.5px solid var(--ju-border)', borderRadius: 12, cursor: 'pointer', textAlign: 'left' }}
         >
-          <span className="ju-mono" style={{ fontSize: 12, color: 'var(--ju-green)' }}>⌕</span>
+          <span className="ju-mono" style={{ fontSize: 12, color: 'var(--ju-accent)' }}>⌕</span>
           <span className="ju-sans" style={{ flex: 1, fontSize: 13, color: applied.length ? 'var(--ju-text)' : 'var(--ju-text3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {applied.length ? applied.join('・') : '請選擇標籤'}
           </span>
