@@ -90,6 +90,8 @@ const COURSES = [
   {
     title: 'UBC｜UX Book Club Taiwan',
     desc: '為期半年的 Google UX 課程讀書會，並完成各階段執行項目，如使用者研究、wireframe、mockup、prototype 等相關設計知識學習與討論。',
+    image: 'UX book證書.png',
+    imageAlt: 'UX Book Club Taiwan 結業證書',
   },
 ];
 
@@ -196,8 +198,9 @@ function LandingWorkCard({ work, cover }) {
   );
 }
 
-/* 課程卡（Figma 1059×384）：左文右圖。圖片素材未到，先以次表面佔位。 */
-function CourseCard({ title, desc }) {
+/* 課程卡（Figma 1059×384）：左文右圖。有 image 時放證書圖，否則以次表面佔位。
+   image 為 public/ 下的檔名；含空白與中文，用 encodeURI 產生合法 URL。 */
+function CourseCard({ title, desc, image, imageAlt }) {
   return (
     <div className="lp-course" style={{ display: 'grid', gap: 'clamp(24px, 4vw, 48px)', alignItems: 'start', marginBottom: 'clamp(28px, 4vw, 40px)' }}>
       <div>
@@ -208,10 +211,20 @@ function CourseCard({ title, desc }) {
           {desc}
         </p>
       </div>
-      <div
-        aria-hidden="true"
-        style={{ aspectRatio: '579 / 384', borderRadius: 20, background: 'var(--ju-surface)', border: '1px solid var(--ju-border)' }}
-      />
+      {image ? (
+        <img
+          src={encodeURI(`${import.meta.env.BASE_URL}${image}`)}
+          alt={imageAlt || title}
+          loading="lazy"
+          decoding="async"
+          style={{ width: '100%', aspectRatio: '579 / 384', objectFit: 'cover', borderRadius: 20, border: '1px solid var(--ju-border)', display: 'block' }}
+        />
+      ) : (
+        <div
+          aria-hidden="true"
+          style={{ aspectRatio: '579 / 384', borderRadius: 20, background: 'var(--ju-surface)', border: '1px solid var(--ju-border)' }}
+        />
+      )}
     </div>
   );
 }
