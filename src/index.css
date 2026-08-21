@@ -213,20 +213,6 @@ button:active:not(:disabled) { transform: scale(0.97); }
 }
 
 /* ── Landing hero：逐段進場 ── */
-/* 逐段上浮＋淡入；stagger 由 inline animationDelay 控制。
-   v3.3 初版還有 blur(4px)→0 的去模糊——那是逐幀濾鏡運算，載入第一秒
-   與粒子圓、簽名的 multiply 疊加撞在一起最重；拿掉後視覺差異極小
-   （20px 上浮＋淡入本來就承擔了絕大部分的進場感）。
-   reduced-motion 時全域規則會把動畫縮到 0.01ms，forwards 讓內容立即定格可見 */
-.lp-fade-up {
-  opacity: 0;
-  animation: lp-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-@keyframes lp-fade-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 /* ── 收尾 CTA（近白實心 pill，hover 微降明度） ── */
 .lp-cta:hover { background: var(--ju-accent-hover) !important; }
 
