@@ -19,3 +19,22 @@ export async function fetchWork(id) {
   if (!res.ok) throw new Error('載入作品內容失敗');
   return res.json();
 }
+
+let notesPromise = null;
+
+// 課程心得列表（landing 卡片用）：[{ id, title }]
+export function fetchNotes() {
+  if (!notesPromise) {
+    notesPromise = fetch(`${BASE}content/notes.json`)
+      .then(res => { if (!res.ok) throw new Error('載入課程心得列表失敗'); return res.json(); })
+      .then(data => (data.notes ?? []).filter(Boolean));
+    notesPromise.catch(() => { notesPromise = null; });
+  }
+  return notesPromise;
+}
+
+export async function fetchNote(id) {
+  const res = await fetch(`${BASE}content/notes/${id}.json`);
+  if (!res.ok) throw new Error('載入課程心得內容失敗');
+  return res.json();
+}

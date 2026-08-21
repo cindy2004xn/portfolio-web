@@ -11,7 +11,7 @@ import 'dotenv/config';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
-import { getWorks, getWork } from './notion.js';
+import { getWorks, getWork, getNote, COURSE_NOTE_IDS } from './notion.js';
 
 const OUT_DIR = path.resolve('public/content');
 const IMG_DIR = path.join(OUT_DIR, 'images');
@@ -76,6 +76,7 @@ async function main() {
   await fs.rm(OUT_DIR, { recursive: true, force: true });
   await fs.mkdir(IMG_DIR, { recursive: true });
   await fs.mkdir(path.join(OUT_DIR, 'works'), { recursive: true });
+  await fs.mkdir(path.join(OUT_DIR, 'notes'), { recursive: true });
 
   const works = await getWorks();
   console.log(`共 ${works.length} 件作品`);
@@ -97,11 +98,26 @@ async function main() {
 
   await fs.writeFile(path.join(OUT_DIR, 'works.json'), JSON.stringify({ works }));
 
-  // sitemap.xml（landing + 作品列表 + 各作品頁）
+  // 課程心得（獨立 Notion 頁面，內容呈現比照作品內頁）
+  const notes = [];
+  for (const noteId of COURSE_NOTE_IDS) {
+    const note = await getNote(noteId);
+    await localizeBlocks(note.blocks);
+    await fs.writeFile(
+      path.join(OUT_DIR, 'notes', `${note.id}.json`),
+      JSON.stringify(note)
+    );
+    notes.push({ id: note.id, title: note.title });
+    console.log(`✓ 課程心得：${note.title}（${note.blocks.length} blocks）`);
+  }
+  await fs.writeFile(path.join(OUT_DIR, 'notes.json'), JSON.stringify({ notes }));
+
+  // sitemap.xml（landing + 作品列表 + 各作品頁 + 課程心得）
   const urls = [
     `  <url><loc>${SITE_URL}/</loc></url>`,
     `  <url><loc>${SITE_URL}/works</loc></url>`,
     ...works.map(w => `  <url><loc>${SITE_URL}/work/${w.id}</loc><lastmod>${w.date}</lastmod></url>`),
+    ...notes.map(n => `  <url><loc>${SITE_URL}/note/${n.id}</loc></url>`),
   ];
   await fs.writeFile(
     path.resolve('public/sitemap.xml'),

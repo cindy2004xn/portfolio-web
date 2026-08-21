@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchWorks } from '../lib/data.js';
+import { fetchWorks, fetchNotes } from '../lib/data.js';
 import BackToTop from '../components/BackToTop.jsx';
 import Footer from '../components/Footer.jsx';
 import HeroCircle from '../components/HeroCircle.jsx';
@@ -93,11 +93,8 @@ const COURSES = [
   },
 ];
 
-/* TODO：待她提供文章標題與 Medium 網址後替換 href 與 title */
-const COURSE_NOTES = [
-  { title: '課程心得名稱', href: '#' },
-  { title: '課程心得名稱', href: '#' },
-];
+/* 課程心得改由 build 時抓 Notion 頁面（見 scripts/notion.js 的 COURSE_NOTE_IDS），
+   標題與內頁連結皆動態載入；抓不到時整區塊不顯示。 */
 
 /* 區塊開場列（Figma 266:253/266:256 文法）：英文小標在上、中文大標在下。
    v3.2 的 28×3 accent 短標記與右側次要動作在 Figma 已不存在，一併退場。 */
@@ -219,13 +216,12 @@ function CourseCard({ title, desc }) {
   );
 }
 
-/* 課程心得列（Figma 1059×105）：整列可點，連往 Medium。
-   href 尚為佔位，暫不開新分頁；素材到位後改 target="_blank" + rel="noopener noreferrer"。 */
-function CourseNote({ title, href }) {
+/* 課程心得列（Figma 1059×105）：整列可點，連往站內課程心得內頁（/note/:id）。 */
+function CourseNote({ title, to }) {
   const [hov, setHov] = useState(false);
   return (
-    <a
-      href={href}
+    <Link
+      to={to}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       onFocus={() => setHov(true)}
@@ -241,12 +237,13 @@ function CourseNote({ title, href }) {
       <span className="ju-mono" style={{ fontSize: 11, letterSpacing: '0.14em', color: 'var(--ju-text)', whiteSpace: 'nowrap' }}>
         查看完整內容 <span aria-hidden="true">→</span>
       </span>
-    </a>
+    </Link>
   );
 }
 
 export default function LandingPage() {
   const [covers, setCovers] = useState({});
+  const [notes, setNotes] = useState([]);
 
   useEffect(() => {
     document.title = '朱千慧作品集';
@@ -257,6 +254,9 @@ export default function LandingPage() {
         setCovers(map);
       })
       .catch(() => {}); // 封面載不到時卡片以次表面色呈現，不擋文案
+    fetchNotes()
+      .then(setNotes)
+      .catch(() => {}); // 課程心得載不到時整列不顯示，不擋其他內容
   }, []);
 
   return (
@@ -428,12 +428,16 @@ export default function LandingPage() {
           <SectionHeader zh="專業證書" en="Courses" />
           <CourseCard {...COURSES[0]} />
           {/* 課程心得小標（Figma 268:2）——只存在於 255-2，266-175 那版沒有 */}
-          <p className="ju-sans" style={{ fontSize: 20, fontWeight: 400, letterSpacing: '1px', color: 'var(--ju-text)', margin: '0 0 20px' }}>
-            課程心得
-          </p>
-          <div style={{ display: 'grid', gap: 12, margin: '0 0 clamp(28px, 4vw, 40px)' }}>
-            {COURSE_NOTES.map((n, i) => <CourseNote key={i} {...n} />)}
-          </div>
+          {notes.length > 0 && (
+            <>
+              <p className="ju-sans" style={{ fontSize: 20, fontWeight: 400, letterSpacing: '1px', color: 'var(--ju-text)', margin: '0 0 20px' }}>
+                課程心得
+              </p>
+              <div style={{ display: 'grid', gap: 12, margin: '0 0 clamp(28px, 4vw, 40px)' }}>
+                {notes.map(n => <CourseNote key={n.id} title={n.title} to={`/note/${n.id}`} />)}
+              </div>
+            </>
+          )}
           <CourseCard {...COURSES[1]} />
         </div>
       </section>

@@ -125,3 +125,29 @@ export async function getWork(id) {
   work.blocks = rawBlocks.map(stripMeta);
   return work;
 }
+
+// 課程心得：獨立於作品資料庫之外的 Notion 頁面（來源為「人生筆記資料庫」），
+// 以固定 ID 清單抓取；陣列順序即前台卡片顯示順序。要增減文章改這裡即可。
+export const COURSE_NOTE_IDS = [
+  '3afaa7a7-8108-804e-af73-d082ed673ce8', // 金融 x AI：導入策略、工作流整合與資安治理思辨
+  '3afaa7a7-8108-8075-82fb-d840a3db1488', // 金融 x 數位資產：從傳統機制到 Web3 與 AI 的金融轉移
+];
+
+// 從 page 物件取標題：找型別為 title 的屬性，不綁定欄名（跨資料庫通用）
+function pageTitle(page) {
+  const titleProp = Object.values(page.properties || {}).find(p => p?.type === 'title');
+  return richTextStr(titleProp?.title) || '';
+}
+
+// 課程心得內頁：只需標題與 blocks，內容呈現比照作品內頁
+export async function getNote(id) {
+  const [page, rawBlocks] = await Promise.all([
+    notion.pages.retrieve({ page_id: id }),
+    fetchBlocksRecursively(id),
+  ]);
+  return {
+    id: page.id,
+    title: pageTitle(page),
+    blocks: rawBlocks.map(stripMeta),
+  };
+}
