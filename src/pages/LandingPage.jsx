@@ -198,33 +198,40 @@ function LandingWorkCard({ work, cover }) {
   );
 }
 
-/* 課程卡（Figma 1059×384）：左文右圖。有 image 時放證書圖，否則以次表面佔位。
-   image 為 public/ 下的檔名；含空白與中文，用 encodeURI 產生合法 URL。 */
+/* 課程卡（Figma 1059×384）：左文右圖。
+   有 image → 左文右圖（image 為 public/ 下的檔名，含空白與中文用 encodeURI 產生合法 URL）；
+   無 image → 先隱藏證書圖區塊（素材未到），只留文字整幅呈現，待證書到位再補 image 欄。 */
 function CourseCard({ title, desc, image, imageAlt }) {
+  const text = (
+    <div>
+      <h3 className="ju-sans" style={{ fontSize: 'clamp(19px, 2.4vw, 24px)', fontWeight: 600, margin: 0, lineHeight: 1.5, textWrap: 'balance' }}>
+        {title}
+      </h3>
+      <p className="ju-sans" style={{ fontSize: 15, lineHeight: 1.85, color: 'var(--ju-text2)', margin: '20px 0 0' }}>
+        {desc}
+      </p>
+    </div>
+  );
+
+  if (!image) {
+    // TODO：Level 1｜金融科技產業地圖基礎課程證書待她提供後，補 image 欄即恢復左文右圖
+    return (
+      <div style={{ marginBottom: 'clamp(28px, 4vw, 40px)' }}>
+        {text}
+      </div>
+    );
+  }
+
   return (
     <div className="lp-course" style={{ display: 'grid', gap: 'clamp(24px, 4vw, 48px)', alignItems: 'start', marginBottom: 'clamp(28px, 4vw, 40px)' }}>
-      <div>
-        <h3 className="ju-sans" style={{ fontSize: 'clamp(19px, 2.4vw, 24px)', fontWeight: 600, margin: 0, lineHeight: 1.5, textWrap: 'balance' }}>
-          {title}
-        </h3>
-        <p className="ju-sans" style={{ fontSize: 15, lineHeight: 1.85, color: 'var(--ju-text2)', margin: '20px 0 0' }}>
-          {desc}
-        </p>
-      </div>
-      {image ? (
-        <img
-          src={encodeURI(`${import.meta.env.BASE_URL}${image}`)}
-          alt={imageAlt || title}
-          loading="lazy"
-          decoding="async"
-          style={{ width: '100%', aspectRatio: '579 / 384', objectFit: 'cover', borderRadius: 20, border: '1px solid var(--ju-border)', display: 'block' }}
-        />
-      ) : (
-        <div
-          aria-hidden="true"
-          style={{ aspectRatio: '579 / 384', borderRadius: 20, background: 'var(--ju-surface)', border: '1px solid var(--ju-border)' }}
-        />
-      )}
+      {text}
+      <img
+        src={encodeURI(`${import.meta.env.BASE_URL}${image}`)}
+        alt={imageAlt || title}
+        loading="lazy"
+        decoding="async"
+        style={{ width: '100%', aspectRatio: '579 / 384', objectFit: 'cover', borderRadius: 20, border: '1px solid var(--ju-border)', display: 'block' }}
+      />
     </div>
   );
 }
@@ -384,11 +391,8 @@ export default function LandingPage() {
           <Portrait />
           {/* 人像底到標題 35px（Figma：人像 869–1040、標題 1075） */}
           <div className="lp-about-text" style={{ marginTop: 35 }}>
-            <h2 className="ju-sans ju-en" style={{ fontSize: 'clamp(22px, 3vw, 30px)', fontWeight: 700, margin: 0, letterSpacing: '-0.01em', textAlign: 'center' }}>
-              What makes me different
-            </h2>
-            {/* 文件第二版的定調主張句：置中承接英文標題，領起下方四段論述 */}
-            <p className="ju-sans" style={{ fontSize: 'clamp(19px, 2.4vw, 26px)', fontWeight: 700, lineHeight: 1.5, margin: '18px 0 0', textAlign: 'center', textWrap: 'balance' }}>
+            {/* 文件第二版的定調主張句：置中領起下方四段論述（原英文標題 What makes me different 已移除，主張句上位為段首） */}
+            <p className="ju-sans" style={{ fontSize: 'clamp(19px, 2.4vw, 26px)', fontWeight: 700, lineHeight: 1.5, margin: 0, textAlign: 'center', textWrap: 'balance' }}>
               AI 不是取代，而是能力放大器
             </p>
             {/* 長中文置中會難讀，稿上也是左對齊——標題置中、內文左對齊是刻意的混合 */}
