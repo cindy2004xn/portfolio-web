@@ -329,17 +329,16 @@ export default function LandingPage() {
             }}
           >
             <span
-              className="ju-hand-en lp-fade-up"
-              style={{ animationDelay: '1.1s', fontSize: 'clamp(14px, 1.39vw, 20px)', color: 'var(--ju-on-accent)', lineHeight: 1.3 }}
+              className="ju-hand-en"
+              style={{ fontSize: 'clamp(14px, 1.39vw, 20px)', color: 'var(--ju-on-accent)', lineHeight: 1.3 }}
             >
               Hi, I'm Cindy Ju
             </span>
             {/* 寬度上限由可用垂直空間反推，見 index.css 的 --ju-sig-w */}
             <img
-              className="lp-fade-up"
               src="/signature.png"
               alt="朱千慧 手寫簽名"
-              style={{ animationDelay: '1.3s', width: 'var(--ju-sig-w)', marginTop: 2, mixBlendMode: 'multiply' }}
+              style={{ width: 'var(--ju-sig-w)', marginTop: 2, mixBlendMode: 'multiply' }}
             />
           </div>
         </div>
@@ -347,9 +346,8 @@ export default function LandingPage() {
         {/* pill／主標／信任句：Figma Frame 1773，flex column gap 27 */}
         <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 27 }}>
           <span
-            className="ju-sans lp-fade-up"
+            className="ju-sans"
             style={{
-              animationDelay: '0.3s',
               background: 'var(--ju-pill-bg)',
               border: '1px solid var(--ju-pill-border)',
               color: 'var(--ju-text)',
@@ -363,14 +361,14 @@ export default function LandingPage() {
             5 年乙方與多元專案經驗
           </span>
           <h1
-            className="ju-sans lp-fade-up"
-            style={{ animationDelay: '0.45s', fontSize: 'clamp(40px, 4.44vw, 64px)', fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.2, margin: 0 }}
+            className="ju-sans"
+            style={{ fontSize: 'clamp(40px, 4.44vw, 64px)', fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.2, margin: 0 }}
           >
             Product Designer
           </h1>
           <p
-            className="ju-sans lp-fade-up"
-            style={{ animationDelay: '0.6s', fontSize: 'clamp(20px, 2.22vw, 32px)', fontWeight: 700, margin: 0, lineHeight: 1.2 }}
+            className="ju-sans"
+            style={{ fontSize: 'clamp(20px, 2.22vw, 32px)', fontWeight: 700, margin: 0, lineHeight: 1.2 }}
           >
             信任，是體驗與記憶的接軌
           </p>
