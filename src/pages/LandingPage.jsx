@@ -330,7 +330,7 @@ export default function LandingPage() {
           >
             <span
               className="ju-hand-en"
-              style={{ fontSize: 'clamp(14px, 1.39vw, 20px)', color: 'var(--ju-on-accent)', lineHeight: 1.3 }}
+              style={{ fontSize: 'var(--ju-sig-en-fs)', color: 'var(--ju-on-accent)', lineHeight: 1.3 }}
             >
               Hi, I'm Cindy Ju
             </span>
@@ -353,7 +353,7 @@ export default function LandingPage() {
               color: 'var(--ju-text)',
               padding: '14px 28px',
               borderRadius: 50,
-              fontSize: 'clamp(16px, 1.67vw, 24px)',
+              fontSize: 'var(--ju-pill-fs)',
               fontWeight: 400,
               lineHeight: 1.2,
             }}
@@ -377,7 +377,7 @@ export default function LandingPage() {
         {/* 中央垂線導引：Figma y=613→796，距信任句 46px */}
         <div
           aria-hidden="true"
-          style={{ position: 'relative', width: 1, height: 183, background: 'var(--ju-hairline)', margin: '46px auto 0' }}
+          style={{ position: 'relative', width: 1, height: 'var(--ju-hero-rule-h)', background: 'var(--ju-hairline)', margin: '46px auto 0' }}
         />
       </section>
 

@@ -152,6 +152,25 @@ button:active:not(:disabled) { transform: scale(0.97); }
     calc(var(--ju-hero-d) * 0.4066),
     calc((var(--ju-hero-d) * 0.4129 - 143px) / 0.643)
   );
+
+  /* Hero 內文字級與導引線高：抽成變數，好讓行動版（≤719）覆寫成稿上的行動版值。 */
+  --ju-sig-en-fs: clamp(14px, 1.39vw, 20px);   /* 簽名英文行 Hi, I'm Cindy Ju */
+  --ju-pill-fs: clamp(16px, 1.67vw, 24px);      /* 5 年乙方 pill */
+  --ju-hero-rule-h: 183px;                      /* 中央導引垂線（桌機 266-175） */
+}
+
+/* ── 行動版 Hero（Figma 294-6「手機版」）──
+   稿上行動版維持 964 大圓（與桌機同尺寸），而非把圓縮到 560：整組幾何都由 --ju-hero-d 推導，
+   把 D 撐回 964 就讓圓、padding-top、pill／主標／信任句位置一次貼齊稿（pill≈348、主標≈427、信任≈502）。
+   簽名寬改用 78vw（402 時≈314，貼近稿的 312）避免貼邊；簽名英文與 pill 依稿放大到 20px；導引線拉長到稿上的 286。 */
+@media (max-width: 719px) {
+  :root {
+    --ju-hero-d: 964px;
+    --ju-sig-w: min(78vw, 392px);
+    --ju-sig-en-fs: 20px;
+    --ju-pill-fs: 20px;
+    --ju-hero-rule-h: 286px;
+  }
 }
 
 /* 技能卡：三欄，Figma 274-2 的 315px 欄寬 + 57px 間距（1059 = 315×3 + 57×2） */
@@ -169,7 +188,10 @@ button:active:not(:disabled) { transform: scale(0.97); }
 .lp-about { display: flex; align-items: flex-start; gap: clamp(28px, 5vw, 61px); }
 .lp-about-text { flex: 1 1 auto; min-width: 0; max-width: 827px; }
 @media (max-width: 680px) {
-  .lp-about { flex-direction: column; align-items: flex-start; }
+  .lp-about { flex-direction: column; }
+  /* 行動版：人像置中，標題與內文維持左對齊（長中文置中難讀）。
+     文字區靠 stretch 撐滿寬、內容仍左對齊；只有人像（首個子元素）置中。 */
+  .lp-about > :first-child { align-self: center; }
 }
 .lp-section { padding: var(--ju-section-pad) 24px 0; position: relative; overflow-x: clip; }
 
