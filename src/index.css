@@ -164,9 +164,13 @@ button:active:not(:disabled) { transform: scale(0.97); }
    用 clip 不用 hidden：單軸 hidden 會讓另一軸隱含變 auto、把區塊變成捲動容器。 */
 .lp-container { max-width: 1080px; margin: 0 auto; position: relative; z-index: 1; }
 
-/* 定位論述：置中直落（人像在上、標題、內文），無容器——Figma 274:121/274:126。
-   內文 858px 是稿上的值，容器窄於此時自動跟著縮。 */
-.lp-about-text { max-width: 858px; margin: 0 auto; }
+/* 定位論述：人像左、文字右並排——Figma 274:121/274:126。
+   欄間距依稿 61px（窄螢幕收斂）；680px 以下改為直落（人像在上、文字在下、維持左對齊）。 */
+.lp-about { display: flex; align-items: flex-start; gap: clamp(28px, 5vw, 61px); }
+.lp-about-text { flex: 1 1 auto; min-width: 0; max-width: 827px; }
+@media (max-width: 680px) {
+  .lp-about { flex-direction: column; align-items: flex-start; }
+}
 .lp-section { padding: var(--ju-section-pad) 24px 0; position: relative; overflow-x: clip; }
 
 /* ── 手寫簽名：英文行用 Nothing You Could Do（Figma 266:184 指定）；中文名用她提供的真跡 signature.png ── */

@@ -140,7 +140,7 @@ function SkillGrid({ items }) {
 function Portrait() {
   const [ok, setOk] = useState(true);
   return (
-    <div style={{ position: 'relative', width: 'clamp(120px, 11.88vw, 171px)', aspectRatio: '1', borderRadius: '50%', overflow: 'hidden', background: 'var(--ju-card2)', border: '1px solid var(--ju-border)', margin: '0 auto', flex: '0 0 auto' }}>
+    <div style={{ position: 'relative', width: 'clamp(120px, 11.88vw, 171px)', aspectRatio: '1', borderRadius: '50%', overflow: 'hidden', background: 'var(--ju-card2)', border: '1px solid var(--ju-border)', flex: '0 0 auto' }}>
       {ok ? (
         <img
           src="/portrait.png"
@@ -381,31 +381,28 @@ export default function LandingPage() {
         />
       </section>
 
-      {/* 2. 定位論述 — 置中直落：人像在上、標題置中、內文左對齊（Figma 274:126 + 274:121）。
-          v3.3 的扁平深色卡退場——稿上內容直接落在畫布上，沒有容器。
-          文字樣式（字級／行高／明度）維持系統值，只有排版與人像尺寸依稿調整。 */}
+      {/* 2. 定位論述 — 人像左、標題＋三段內文右並排（Figma 274:126 + 274:121）。
+          從 v3.3 的置中直落改回並排：171 圓框人像在左，右欄由標題 What make me different
+          （Noto Sans TC Bold 32px、白）領起三段內文（16px／行高 2／字距 0.8px／0.82 明度）。
+          間距依稿：欄間 61、標題→內文 31、段間 26；680px 以下收成直落（人像在上、文字左對齊）。 */}
       <section className="lp-section" style={{ paddingTop: 0 }}>
         <div className="lp-container">
-          <Portrait />
-          {/* 人像底到標題 35px（Figma：人像 869–1040、標題 1075） */}
-          <div className="lp-about-text" style={{ marginTop: 35 }}>
-            {/* 文件第二版的定調主張句：置中領起下方四段論述（原英文標題 What makes me different 已移除，主張句上位為段首） */}
-            <p className="ju-sans" style={{ fontSize: 'clamp(19px, 2.4vw, 26px)', fontWeight: 700, lineHeight: 1.5, margin: 0, textAlign: 'center', textWrap: 'balance' }}>
-              AI 不是取代，而是能力放大器
-            </p>
-            {/* 長中文置中會難讀，稿上也是左對齊——標題置中、內文左對齊是刻意的混合 */}
-            <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '31px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
-              我擅長在繁雜的事物之間，找出底層共通的邏輯。過去面對需求、面對問題，我會不停追問，不輕易讓問題只停在表面，就像兩個角色、兩種訴求，看起來是該分開處理的兩件事，但往下追問「真正卡住的是什麼」，常常會發現，兩者卡住的其實是同一個問題，最終指向的也是同一個目標。
-            </p>
-            <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
-              過去要花大量時間整理的資訊，現在我可以先把看似無關的想法丟出來，讓 AI 幫我快速整理，我能更聚焦在思考問題的本質，那些憑經驗做出的判斷，過去往往是反射動作、自己都沒意識到，透過反覆梳理，我開始看見那些藏在經驗裡，與原本說不出口的邏輯。
-            </p>
-            <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
-              設計師的價值，在於能把想法做成可以被驗證的東西，親自動手做出來、親自測試過，這件事不會因為有了 AI 而改變，只會因為 AI 而變得可以更快執行。
-            </p>
-            <p className="ju-sans" style={{ fontSize: 15, lineHeight: 2, margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
-              AI 把原本被時間掩埋住的判斷邏輯，重新還給了我，讓我更專注在找出真正的問題，並驗證解決的方法。
-            </p>
+          <div className="lp-about">
+            <Portrait />
+            <div className="lp-about-text">
+              <h2 className="ju-sans" style={{ fontSize: 'clamp(24px, 3.4vw, 32px)', fontWeight: 700, lineHeight: 1.25, margin: 0, color: 'var(--ju-text)' }}>
+                What makes me different
+              </h2>
+              <p className="ju-sans" style={{ fontSize: 16, lineHeight: 2, letterSpacing: '0.8px', margin: '31px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
+                我擅長在繁雜的事物之間，找出底層共通的邏輯。過去面對需求、面對問題，我會不停追問，不輕易讓問題只停在表面，就像不同角色的使用者有不同的需求，看似分開的兩件事，但往更深入的需求的本質，常常會發現，其實是同一個問題，最終指向的也是同一個目標。
+              </p>
+              <p className="ju-sans" style={{ fontSize: 16, lineHeight: 2, letterSpacing: '0.8px', margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
+                過去要花大量時間整理的資訊，AI 協助我快速釐清雜亂的思緒，我能更聚焦在思考問題的本質，過去那些憑經驗做出的判斷的隱性知識，透過反覆梳理，讓我開始看見那些藏在經驗裡，與沒被說出口的判斷邏輯。
+              </p>
+              <p className="ju-sans" style={{ fontSize: 16, lineHeight: 2, letterSpacing: '0.8px', margin: '26px 0 0', color: 'rgba(244, 243, 239, 0.82)' }}>
+                AI 把原本被時間掩埋的判斷邏輯，重新還給了我，讓我更專注在找出真正的問題，並驗證解決的方法。
+              </p>
+            </div>
           </div>
         </div>
       </section>
