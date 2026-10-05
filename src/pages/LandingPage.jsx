@@ -86,6 +86,9 @@ const COURSES = [
   {
     title: 'Level 1｜金融科技產業地圖基礎課程',
     desc: '臺灣金融科技協會規劃推出 FinTech Academy 金融科技產業學院，以「金融科技產業地圖」為核心，從 AI、保險科技、區塊鏈與虛擬資產，到金融資安、詐欺防治與監理科技，金融業與科技業都需要更快掌握趨勢，理解監理方向，並了解技術如何真正落地到產業應用。',
+    image: 'fintech-certificate.png',
+    imageAlt: '臺灣金融科技協會 FinTech Academy 結業證書',
+    ratio: '842 / 595', // 證書原圖比例，避免 cover 裁掉金邊
   },
   {
     title: 'UBC｜UX Book Club Taiwan',
@@ -200,8 +203,8 @@ function LandingWorkCard({ work, cover }) {
 
 /* 課程卡（Figma 1059×384）：左文右圖。
    有 image → 左文右圖（image 為 public/ 下的檔名，含空白與中文用 encodeURI 產生合法 URL）；
-   無 image → 先隱藏證書圖區塊（素材未到），只留文字整幅呈現，待證書到位再補 image 欄。 */
-function CourseCard({ title, desc, image, imageAlt }) {
+   無 image → 只留文字整幅呈現。 */
+function CourseCard({ title, desc, image, imageAlt, ratio = '579 / 384' }) {
   const text = (
     <div>
       <h3 className="ju-sans" style={{ fontSize: 'clamp(19px, 2.4vw, 24px)', fontWeight: 600, margin: 0, lineHeight: 1.5, textWrap: 'balance' }}>
@@ -214,7 +217,6 @@ function CourseCard({ title, desc, image, imageAlt }) {
   );
 
   if (!image) {
-    // TODO：Level 1｜金融科技產業地圖基礎課程證書待她提供後，補 image 欄即恢復左文右圖
     return (
       <div style={{ marginBottom: 'clamp(28px, 4vw, 40px)' }}>
         {text}
@@ -230,7 +232,7 @@ function CourseCard({ title, desc, image, imageAlt }) {
         alt={imageAlt || title}
         loading="lazy"
         decoding="async"
-        style={{ width: '100%', aspectRatio: '579 / 384', objectFit: 'cover', borderRadius: 20, border: '1px solid var(--ju-border)', display: 'block' }}
+        style={{ width: '100%', aspectRatio: ratio, objectFit: 'cover', borderRadius: 20, border: '1px solid var(--ju-border)', display: 'block' }}
       />
     </div>
   );
