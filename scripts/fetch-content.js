@@ -101,14 +101,20 @@ async function main() {
   // 課程心得（獨立 Notion 頁面，內容呈現比照作品內頁）
   const notes = [];
   for (const noteId of COURSE_NOTE_IDS) {
-    const note = await getNote(noteId);
-    await localizeBlocks(note.blocks);
-    await fs.writeFile(
-      path.join(OUT_DIR, 'notes', `${note.id}.json`),
-      JSON.stringify(note)
-    );
-    notes.push({ id: note.id, title: note.title });
-    console.log(`✓ 課程心得：${note.title}（${note.blocks.length} blocks）`);
+    try {
+      const note = await getNote(noteId);
+      await localizeBlocks(note.blocks);
+      await fs.writeFile(
+        path.join(OUT_DIR, 'notes', `${note.id}.json`),
+        JSON.stringify(note)
+      );
+      notes.push({ id: note.id, title: note.title });
+      console.log(`✓ 課程心得：${note.title}（${note.blocks.length} blocks）`);
+    } catch (err) {
+      // 課程心得為選配內容（前台已設計成載不到就整列不顯示）；
+      // 單篇抓不到（如 Notion 頁面未分享給整合、已刪除）不該中斷整個部署。
+      console.warn(`  ⚠ 課程心得略過（${noteId}）：${err.message}`);
+    }
   }
   await fs.writeFile(path.join(OUT_DIR, 'notes.json'), JSON.stringify({ notes }));
 
