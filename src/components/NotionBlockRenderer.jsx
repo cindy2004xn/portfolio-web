@@ -172,7 +172,7 @@ function NotionBlock({ block }) {
           borderLeft: '3px solid var(--ju-border)',
           color: 'var(--ju-text2)',
         }}>
-          <p className="ju-sans" style={{ margin: 0, lineHeight: 1.9, fontSize: 16 }}>
+          <p className="ju-sans" style={{ margin: 0, lineHeight: 1.9, fontSize: 16, whiteSpace: 'pre-line' }}>
             {renderRichText(d.rich_text || [])}
           </p>
           {block.children?.length > 0 && (
@@ -349,7 +349,8 @@ function NotionBlock({ block }) {
                       return (
                         <Tag key={ci} className="ju-sans" style={{
                           padding: '8px 14px', border: '0.5px solid var(--ju-border)',
-                          textAlign: 'left', lineHeight: 1.6,
+                          textAlign: 'left', lineHeight: 1.6, whiteSpace: 'pre-line',
+                          verticalAlign: 'top',
                           fontWeight: isHeader ? 600 : 400,
                           backgroundColor: isHeader ? 'var(--ju-surface)' : 'transparent',
                         }}>

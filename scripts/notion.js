@@ -126,14 +126,10 @@ export async function getWork(id) {
   return work;
 }
 
-// 課程心得：獨立於作品資料庫之外的 Notion 頁面（來源為「人生筆記資料庫」），
-// 以固定 ID 清單抓取；陣列順序即前台卡片顯示順序。要增減文章改這裡即可。
-export const COURSE_NOTE_IDS = [
-  // 下面兩篇 Notion 頁面已不再分享給整合（抓取回 404），先移除：
-  //   '3afaa7a7-8108-804e-af73-d082ed673ce8' // 金融 x AI：導入策略、工作流整合與資安治理思辨
-  //   '3afaa7a7-8108-8075-82fb-d840a3db1488' // 金融 x 數位資產：從傳統機制到 Web3 與 AI 的金融轉移
-  // 要恢復：在 Notion 把頁面分享給整合後，把對應 ID 放回這個陣列即可。
-];
+// 課程心得（Notion 來源）：獨立於作品資料庫之外的 Notion 頁面，以固定 ID 清單抓取。
+// 註：原本兩篇金融文章已改為「程式內建、不經 Notion」——見 scripts/local-notes.js，
+// 由 fetch-content.js 於 build 時併入 notes。此清單保留給日後仍想走 Notion 的課程心得。
+export const COURSE_NOTE_IDS = [];
 
 // 從 page 物件取標題：找型別為 title 的屬性，不綁定欄名（跨資料庫通用）
 function pageTitle(page) {

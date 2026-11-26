@@ -12,6 +12,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 import { getWorks, getWork, getNote, COURSE_NOTE_IDS } from './notion.js';
+import { LOCAL_NOTES } from './local-notes.js';
 
 const OUT_DIR = path.resolve('public/content');
 const IMG_DIR = path.join(OUT_DIR, 'images');
@@ -116,6 +117,18 @@ async function main() {
       console.warn(`  ⚠ 課程心得略過（${noteId}）：${err.message}`);
     }
   }
+
+  // 本地內建課程心得（不經 Notion；內容定稿、直接寫在 scripts/local-notes.js）。
+  // 無圖片，故不需 localizeBlocks；排列順序即 landing 卡片順序。
+  for (const note of LOCAL_NOTES) {
+    await fs.writeFile(
+      path.join(OUT_DIR, 'notes', `${note.id}.json`),
+      JSON.stringify(note)
+    );
+    notes.push({ id: note.id, title: note.title });
+    console.log(`✓ 課程心得（本地）：${note.title}（${note.blocks.length} blocks）`);
+  }
+
   await fs.writeFile(path.join(OUT_DIR, 'notes.json'), JSON.stringify({ notes }));
 
   // sitemap.xml（landing + 作品列表 + 各作品頁 + 課程心得）
